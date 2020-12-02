@@ -159,6 +159,22 @@ export default class App extends Component {
             }}
           >
             <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
+              Member name
+            </Text>
+            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
+              {item.member_name}
+            </Text>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'center',
+              marginTop: 5
+            }}
+          >
+            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
               Company name
             </Text>
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>

@@ -81,8 +81,7 @@ export default class ViewProfessionalDetails extends Component {
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
         const member_id = this.props.navigation.getParam('member_id')
         const member_type = this.props.navigation.getParam('type')
-        console.log('samaj id ', member_id)
-        console.log('type ', member_type)
+        
         this.setState({
             samaj_id: samaj_id,
             member_id: member_id,
@@ -679,6 +678,12 @@ export default class ViewProfessionalDetails extends Component {
                                 <Text style={Style.buttonText}>Update Details</Text>
                             </TouchableOpacity>
                         }
+                        <TouchableOpacity
+                                style={[Style.Buttonback, (style = { marginTop: 10 })]}
+                                onPress={() => this.props.navigation.navigate('AddProduct')}
+                        >
+                            <Text style={Style.buttonText}>Add Product</Text>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
             </SafeAreaView>

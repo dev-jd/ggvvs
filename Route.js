@@ -61,6 +61,7 @@ import ViewMemberDoctorDetails from './src/screens/PersionalDetails/ViewMemberDo
 import LookingForJob from './src/screens/PersionalDetails/LookinForJob'
 import LookinForMatrimony from './src/screens/PersionalDetails/LookinForMatrimony'
 import ViewJobProvider from './src/screens/PersionalDetails/ViewJobProvider'
+import AddProduct from './src/screens/PersionalDetails/AddProduct'
 import WebView from './src/screens/WebView'
 import Videos from './src/screens/Videos'
 import FamilyDetails from './src/screens/FamilyDetails';
@@ -333,6 +334,9 @@ const Stack_Navi = createStackNavigator(
         },
         ViewMemberDoctorDetails: {
             screen: ViewMemberDoctorDetails
+        },
+        AddProduct: {
+            screen: AddProduct
         },
         LookingForJob: {
             screen: LookingForJob
