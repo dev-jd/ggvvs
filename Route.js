@@ -62,6 +62,8 @@ import LookingForJob from './src/screens/PersionalDetails/LookinForJob'
 import LookinForMatrimony from './src/screens/PersionalDetails/LookinForMatrimony'
 import ViewJobProvider from './src/screens/PersionalDetails/ViewJobProvider'
 import AddProduct from './src/screens/PersionalDetails/AddProduct'
+import ProductDetails from './src/screens/ProductDetails'
+import CompanyProductsList from './src/screens/CompanyProductsList'
 import WebView from './src/screens/WebView'
 import Videos from './src/screens/Videos'
 import FamilyDetails from './src/screens/FamilyDetails';
@@ -78,6 +80,7 @@ import FirendsView from './src/screens/FirendsView';
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import Notification from './src/screens/Notification';
 import CompanyDetails from './src/screens/CompanyDetails';
+import EditProduct from './src/screens/PersionalDetails/EditProduct';
 
 const topTabNavi = createMaterialTopTabNavigator({
     Photos: {
@@ -294,6 +297,12 @@ const Stack_Navi = createStackNavigator(
         MembersDetails: {
             screen: MembersDetails,
         },
+        ProductDetails: {
+            screen: ProductDetails,
+        },
+        CompanyProductsList: {
+            screen: CompanyProductsList,
+        },
         Addnewpost: {
             screen: Addnewpost,
         },
@@ -303,6 +312,9 @@ const Stack_Navi = createStackNavigator(
         },
         CompanyDetails: {
             screen: CompanyDetails,
+        },
+        EditProduct: {
+            screen: EditProduct,
         },
         BecomeDoner: {
             screen: BecomeDoner,
@@ -330,7 +342,10 @@ const Stack_Navi = createStackNavigator(
             screen: ViewOtherPersionalDetails
         },
         ViewProfessionalDetails: {
-            screen: ViewProfessionalDetails
+            screen: ViewProfessionalDetails,
+            navigationOptions: {
+                header: null
+            }
         },
         ViewMemberDoctorDetails: {
             screen: ViewMemberDoctorDetails

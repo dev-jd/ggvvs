@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         fontSize: 14, fontFamily: CustomeFonts.regular, width: '100%',
     },
     SubTextstyle: {
-        fontSize: 10, fontFamily: CustomeFonts.regular, width: '100%'
+        fontSize: 12, fontFamily: CustomeFonts.regular, width: '100%'
     },
     Textbold: {
         fontFamily: CustomeFonts.bold
@@ -257,18 +257,24 @@ const styles = StyleSheet.create({
         color: Colors.Theme_color,
         fontFamily: CustomeFonts.bold
     },
-    isActivate: {
+    isActivateTab: {
         width: '33.33%',
         borderBottomWidth: 2,
         borderColor: Colors.white,
         justifyContent: 'center',
         alignItems: 'center'
     },
-    isDeactive: {
+    isDeactiveTab: {
         width: '33.33%',
         justifyContent: 'center',
         alignItems: 'center'
     },
+    backView:{
+        width:'100%',
+        backgroundColor:Colors.white,
+        elevation:2,
+        padding: '3%',
+    }
 })
 
 export default styles

@@ -49,8 +49,8 @@ const options = {
   takePhotoButtonTitle: 'Take Photo',
   chooseFromLibraryButtonTitle: 'Choose From Gallery',
   quality: 1,
-  maxWidth: 500,
-  maxHeight: 500,
+  maxWidth: 300,
+  maxHeight: 300,
   storageOptions: {
     skipBackup: true
   }
@@ -636,6 +636,7 @@ export default class App extends Component {
                   /> */}
               </View>
             </Form>
+            <Text style={[Style.SubTextstyle, { color: Colors.white, paddingVertical: '2%' }]}> NOTE: You Can Upload Maximum 300 KB Image </Text>
 
             <View>
               {this.state._isLoading ? (

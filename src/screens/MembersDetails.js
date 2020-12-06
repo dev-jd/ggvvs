@@ -27,6 +27,7 @@ import AppImages from '../Theme/image'
 import PersionalDetails from './PersionalDetails/PersionalDetails'
 import FamilyDetails from './FamilyDetails'
 import MemberSearch from './MemberSearch'
+import Products from './Products'
 
 class MembersDetails extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -53,6 +54,7 @@ class MembersDetails extends Component {
       isTheory: true,
       isVideos: false,
       isFiles: false,
+      isProduct:false,
       fb: '',
       instagram: '',
       linkedin: '',
@@ -63,6 +65,7 @@ class MembersDetails extends Component {
       editWapp: false,
       editLinked: false,
       editTwitter: false,
+      ProductArray:[]
     }
   }
 
@@ -130,14 +133,14 @@ class MembersDetails extends Component {
     axois
       .post(base_url + 'profile_data', formdata)
       .then(res => {
-        console.log('profile_data res---->', res.data.member_details)
+        console.log('profile_data res---->', res.data.member_details.member_photo)
         console.log('profile_data res---->', res.data.member_photo)
         this.setState({ isLoding: false })
         if (res.data.status === true) {
           this.setState({
             memberDetails: res.data.member_details,
             profile_pic_url: res.data.member_photo,
-            profilepic: res.data.member_details.member_photo
+            profilepic: res.data.member_details.member_photo === null ? AppImages.placeHolder : res.data.member_photo + res.data.member_details.member_photo
           })
         }
       })
@@ -179,7 +182,7 @@ class MembersDetails extends Component {
     axois
       .post(base_url + 'member_details_edit', formdata)
       .then(res => {
-        console.log('profile_data res---->', res.data)
+        console.log('profile_data res 333---->', res.data)
         this.setState({ isLoding: false })
         this.setState({
           editFb: false,
@@ -202,11 +205,12 @@ class MembersDetails extends Component {
       banner_url,
       profilepic,
       profile_pic_url,
-      isTheory,
+      isTheory,isProduct,
       isVideos,
       isFiles, editFb, editInsta, editLinked, editTwitter, editWapp,
       member_id, fb, instagram, whatsapp, linkedin, twitter
     } = this.state
+    
     return (
       <SafeAreaView style={Style.cointainer1}>
         <StatusBar
@@ -217,11 +221,7 @@ class MembersDetails extends Component {
           <Image
             resizeMode='stretch'
             source={
-              profilepic === null
-                ? AppImages.placeHolder
-                : {
-                  uri: profile_pic_url + profilepic
-                }
+              profilepic 
             }
             style={{
               backgroundColor: Colors.white,
@@ -253,10 +253,10 @@ class MembersDetails extends Component {
                 this.setState({
                   isTheory: true,
                   isVideos: false,
-                  isFiles: false
+                  isFiles: false,isProduct:false
                 })
               }
-              style={isTheory ? Style.isActivate : Style.isDeactive}
+              style={isTheory ? Style.isActivateTab : Style.isDeactiveTab}
             >
               <Text style={[Style.buttonText, { color: Colors.white }]}>
                 Profile
@@ -268,10 +268,10 @@ class MembersDetails extends Component {
                 this.setState({
                   isTheory: false,
                   isVideos: true,
-                  isFiles: false
+                  isFiles: false,isProduct:false
                 })
               }
-              style={isVideos ? Style.isActivate : Style.isDeactive}
+              style={isVideos ? Style.isActivateTab : Style.isDeactiveTab}
             >
               <Text style={[Style.buttonText, { color: Colors.white }]}>
                 Family
@@ -283,29 +283,17 @@ class MembersDetails extends Component {
                 this.setState({
                   isTheory: false,
                   isVideos: false,
-                  isFiles: true
+                  isFiles: true,
+                  isProduct:false
                 })
               }
-              style={isFiles ? Style.isActivate : Style.isDeactive}
+              style={isFiles ? Style.isActivateTab : Style.isDeactiveTab}
             >
               <Text style={[Style.buttonText, { color: Colors.white }]}>
                 Social
               </Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity
-              onPress={() =>
-                this.setState({
-                  isTheory: false,
-                  isVideos: false,
-                  isFiles: true
-                })
-              }
-              style={isFiles ? Style.isActivate : Style.isDeactive}
-            >
-              <Text style={[Style.buttonText, { color: Colors.white }]}>
-                Search Member
-              </Text>
-            </TouchableOpacity> */}
+           
           </View>
 
           {isTheory ? (
@@ -316,7 +304,8 @@ class MembersDetails extends Component {
               member_tree_id={member_id}
               navigation={this.props.navigation}
             />
-          ) : (
+          ) :
+          (
                 <View
                   style={{
                     padding: '2%',
@@ -420,7 +409,7 @@ class MembersDetails extends Component {
                   }}>
                     <TouchableOpacity
                       style={{ width: '20%' }}
-                      onPress={() => { whatsapp === null || whatsapp === '' || whatsapp === undefined ? null : Linking.openURL('whatsapp://send?text=Hello&phone=+91' + whatsapp) }}>
+                      onPress={() => { whatsapp === null || whatsapp === '' || whatsapp === undefined ? null : Linking.openURL('whatsapp://send?text=Hello&phone=+' + whatsapp) }}>
                       <IconFontAwesome name='whatsapp' size={35} color='#4FCE5D' />
                     </TouchableOpacity>
                     {/* <Text style={[Style.Textmainstyle, { width: '70%' }]}>Whatsapp</Text> */}

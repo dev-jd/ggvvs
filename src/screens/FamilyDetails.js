@@ -61,7 +61,7 @@ export default class FamilyDetails extends Component {
     //   member_id = await AsyncStorage.getItem('main_member')
     // }
 
-    console.log('member id ', member_type)
+    console.log('member id ', member_tree_id)
     // console.log('member member_tree_id ', member_tree_id)
 
     this.setState({

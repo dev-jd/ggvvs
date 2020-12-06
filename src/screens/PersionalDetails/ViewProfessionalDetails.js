@@ -17,13 +17,15 @@ import ImagePicker from 'react-native-image-picker'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
+import { showToast } from '../../Theme/Const';
+import Products from '../Products';
 const options = {
     title: 'Select Image',
     takePhotoButtonTitle: 'Take Photo',
     chooseFromLibraryButtonTitle: 'Choose From Gallery',
     quality: 1,
-    maxWidth: 500,
-    maxHeight: 500,
+    maxWidth: 300,
+    maxHeight: 300,
     storageOptions: {
         skipBackup: true
     }
@@ -73,7 +75,10 @@ export default class ViewProfessionalDetails extends Component {
             p_linkedin: '',
             p_whatsapp: '',
             p_twitter: '',
-            website: ''
+            website: '',
+            ytubelink: '',
+            isProfessional: true,
+            isProduct: false
 
         };
     }
@@ -81,7 +86,7 @@ export default class ViewProfessionalDetails extends Component {
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
         const member_id = this.props.navigation.getParam('member_id')
         const member_type = this.props.navigation.getParam('type')
-        
+
         this.setState({
             samaj_id: samaj_id,
             member_id: member_id,
@@ -117,6 +122,7 @@ export default class ViewProfessionalDetails extends Component {
             p_linkedin: details.p_linkedin,
             p_whatsapp: details.p_whatsapp,
             p_twitter: details.p_twitter,
+            ytubelink: details.p_youtube,
             website: details.p_website,
             countrytatus: details.p_country,
             statetatus: parseInt(details.p_state),
@@ -132,7 +138,7 @@ export default class ViewProfessionalDetails extends Component {
         axois
             .get(base_url + 'business_type_list')
             .then(res => {
-                console.log('check the responce', res.data.data)
+                // console.log('check the responce', res.data.data)
                 if (res.data.success === true) {
                     var cont = res.data.data
                     this.setState({
@@ -227,12 +233,13 @@ export default class ViewProfessionalDetails extends Component {
         formData.append('city_id', this.state.citytatus)
         formData.append('email', this.state.email)
         formData.append('business_type', this.state.businesstype)
-        formData.append('p_instagram ', this.state.p_instagram)
-        formData.append('p_facebook ', this.state.p_facebook)
-        formData.append('p_linkedin ', this.state.p_linkedin)
-        formData.append('p_whatsapp ', this.state.p_whatsapp)
-        formData.append('p_twitter ', this.state.p_twitter)
-        formData.append('website ', this.state.website)
+        formData.append('p_instagram', this.state.p_instagram)
+        formData.append('p_facebook', this.state.p_facebook)
+        formData.append('p_linkedin', this.state.p_linkedin)
+        formData.append('p_whatsapp', this.state.p_whatsapp)
+        formData.append('p_twitter', this.state.p_twitter)
+        formData.append('website', this.state.website)
+        formData.append('p_youtube', this.state.ytubelink)
 
 
         if (
@@ -294,398 +301,442 @@ export default class ViewProfessionalDetails extends Component {
                 } else {
                     const source = response.uri
                     console.log('check the responce --> ', source)
-                    this.setState({
-                        photoImage: source,
-                        photoPath: response.path,
-                        photoFileName: response.fileName,
-                        photoType: response.type,
-                        photoSelect: true
-                    })
+
+                    if (response.fileSize > 300000) {
+                        showToast('Image is large select 300 KB image only')
+                    } else {
+                        this.setState({
+                            photoImage: source,
+                            photoPath: response.path,
+                            photoFileName: response.fileName,
+                            photoType: response.type,
+                            photoSelect: true
+                        })
+                    }
                 }
             })
         }
     }
     render() {
+        var { isProduct, isProfessional } = this.state
         return (
             <SafeAreaView style={{ flex: 1 }}>
+
+                <View
+                    style={{
+                        height: '7%',
+                        backgroundColor: Colors.white,
+                        flexDirection: 'row',
+                    }}
+                >
+                    <TouchableOpacity
+                        onPress={() => this.setState({ isProfessional: true, isProduct: false })}
+                        style={isProfessional ? Style.isActivate : Style.isDeactive}
+                    >
+                        <Text style={Style.headerTesxt}>Prefessional Details</Text>
+                    </TouchableOpacity>
+                    {/* <View style={{ borderWidth: 1, borderColor: Colors.Theme_color, marginVertical: '2%' }}></View> */}
+                    <TouchableOpacity
+                        onPress={() => this.setState({ isProfessional: false, isProduct: true })}
+                        style={isProduct ? Style.isActivate : Style.isDeactive}
+                    >
+                        <Text style={Style.headerTesxt}>Products</Text>
+                    </TouchableOpacity>
+                </View>
+                {isProfessional?
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={Style.cointainer}>
-                        <View style={[Style.cardback, style = { flex: 1, justifyContent: 'center', marginTop: 10, }]}>
-
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginLeft: 15
-                                }}
-                            >
-                                <Text
-                                    style={[
-                                        Style.Textmainstyle,
-                                        { width: '45%', color: Colors.black }
-                                    ]}
-                                >
-                                    Business Type
-                                </Text>
-                                <Picker
-                                    selectedValue={this.state.businesstype}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        this.setState({ businesstype: itemValue })
-                                    }
-                                    mode='dialog'
-                                    style={{
-                                        flex: 1,
-                                        width: '100%',
-                                        fontFamily: CustomeFonts.reguar,
-                                        color: Colors.black
-                                    }}
-                                >
-                                    <Picker.Item label='Select Business type' value='0' />
-                                    {this.state.businessTypeArray.map((item, key) => (
-                                        <Picker.Item label={item.bm_type} value={item.id} key={key} />
-                                    ))}
-                                </Picker>
-                            </View>
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    marginLeft: 15
-                                }}
-                            >
-                                <Text
-                                    style={[Style.Textmainstyle, { width: '45%' }]}
-                                >
-                                    Country
-                                </Text>
-                                <Picker
-                                    selectedValue={this.state.countrytatus}
-                                    onValueChange={this.onValueCountryChange}
-                                    mode={'dialog'}
-                                    style={{
-                                        flex: 1,
-                                        width: '100%',
-                                        fontFamily: CustomeFonts.reguar,
-                                        color: Colors.black
-                                    }}
-                                >
-                                    <Picker.Item label='Select Country' value='0' />
-                                    {this.state.Country.map((item, key) => (
-                                        <Picker.Item
-                                            label={item.country_name}
-                                            value={item.code}
-                                            key={key}
-                                        />
-                                    ))}
-                                </Picker>
-                            </View>
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    marginLeft: 15
-                                }}
-                            >
-                                <Text
-                                    style={[Style.Textmainstyle, { width: '45%' }]}
-                                >
-                                    State
-                                </Text>
-
-                                <Picker
-                                    selectedValue={this.state.statetatus}
-                                    onValueChange={this.onValueStateChange}
-                                    mode={'dialog'}
-                                    style={{
-                                        flex: 1,
-                                        width: '100%',
-                                        fontFamily: CustomeFonts.reguar,
-                                        color: Colors.black
-                                    }}
-                                >
-                                    <Picker.Item label='Select State' value='0' />
-                                    {this.state.state.map((item, key) => (
-                                        <Picker.Item
-                                            label={item.state_name}
-                                            value={item.id}
-                                            key={key}
-                                        />
-                                    ))}
-                                </Picker>
-                            </View>
-
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    marginLeft: 15
-                                }}
-                            >
-                                <Text
-                                    style={[Style.Textmainstyle, { width: '45%' }]}
-                                >
-                                    City
-                                </Text>
-                                <Picker
-                                    selectedValue={this.state.citytatus}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        this.setState({ citytatus: itemValue })
-                                    }
-                                    mode={'dialog'}
-                                    style={{
-                                        flex: 1,
-                                        width: '100%',
-                                        fontFamily: CustomeFonts.reguar,
-                                        color: Colors.black
-                                    }}
-                                >
-                                    <Picker.Item label='Select City' value='0' />
-                                    {this.state.city.map((item, key) => (
-                                        <Picker.Item
-                                            label={item.city_name}
-                                            value={item.id}
-                                            key={key}
-                                        />
-                                    ))}
-                                </Picker>
-                            </View>
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Company Name</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ cmpName: value })}
-                                        value={this.state.cmpName}
-                                        maxLength={60}
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Company Phone</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        keyboardType='numeric'
-                                        maxLength={13}
-                                        minLength={8}
-                                        onChangeText={(value) => this.setState({ cmpPhone: value })}
-                                        value={this.state.cmpPhone}
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Email</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ email: value })}
-                                        value={this.state.email}
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Website</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ website: value })}
-                                        value={this.state.website}
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Designation</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ designation: value })}
-                                        value={this.state.designation}
-                                        maxLength={20}
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Company Address</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={true}
-                                        numberOfLines={3}
-                                        onChangeText={(value) => this.setState({ cmpAddress: value })}
-                                        value={this.state.cmpAddress}
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Instagram</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ p_instagram: value })}
-                                        value={this.state.p_instagram}
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Facebook</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ p_facebook: value })}
-                                        value={this.state.p_facebook}
-                                        
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        LinkedIn</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ p_linkedin: value })}
-                                        value={this.state.p_linkedin}
-                                        
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Whatsapp</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ p_whatsapp: value })}
-                                        value={this.state.p_whatsapp}
-                                        
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
-
-                            <Form>
-                                <Item stackedLabel>
-                                    <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                        Twitter</Label>
-                                    <Input style={Style.Textstyle}
-                                        multiline={false}
-                                        onChangeText={(value) => this.setState({ p_twitter: value })}
-                                        value={this.state.p_twitter}
-                                        
-                                    >
-                                    </Input>
-                                </Item>
-                            </Form>
 
 
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginLeft: 15,
-                                    marginTop: 10
-                                }}
-                            >
-                                <Text
-                                    style={[
-                                        Style.Textstyle,
-                                        (style = {
-                                            color: Colors.black,
-                                            fontFamily: CustomeFonts.medium
-                                        })
-                                    ]}
-                                >
-                                    Company Logo
-                                </Text>
+                        <View>
+                            <View style={[Style.cardback, style = { flex: 1, justifyContent: 'center', marginTop: 10, }]}>
+
                                 <View
-                                    style={{ flexDirection: 'row', marginTop: 5, width: '100%' }}
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginLeft: 15
+                                    }}
                                 >
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            this.props.navigation.navigate('KundliImage', {
-                                                imageURl: this.state.company_pic_url + this.state.photoImage,
-
-                                            })
-                                        }
+                                    <Text
+                                        style={[
+                                            Style.Textmainstyle,
+                                            { width: '45%', color: Colors.black }
+                                        ]}
                                     >
-                                        <Image
-                                            source={
-                                                this.state.photoImage === '' ||
-                                                    this.state.photoImage === null || this.state.photoImage === 'null' ||
-                                                    this.state.photoImage === undefined
-                                                    ? AppImages.placeHolder
-                                                    : this.state.photoImage.includes('http') ? { uri: this.state.photoImage } : this.state.photoSelect ? { uri: this.state.photoImage } : { uri: this.state.company_pic_url + this.state.photoImage }
-                                            }
-                                            style={{ height: 100, width: 150, marginLeft: 20 }}
-                                            resizeMode='stretch'
-                                        />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
+                                        Business Type
+                                </Text>
+                                    <Picker
+                                        selectedValue={this.state.businesstype}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            this.setState({ businesstype: itemValue })
+                                        }
+                                        mode='dialog'
                                         style={{
-                                            alignSelf: 'flex-end',
-                                            width: '25%',
-                                            padding: 5,
-                                            backgroundColor: Colors.Theme_color,
-                                            height: 35,
-                                            borderRadius: 5,
-                                            position: 'absolute',
-                                            right: 0
+                                            flex: 1,
+                                            width: '100%',
+                                            fontFamily: CustomeFonts.reguar,
+                                            color: Colors.black
                                         }}
-                                        onPress={() => this.CapturePhoto('photo')}>
-                                        <Text
-                                            style={[
-                                                Style.Textmainstyle,
-                                                { color: Colors.white, textAlign: 'center' }
-                                            ]}
+                                    >
+                                        <Picker.Item label='Select Business type' value='0' />
+                                        {this.state.businessTypeArray.map((item, key) => (
+                                            <Picker.Item label={item.bm_type} value={item.id} key={key} />
+                                        ))}
+                                    </Picker>
+                                </View>
+                                <View
+                                    style={{
+                                        justifyContent: 'center',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginLeft: 15
+                                    }}
+                                >
+                                    <Text
+                                        style={[Style.Textmainstyle, { width: '45%' }]}
+                                    >
+                                        Country
+                                </Text>
+                                    <Picker
+                                        selectedValue={this.state.countrytatus}
+                                        onValueChange={this.onValueCountryChange}
+                                        mode={'dialog'}
+                                        style={{
+                                            flex: 1,
+                                            width: '100%',
+                                            fontFamily: CustomeFonts.reguar,
+                                            color: Colors.black
+                                        }}
+                                    >
+                                        <Picker.Item label='Select Country' value='0' />
+                                        {this.state.Country.map((item, key) => (
+                                            <Picker.Item
+                                                label={item.country_name}
+                                                value={item.code}
+                                                key={key}
+                                            />
+                                        ))}
+                                    </Picker>
+                                </View>
+                                <View
+                                    style={{
+                                        justifyContent: 'center',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginLeft: 15
+                                    }}
+                                >
+                                    <Text
+                                        style={[Style.Textmainstyle, { width: '45%' }]}
+                                    >
+                                        State
+                                </Text>
+
+                                    <Picker
+                                        selectedValue={this.state.statetatus}
+                                        onValueChange={this.onValueStateChange}
+                                        mode={'dialog'}
+                                        style={{
+                                            flex: 1,
+                                            width: '100%',
+                                            fontFamily: CustomeFonts.reguar,
+                                            color: Colors.black
+                                        }}
+                                    >
+                                        <Picker.Item label='Select State' value='0' />
+                                        {this.state.state.map((item, key) => (
+                                            <Picker.Item
+                                                label={item.state_name}
+                                                value={item.id}
+                                                key={key}
+                                            />
+                                        ))}
+                                    </Picker>
+                                </View>
+
+                                <View
+                                    style={{
+                                        justifyContent: 'center',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginLeft: 15
+                                    }}
+                                >
+                                    <Text
+                                        style={[Style.Textmainstyle, { width: '45%' }]}
+                                    >
+                                        City
+                                </Text>
+                                    <Picker
+                                        selectedValue={this.state.citytatus}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            this.setState({ citytatus: itemValue })
+                                        }
+                                        mode={'dialog'}
+                                        style={{
+                                            flex: 1,
+                                            width: '100%',
+                                            fontFamily: CustomeFonts.reguar,
+                                            color: Colors.black
+                                        }}
+                                    >
+                                        <Picker.Item label='Select City' value='0' />
+                                        {this.state.city.map((item, key) => (
+                                            <Picker.Item
+                                                label={item.city_name}
+                                                value={item.id}
+                                                key={key}
+                                            />
+                                        ))}
+                                    </Picker>
+                                </View>
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Company Name</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ cmpName: value })}
+                                            value={this.state.cmpName}
+                                            maxLength={60}
                                         >
-                                            Edit
+                                        </Input>
+                                    </Item>
+                                </Form>
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Company Phone</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            keyboardType='numeric'
+                                            maxLength={13}
+                                            minLength={8}
+                                            onChangeText={(value) => this.setState({ cmpPhone: value })}
+                                            value={this.state.cmpPhone}
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Email</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ email: value })}
+                                            value={this.state.email}
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Website</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ website: value })}
+                                            value={this.state.website}
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Designation</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ designation: value })}
+                                            value={this.state.designation}
+                                            maxLength={20}
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Company Address</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={true}
+                                            numberOfLines={3}
+                                            onChangeText={(value) => this.setState({ cmpAddress: value })}
+                                            value={this.state.cmpAddress}
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Instagram</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ p_instagram: value })}
+                                            value={this.state.p_instagram}
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Facebook</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ p_facebook: value })}
+                                            value={this.state.p_facebook}
+
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            LinkedIn</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ p_linkedin: value })}
+                                            value={this.state.p_linkedin}
+
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Whatsapp</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ p_whatsapp: value })}
+                                            value={this.state.p_whatsapp}
+                                            keyboardType='number-pad'
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Twitter</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ p_twitter: value })}
+                                            value={this.state.p_twitter}
+
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+                                <Form>
+                                    <Item stackedLabel>
+                                        <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                                            Youtube Video</Label>
+                                        <Input style={Style.Textstyle}
+                                            multiline={false}
+                                            onChangeText={(value) => this.setState({ ytubelink: value })}
+                                            value={this.state.ytubelink}
+
+                                        >
+                                        </Input>
+                                    </Item>
+                                </Form>
+
+
+                                <View
+                                    style={{
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        marginLeft: 15,
+                                        marginTop: 10
+                                    }}
+                                >
+                                    <Text
+                                        style={[
+                                            Style.Textstyle,
+                                            (style = {
+                                                color: Colors.black,
+                                                fontFamily: CustomeFonts.medium
+                                            })
+                                        ]}
+                                    >
+                                        Company Logo
+                                </Text>
+                                    <View
+                                        style={{ flexDirection: 'row', marginTop: 5, width: '100%' }}
+                                    >
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                this.props.navigation.navigate('KundliImage', {
+                                                    imageURl: this.state.company_pic_url + this.state.photoImage,
+
+                                                })
+                                            }
+                                        >
+                                            <Image
+                                                source={
+                                                    this.state.photoImage === '' ||
+                                                        this.state.photoImage === null || this.state.photoImage === 'null' ||
+                                                        this.state.photoImage === undefined
+                                                        ? AppImages.placeHolder
+                                                        : this.state.photoImage.includes('http') ? { uri: this.state.photoImage } : this.state.photoSelect ? { uri: this.state.photoImage } : { uri: this.state.company_pic_url + this.state.photoImage }
+                                                }
+                                                style={{ height: 100, width: 150, marginLeft: 20 }}
+                                                resizeMode='stretch'
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{
+                                                alignSelf: 'flex-end',
+                                                width: '25%',
+                                                padding: 5,
+                                                backgroundColor: Colors.Theme_color,
+                                                height: 35,
+                                                borderRadius: 5,
+                                                position: 'absolute',
+                                                right: 0
+                                            }}
+                                            onPress={() => this.CapturePhoto('photo')}>
+                                            <Text
+                                                style={[
+                                                    Style.Textmainstyle,
+                                                    { color: Colors.white, textAlign: 'center' }
+                                                ]}
+                                            >
+                                                Edit
                                         </Text>
-                                    </TouchableOpacity>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <Text style={[Style.SubTextstyle, { color: Colors.Theme_color, paddingVertical: '2%' }]}> NOTE: You Can Upload Maximum 300 KB Image </Text>
+
                                 </View>
                             </View>
+                            {this.state.isLoading ?
+                                <ActivityIndicator size={'large'} color={Colors.Theme_color} />
+                                :
+                                <TouchableOpacity
+                                    style={[Style.Buttonback, (style = { marginTop: 10 })]}
+                                    onPress={() => this.editData()}
+                                >
+                                    <Text style={Style.buttonText}>Update Details</Text>
+                                </TouchableOpacity>
+                            }
+                        
                         </View>
-                        {this.state.isLoading ?
-                            <ActivityIndicator size={'large'} color={Colors.Theme_color} />
-                            :
-                            <TouchableOpacity
-                                style={[Style.Buttonback, (style = { marginTop: 10 })]}
-                                onPress={() => this.editData()}
-                            >
-                                <Text style={Style.buttonText}>Update Details</Text>
-                            </TouchableOpacity>
-                        }
-                        <TouchableOpacity
-                                style={[Style.Buttonback, (style = { marginTop: 10 })]}
-                                onPress={() => this.props.navigation.navigate('AddProduct')}
-                        >
-                            <Text style={Style.buttonText}>Add Product</Text>
-                        </TouchableOpacity>
                     </View>
-                </ScrollView>
+                </ScrollView>:
+                <Products  navigation={this.props.navigation} />}
             </SafeAreaView>
         );
     }

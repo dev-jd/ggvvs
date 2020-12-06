@@ -279,13 +279,13 @@ export default class App extends Component {
         ) : (
             <View>
               <View
-                style={{
+                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
                   paddingHorizontal:'2%',
                   height:'7%',
-                  borderWidth:1,borderColor:'yellow'
+                 
                 }}
               >
                 <Text

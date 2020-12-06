@@ -18,14 +18,15 @@ import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
+import { showToast } from '../../Theme/Const'
 
 const options = {
   title: 'Select Image',
   takePhotoButtonTitle: 'Take Photo',
   chooseFromLibraryButtonTitle: 'Choose From Gallery',
   quality: 1,
-  maxWidth: 500,
-  maxHeight: 500,
+  maxWidth: 300,
+  maxHeight: 300,
   storageOptions: {
     skipBackup: true
   }
@@ -125,9 +126,9 @@ class ViewOtherPersionalDetails extends Component {
       member_type: '',
       isanySelect: false,
       isdobSelect: false,
-      profile_pic_url:'',
-      member_proof:'',
-      family_pic_url:''
+      profile_pic_url: '',
+      member_proof: '',
+      family_pic_url: ''
     }
   }
   async componentWillMount() {
@@ -152,9 +153,9 @@ class ViewOtherPersionalDetails extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-      if (this.state.connection_Status === true) {
+    if (this.state.connection_Status === true) {
       this.apiCalling()
-      }
+    }
   }
 
   async apiCalling() {
@@ -176,11 +177,10 @@ class ViewOtherPersionalDetails extends Component {
       })
     }
 
-    if(details.member_marriage_anniversary === invalid || details.member_marriage_anniversary === undefined||details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined')
-    {
-      this.setState({anniversary:new Date()})
-    }else{
-      this.setState({anniversary: details.member_marriage_anniversary,})
+    if (details.member_marriage_anniversary === invalid || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined') {
+      this.setState({ anniversary: new Date() })
+    } else {
+      this.setState({ anniversary: details.member_marriage_anniversary, })
     }
 
     this.setState({
@@ -211,22 +211,22 @@ class ViewOtherPersionalDetails extends Component {
       idImage: details.member_id_proof,
       // idImage: pic_url + details.member_id_proof,
       defaultIdImage: details.member_id_proof,
-      photoImage: details.member_photo, 
+      photoImage: details.member_photo,
       // photoImage: pic_url + details.member_photo,
       defaultPhotoImage: details.member_photo,
       familyPhoto: details.member_family_photo,
       // familyPhoto: pic_url + details.member_family_photo,
       defaultFamilyPhoto: details.member_family_photo,
-      countrytatus:otherDetails.member_country_id,
+      countrytatus: otherDetails.member_country_id,
       statetatus: otherDetails.member_state_id,
       citytatus: otherDetails.member_city_id,
       gendertatus: otherDetails.member_gender_id,
       bloodGroupStatus: otherDetails.member_bgm_id,
       _isLoading: false
     })
-    console.log('profilw id ', this.state.profile_pic_url+this.state.photoImage)
-    console.log('id id ', this.state.member_proof+this.state.idImage)
-    console.log('family id ', this.state.family_pic_url+this.state.familyPhoto)
+    console.log('profilw id ', this.state.profile_pic_url + this.state.photoImage)
+    console.log('id id ', this.state.member_proof + this.state.idImage)
+    console.log('family id ', this.state.family_pic_url + this.state.familyPhoto)
 
 
     //country
@@ -235,11 +235,11 @@ class ViewOtherPersionalDetails extends Component {
       .then(res => {
         // console.log('countryList res---->', res.data.data)
         if (res.data.success === true) {
-          var cont=res.data.data
+          var cont = res.data.data
           this.setState({
             Country: res.data.data
           })
-         
+
           this.stateApiCall(this.state.countrytatus)
         }
       })
@@ -285,7 +285,7 @@ class ViewOtherPersionalDetails extends Component {
       base_url + 'stateList/' + this.state.samaj_id + '/' + value
     )
     axois
-      .get(base_url + 'stateList?country_id='+value)
+      .get(base_url + 'stateList?country_id=' + value)
       .then(res => {
         // console.log('stateList res---->', res.data.data)
         if (res.data.success === true) {
@@ -387,14 +387,14 @@ class ViewOtherPersionalDetails extends Component {
         var formdata = new FormData()
         formdata.append('member_marital_status', this.state.maritalstatus)
 
-        if(this.state.isdobSelect){
-        var temp = this.state.dob
-        var trim_date = temp.split('-')
-        var final_date = trim_date[0] + '/' + trim_date[1] + '/' + trim_date[2]
+        if (this.state.isdobSelect) {
+          var temp = this.state.dob
+          var trim_date = temp.split('-')
+          var final_date = trim_date[0] + '/' + trim_date[1] + '/' + trim_date[2]
 
-        console.log('final date', final_date)
-        formdata.append('member_birth_date', final_date)
-        }else{
+          console.log('final date', final_date)
+          formdata.append('member_birth_date', final_date)
+        } else {
           formdata.append('member_birth_date', this.state.dob)
         }
 
@@ -597,32 +597,36 @@ class ViewOtherPersionalDetails extends Component {
           })
         } else {
           const source = response.uri
-          if (type === 'idproof') {
-            this.setState({
-              idImage: source,
-              idPath: response.path,
-              idFileName: response.fileName,
-              idType: response.type,
-              idSelect: true
-            })
-          }
-          if (type === 'photo') {
-            this.setState({
-              photoImage: source,
-              photoPath: response.path,
-              photoFileName: response.fileName,
-              photoType: response.type,
-              photoSelect: true
-            })
-          }
-          if (type === 'familyphoto') {
-            this.setState({
-              familyPhoto: source,
-              familyPath: response.path,
-              familyFileName: response.fileName,
-              familyType: response.type,
-              familySelect: true
-            })
+          if (response.fileSize > 300000) {
+            showToast('Image is large select 300 KB image only')
+          } else {
+            if (type === 'idproof') {
+              this.setState({
+                idImage: source,
+                idPath: response.path,
+                idFileName: response.fileName,
+                idType: response.type,
+                idSelect: true
+              })
+            }
+            if (type === 'photo') {
+              this.setState({
+                photoImage: source,
+                photoPath: response.path,
+                photoFileName: response.fileName,
+                photoType: response.type,
+                photoSelect: true
+              })
+            }
+            if (type === 'familyphoto') {
+              this.setState({
+                familyPhoto: source,
+                familyPath: response.path,
+                familyFileName: response.fileName,
+                familyType: response.type,
+                familySelect: true
+              })
+            }
           }
         }
       })
@@ -838,7 +842,7 @@ class ViewOtherPersionalDetails extends Component {
                   }}
                   onDateChange={setDate => {
                     this.setState({
-                      dob:setDate,
+                      dob: setDate,
                       isdobSelect: true
                     })
                   }}
@@ -1395,7 +1399,7 @@ class ViewOtherPersionalDetails extends Component {
                     onPress={() =>
                       this.props.navigation.navigate('KundliImage', {
                         // imageURl: this.state.idImage,
-                        imageURl: this.state.member_proof + this.state.idImage ,
+                        imageURl: this.state.member_proof + this.state.idImage,
 
                       })
                     }
@@ -1465,7 +1469,7 @@ class ViewOtherPersionalDetails extends Component {
                     onPress={() =>
                       this.props.navigation.navigate('KundliImage', {
                         // imageURl: this.state.photoImage
-                        imageURl: this.state.profile_pic_url + this.state.photoImage ,
+                        imageURl: this.state.profile_pic_url + this.state.photoImage,
 
                       })
                     }
@@ -1533,7 +1537,7 @@ class ViewOtherPersionalDetails extends Component {
                       onPress={() =>
                         this.props.navigation.navigate('KundliImage', {
                           // imageURl: +this.state.familyPhoto,
-                          imageURl: this.state.family_pic_url + this.state.familyPhoto ,
+                          imageURl: this.state.family_pic_url + this.state.familyPhoto,
                         })
                       }
                     >
@@ -1572,6 +1576,8 @@ class ViewOtherPersionalDetails extends Component {
                     </Text>
                     </TouchableOpacity>
                   </View>
+                  <Text style={[Style.SubTextstyle, { color: Colors.white, paddingVertical: '5%' }]}> NOTE: You Can Upload Maximum 300 KB Image </Text>
+
                 </View>
               ) : null}
             </View>

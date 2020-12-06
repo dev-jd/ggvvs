@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import {
     TouchableOpacity, ScrollView, SafeAreaView,
     ActivityIndicator, ToastAndroid,
-    Picker, Image, PermissionsAndroid
+    Picker, Image, PermissionsAndroid, Alert
 } from 'react-native';
-import { Form, Item, Input, Label, Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Left, Body, Right, View } from 'native-base';
+import { Form, Item, Input, Label, CheckBox, Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Left, Body, Right, View } from 'native-base';
 import CustomeFonts from '../../Theme/CustomeFonts'
 import Style from '../../Theme/Style'
 import Colors from '../../Theme/Colors'
@@ -17,6 +17,8 @@ import ImagePicker from 'react-native-image-picker'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import DocumentPicker from 'react-native-document-picker'
+import { showToast, validateName, validationBlank, validationempty } from '../../Theme/Const';
+import { Helper } from '../../Helper/Helper';
 
 const options = {
     title: 'Select Image',
@@ -32,14 +34,14 @@ const options = {
 
 export default class AddProduct extends Component {
     static navigationOptions = ({ navigation }) => {
-      return {
-        title: 'Add Product',
-        headerTitleStyle: {
-          width: '100%',
-          fontWeight: '200',
-          fontFamily: CustomeFonts.regular
+        return {
+            title: 'Add Product',
+            headerTitleStyle: {
+                width: '100%',
+                fontWeight: '200',
+                fontFamily: CustomeFonts.regular
+            }
         }
-      }
     }
 
     constructor() {
@@ -48,51 +50,59 @@ export default class AddProduct extends Component {
             samaj_id: '',
             member_id: '',
             member_type: '',
-            name:'',
-            description:'',
+            name: '',
+            description: '',
             photoImage: '',
             photoPath: '',
             photoFileName: '',
             photoType: '',
             photoSelect: false,
-            videolink:'',
-            photoPDF:'',
-            pdfPath:'',
+            videolink: '',
+            photoPDF: '',
+            pdfPath: '',
             pdfFileName: '',
             pdfType: '',
-            pdfSelect:'',
-            Category:[],
-            SubCategory:[],
-            multipleImages:[],
+            pdfSelect: '',
+            Category: [],
+            SubCategory: [],
+            multipleImages: [],
             categorytatus: '',
-            subcategorytatus: '',
+            subcategorytatus: '', termsconditions: ''
         }
     }
 
     async componentWillMount() {
-        
+
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
         const member_id = await AsyncStorage.getItem('member_id')
         const member_type = await AsyncStorage.getItem('type')
-    
+
         this.setState({
-          samaj_id: samaj_id,
-          member_id: member_id,
-          member_type: member_type,
+            samaj_id: samaj_id,
+            member_id: member_id,
+            member_type: member_type,
         })
-    
+
         await NetInfo.addEventListener(state => {
-          console.log('Connection type', state.type)
-          console.log('Is connected?', state.isConnected)
-          this.setState({ connection_Status: state.isConnected })
+            console.log('Connection type', state.type)
+            console.log('Is connected?', state.isConnected)
+            this.setState({ connection_Status: state.isConnected })
         })
 
         if (this.state.connection_Status === true) {
             this.CategoryApi()
+            this.termsconditionApi()
         }
-      }
+    }
+    async termsconditionApi() {
+        var responce = await Helper.GET('business_details_view?samaj_id=' + this.state.samaj_id)
 
-      async CategoryApi() {
+        if (responce.status) {
+            console.log("terms and conditions", responce.product_terms)
+            this.setState({ termsconditions: responce.product_terms })
+        }
+    }
+    async CategoryApi() {
         axois
             .get(base_url + 'category_list')
             .then(res => {
@@ -108,13 +118,13 @@ export default class AddProduct extends Component {
                 console.log(err)
                 this.setState({ isLoding: false })
             })
-            
+
     }
 
     async SubCategoryApi(value) {
-        
+
         axois
-            .get(base_url + 'sub_category_list?cat_id='+value)
+            .get(base_url + 'sub_category_list?cat_id=' + value)
             .then(res => {
                 if (res.data.success === true) {
                     this.setState({
@@ -127,7 +137,7 @@ export default class AddProduct extends Component {
                 console.log(err)
                 this.setState({ isLoding: false })
             })
-            console.log('sub_category_list res---->', this.state.SubCategory)
+        console.log('sub_category_list res---->', this.state.SubCategory)
     }
 
     onValueCategoryChange = value => {
@@ -138,50 +148,6 @@ export default class AddProduct extends Component {
         this.SubCategoryApi(value)
     }
 
-    // async CapturePhoto(type) {
-    //     console.log('click on image ')
-    //     const granted = await PermissionsAndroid.request(
-    //         PermissionsAndroid.PERMISSIONS.CAMERA,
-    //         {
-    //             title: 'Samaj App Camera Permission',
-    //             message: 'Samaj App needs access to your camera ',
-    //             buttonNegative: 'Cancel',
-    //             buttonPositive: 'OK'
-    //         }
-    //     )
-
-    //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //         console.log('You can use the camera')
-    //         ImagePicker.showImagePickerMultiple(options, response => {
-    //             console.log('responce cammera', response)
-
-    //             if (response.didCancel) {
-    //                 this.setState({ photoSelect: false })
-    //             } else if (response.error) {
-    //                 this.setState({ photoSelect: false })
-    //             } else {
-    //                 const source = response.uri
-    //                 console.log('check the responce --> ', source)
-                    
-    //                 var mainresult = []
-    //                 for (const res of response) {
-    //                     //Printing the log realted to the file
-                        
-    //                     mainresult.push({
-    //                         uri: res.uri,
-    //                         name: res.name,
-    //                         type: res.type
-    //                     })
-    //                 }
-    //                 this.setState({
-    //                     photoImage: source,
-    //                     photoSelect: true
-    //                 })
-    //                 this.setState({ multipleImages: mainresult });
-    //             }
-    //         })
-    //     }
-    // }
 
     async attachFile() {
         const files = []
@@ -197,49 +163,83 @@ export default class AddProduct extends Component {
                 console.log('Type : ' + res.type);
                 console.log('File Name : ' + res.name);
                 console.log('File Size : ' + res.size);
-                mainresult.push({
-                    uri: res.uri,
-                    name: res.name,
-                    type: res.type
-                })
+                if (res.size > 300000) {
+                    showToast('Image is large select 300 MB image only')
+                } else {
+                    mainresult.push({
+                        uri: res.uri,
+                        name: res.name,
+                        type: res.type
+                    })
+                }
             }
             //Setting the state to show multiple file attributes
-            this.setState({ multipleImages: mainresult,photoSelect: true });
+            this.setState({ multipleImages: mainresult, photoSelect: true });
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
                 console.log('check the cancel')
             } else {
                 throw err
             }
-        }    
+        }
     }
 
     async attachFile1() {
-    const files = []
-    try {
-        const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles]
-        })
-        console.log(
-        'uri -> ' + res.uri,
-        'type -> ' + res.type, // mime type
-        'name -> ' + res.name,
-        'size -> ' + res.size
-        )
-        this.setState({
-        // photoPDF: source,
-        pdfPath: res.uri,
-        pdfFileName: res.name,
-        pdfType: res.type
-        // selectedFiles: files
-        })
-    } catch (err) {
-        if (DocumentPicker.isCancel(err)) {
-        // User cancelled the picker, exit any dialogs or menus and move on
-        } else {
-        throw err
+        const files = []
+        try {
+            const res = await DocumentPicker.pick({
+                type: [DocumentPicker.types.pdf]
+            })
+            console.log(
+                'uri -> ' + res.uri,
+                'type -> ' + res.type, // mime type
+                'name -> ' + res.name,
+                'size -> ' + res.size
+            )
+            if (res.size > 1000000) {
+                showToast('You can upload only 1 mb file')
+            } else {
+                this.setState({
+                    // photoPDF: source,
+                    pdfPath: res.uri,
+                    pdfFileName: res.name,
+                    pdfType: res.type
+                    // selectedFiles: files
+                })
+            }
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                throw err
+            }
         }
     }
+
+    async validation() {
+        var { name, videolink, description, categorytatus, subcategorytatus, multipleImages, pdfPath, termsconditions } = this.state
+
+        Alert.alert(
+            'Add Product',
+            termsconditions,
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel'
+                },
+                {
+                    text: 'OK', onPress: () => {
+                        if (validationBlank(name, 'Enter Product Name') && validationBlank(description, 'Enter Product Description') && validationBlank(categorytatus, 'Select Category') && validationBlank(subcategorytatus, 'Select Sub-Category')
+                            && validationBlank(multipleImages, 'Select Product Image')) {
+                            this.editData()
+                        }
+                    }
+                }
+            ],
+            { cancelable: false })
+
+
     }
 
     async editData() {
@@ -253,42 +253,38 @@ export default class AddProduct extends Component {
         formData.append('category', this.state.categorytatus)
         formData.append('subcategory', this.state.subcategorytatus)
         formData.append('videolink', this.state.videolink)
+        //formData.append('pc_image', this.state.multipleImages)
 
         for (let iimage = 0; iimage < this.state.multipleImages.length; iimage++) {
             const element = this.state.multipleImages[iimage];
-            formData.append('pc_image['+iimage+']', {
+            formData.append('pc_image[' + iimage + ']', {
                 uri: element.uri,
                 name: element.name,
                 type: element.type
             })
         }
-
-        if (
-            this.state.photoPDF === '' ||
-            this.state.photoPDF === null || this.state.photoPDF === 'null' ||
-            this.state.photoPDF === undefined
-        ) {
-            formData.append('pc_pdf', this.state.photoPDF)
-        } else {
+        if (validationempty(this.state.pdfPath)) {
             formData.append('pc_pdf', {
-                uri: 'file://' + this.state.photoPDF,
+                uri: this.state.pdfPath,
                 name: this.state.pdfFileName,
                 type: this.state.pdfType
             })
+        } else {
+            formData.append('pc_pdf', '')
         }
 
-        console.log("formdata-->", formData)
-        
+        console.log("formdata -->", formData)
+
         if (this.state.connection_Status) {
             axois.post(base_url + 'productAdd', formData)
                 .then(res => {
                     console.log("productAdd--->", res.data)
                     this.setState({ isLoading: false })
                     if (res.data.status === true) {
-                        Toast.show(res.data.message)
+                        showToast(res.data.message)
                         this.props.navigation.navigate('Dashboard')
                     } else {
-                        Toast.show(res.data.message)
+                        showToast(res.data.message)
                     }
                 })
                 .catch(err => {
@@ -302,7 +298,7 @@ export default class AddProduct extends Component {
     }
 
     render() {
-        
+
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView showsVerticalScrollIndicator={false}>
@@ -336,7 +332,7 @@ export default class AddProduct extends Component {
                             <Form>
                                 <Item stackedLabel>
                                     <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                    Category</Label>
+                                        Category</Label>
                                     <Picker
                                         selectedValue={this.state.categorytatus}
                                         onValueChange={this.onValueCategoryChange}
@@ -362,7 +358,7 @@ export default class AddProduct extends Component {
                             <Form>
                                 <Item stackedLabel>
                                     <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                    Sub Category</Label>
+                                        Sub Category</Label>
                                     <Picker
                                         selectedValue={this.state.subcategorytatus}
                                         onValueChange={(itemValue, itemIndex) =>
@@ -390,7 +386,7 @@ export default class AddProduct extends Component {
                             <Form>
                                 <Item stackedLabel>
                                     <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                    Video Link</Label>
+                                        Video Link</Label>
                                     <Input style={Style.Textstyle}
                                         multiline={false}
                                         onChangeText={(value) => this.setState({ videolink: value })}
@@ -410,18 +406,19 @@ export default class AddProduct extends Component {
                                 <Text
                                     style={[
                                         Style.Textstyle,
-                                        (style = {
+                                        {
                                             color: Colors.black,
                                             fontFamily: CustomeFonts.medium
-                                        })
+                                        }
                                     ]}
                                 >
                                     Product Image
                                 </Text>
                                 <View
-                                    style={{ flexDirection: 'row', marginTop: 5, width: '100%' }}
+                                    style={{ flexDirection: 'row', marginVertical: 10, width: '100%' }}
                                 >
-                                    <TouchableOpacity
+                                    <Text style={[Style.Textstyle, { width: '70%' }]}>{this.state.multipleImages.length} Images Selected</Text>
+                                    {/* <TouchableOpacity
                                         onPress={() =>
                                             this.props.navigation.navigate('KundliImage', {
                                                 imageURl: this.state.company_pic_url + this.state.photoImage,
@@ -440,11 +437,11 @@ export default class AddProduct extends Component {
                                             style={{ height: 100, width: 150, marginLeft: 20 }}
                                             resizeMode='stretch'
                                         />
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                     <TouchableOpacity
                                         style={{
                                             alignSelf: 'flex-end',
-                                            width: '25%',
+                                            width: '45%',
                                             padding: 5,
                                             backgroundColor: Colors.Theme_color,
                                             height: 35,
@@ -459,10 +456,12 @@ export default class AddProduct extends Component {
                                                 { color: Colors.white, textAlign: 'center' }
                                             ]}
                                         >
-                                            Edit
+                                            Select Images
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
+                                <Text style={[Style.SubTextstyle, { color: Colors.Theme_color, paddingVertical: '2%' }]}> NOTE: You Can Upload Maximum 300 KB Image </Text>
+
                             </View>
                             <View
                                 style={{
@@ -486,30 +485,11 @@ export default class AddProduct extends Component {
                                 <View
                                     style={{ flexDirection: 'row', marginTop: 5, width: '100%' }}
                                 >
-                                    <TouchableOpacity
-                                        onPress={() =>
-                                            this.props.navigation.navigate('KundliImage', {
-                                                imageURl: this.state.company_pic_url + this.state.photoImage,
-
-                                            })
-                                        }
-                                    >
-                                        <Image
-                                            source={
-                                                this.state.photoPDF === '' ||
-                                                    this.state.photoPDF === null || this.state.photoPDF === 'null' ||
-                                                    this.state.photoPDF === undefined
-                                                    ? AppImages.placeHolder
-                                                    : this.state.photoPDF.includes('http') ? { uri: this.state.photoPDF } : this.state.photoSelect ? { uri: this.state.photoPDF } : { uri: this.state.company_pic_url + this.state.photoPDF }
-                                            }
-                                            style={{ height: 100, width: 150, marginLeft: 20 }}
-                                            resizeMode='stretch'
-                                        />
-                                    </TouchableOpacity>
+                                    <Text style={[Style.Textstyle, { width: '70%' }]}>{this.state.pdfFileName}</Text>
                                     <TouchableOpacity
                                         style={{
                                             alignSelf: 'flex-end',
-                                            width: '25%',
+                                            width: '45%',
                                             padding: 5,
                                             backgroundColor: Colors.Theme_color,
                                             height: 35,
@@ -524,21 +504,27 @@ export default class AddProduct extends Component {
                                                 { color: Colors.white, textAlign: 'center' }
                                             ]}
                                         >
-                                            Edit
+                                            Select PDF
                                         </Text>
                                     </TouchableOpacity>
+
                                 </View>
+                                <Text style={[Style.SubTextstyle, { color: Colors.Theme_color, paddingVertical: '2%' }]}> NOTE: You Can Upload Maximum 1 MB PDF </Text>
+                                {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    <CheckBox></CheckBox>
+                                    <Text style={[Style.Textstyle,{width:'80%'}]}>Please Accept Terms and Condition for Add Product</Text>
+                                </View> */}
                             </View>
 
                         </View>
-                        
-                    
+
+
                         {this.state.isLoading ?
                             <ActivityIndicator size={'large'} color={Colors.Theme_color} />
                             :
                             <TouchableOpacity
                                 style={[Style.Buttonback, (style = { marginTop: 10 })]}
-                                onPress={() => this.editData()}
+                                onPress={() => this.validation()}
                             >
                                 <Text style={Style.buttonText}>Add</Text>
                             </TouchableOpacity>

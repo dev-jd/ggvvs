@@ -299,7 +299,7 @@ export default class LookinForJob extends Component {
                                     style={{ height: 100, width: 150, marginLeft: 20 }}
                                     resizeMode='stretch'
                                 /> */}
-                  <Text style={{ width: '70%' }}>{this.state.cvFileName}</Text>
+                  <Text style={[Style.Textstyle,{ width: '70%' }]}>{this.state.cvFileName}</Text>
                   <TouchableOpacity
                     style={{
                       alignSelf: 'flex-end',

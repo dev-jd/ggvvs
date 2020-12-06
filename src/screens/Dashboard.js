@@ -67,7 +67,7 @@ export default class App extends Component {
       postDataView: [],
       ad_data: [],
       isLoading: true,
-      isAdLoading: true,
+      isAdLoading: false,
       samaj_id: '',
       connection_Status: true,
       adimgUrl: '',
@@ -93,7 +93,7 @@ export default class App extends Component {
     const member_id = await AsyncStorage.getItem('member_id')
     const member_can_post = await AsyncStorage.getItem('member_can_post')
     const member_type = await AsyncStorage.getItem('type')
-    this.setState({ isLoading: true,isAdLoading: true })
+    this.setState({ isLoading: true })
 
     console.log('member id ', member_id)
     console.log('member_can_post ', member_can_post)
@@ -127,7 +127,7 @@ export default class App extends Component {
     formdata.append('member_id', this.state.member_id)
     formdata.append('type', this.state.member_type)
 
-    console.log('check formdata profile --> ', formdata)
+    console.log('check formdata profile -->11 ', formdata)
     axois
       .post(base_url + 'profile_data', formdata)
       .then(res => {
@@ -142,7 +142,7 @@ export default class App extends Component {
         }
       })
       .catch(err => {
-        console.log(err)
+        console.log('profile_data error',err)
         this.setState({ isLoding: false })
       })
   }
@@ -269,7 +269,7 @@ export default class App extends Component {
         this.setState({
           isLoading: false
         })
-        console.log('error post view', err)
+        console.log('error post view11', err)
       })
 
     // var postDataView = realm.objects(post).sorted('id', true);
@@ -301,11 +301,11 @@ export default class App extends Component {
 
     // post ads
     this.setState({
-      isAdLoading: true
+      isAdLoading: false
     })
     var postAdsRes = await Helper.GET('post_advertisement_list?samaj_id=' + this.state.samaj_id)
-    console.log('post Ads', postAdsRes.data)
-    console.log('post Ads1', postAdsRes.data[0])
+    //console.log('post Ads', postAdsRes.data)
+    //console.log('post Ads1', postAdsRes.data[0])
     if (postAdsRes.success) {
       this.setState({
         postAdsArray: postAdsRes.data,
@@ -557,7 +557,7 @@ export default class App extends Component {
             /> */}
           </View>
           {/* banner  */}
-          {this.state.isLoading ? 
+          {this.state.isAdLoading ? 
           <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
