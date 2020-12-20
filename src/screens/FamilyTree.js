@@ -64,12 +64,20 @@ export default class FamilyTree extends Component {
   async componentWillMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
+    const main_member_id = await AsyncStorage.getItem('main_member_id')
     const member_type = await AsyncStorage.getItem('type')
-    console.log('member id ', member_type)
+    console.log('member_type ====> ', member_type)
 
+    if(member_type != 1){
+      console.log('mainMemberID 11 --> ',main_member_id)
+      this.setState({member_id: main_member_id})
+    }else{
+      console.log('mainMemberID 22 --> ',member_id)
+      this.setState({member_id: member_id})
+    }
+    
     this.setState({
       samaj_id: samaj_id,
-      member_id: member_id,
       member_type: member_type
     })
 
@@ -99,6 +107,7 @@ export default class FamilyTree extends Component {
 
   render() {
     console.log('family tree --> '+'http://new.mysamaaj.com/familyChart/'+this.state.member_id)
+    //console.log('mainMemberID --> ',this.state.member_id)
     // const { title, titleStyle, titleColor } = this.props
     if (this.state.isLoading) {
       return (

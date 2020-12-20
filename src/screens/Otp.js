@@ -239,6 +239,7 @@ class Otp extends Component {
       if (response.status) {
 
         AsyncStorage.setItem('member_id', response.data.member_id + '')
+        AsyncStorage.setItem('main_member_id', response.data.main_member_id + '')
         AsyncStorage.setItem(
           'member_samaj_id',
           response.data.member_samaj_id + ''

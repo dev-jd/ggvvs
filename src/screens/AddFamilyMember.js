@@ -61,6 +61,7 @@ class AddFamilyMember extends Component {
       Country: [],
       state: [],
       city: [],
+      Memer_relation_member:[],
       name: '',
       mobile: '',
       email: '',
@@ -74,6 +75,7 @@ class AddFamilyMember extends Component {
       statetatus: '',
       citytatus: '',
       member_code:'',
+      memberrelationstatus:'',
       LinkedIn:'https://in.linkedin.com/',
       Whatsapp:'7801801313',
       fb:'https://www.facebook.com',
@@ -102,7 +104,7 @@ class AddFamilyMember extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-      if (this.state.connection_Status === true) {
+    if (this.state.connection_Status === true) {
       this.getRelation()
     }
   }
@@ -110,7 +112,7 @@ class AddFamilyMember extends Component {
     axois
       .get(base_url + 'relation_masters')
       .then(res => {
-        console.log('family member res ===> ', res.data)
+        //console.log('family member res ===> ', res.data)
         if (res.data.success === true) {
           this.setState({
             dataSource: res.data.data
@@ -122,20 +124,36 @@ class AddFamilyMember extends Component {
       })
 
         //country
-    axois
-    .get(base_url + 'countryList')
-    .then(res => {
-      console.log('countryList res---->', res.data.data)
-      if (res.data.success === true) {
-        this.setState({
-          Country: res.data.data
-        })
-      }
-    })
-    .catch(err => {
-      console.log(err)
-      this.setState({ isLoding: false })
-    })
+      axois
+      .get(base_url + 'countryList')
+      .then(res => {
+        //console.log('countryList res---->', res.data.data)
+        if (res.data.success === true) {
+          this.setState({
+            Country: res.data.data
+          })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        
+      })
+
+      //member list
+      axois
+      .get(base_url + 'member_list?id='+this.state.member_id)
+      .then(res => {
+        console.log('member_list res---->', res.data.data)
+        if (res.data.success === true) {
+          this.setState({
+            Memer_relation_member: res.data.data
+          })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        this.setState({ isLoding: false })
+      })
   }
   async addFamily(){
     console.log("addFamily", this.state.relation)
@@ -177,6 +195,7 @@ api_call(){
     formData.append('member_sbm_id', this.state.member_sbm_id)
     formData.append('main_member_id', this.state.member_id)
     formData.append('member_samaj_id', this.state.samaj_id)
+    formData.append('member_relation_to_member', this.state.memberrelationstatus)
     // formData.append('member_fb', this.state.fb)
     // formData.append('member_insta', this.state.Instagram)
     // formData.append('member_linkedin', this.state.LinkedIn)
@@ -262,6 +281,41 @@ onValueStateChange = value => {
           />
         <ScrollView>
           <Card style={{ padding: '2%' }}>
+          <View
+              style={{
+                justifyContent: 'center',
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}
+            >
+              <Text
+                style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
+              >
+                Member Relation To Member
+              </Text>
+              <Picker
+                selectedValue={this.state.memberrelationstatus}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({ memberrelationstatus: itemValue })
+                }
+                mode={'dialog'}
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  fontFamily: CustomeFonts.reguar,
+                  color: Colors.black
+                }}
+              >
+                <Picker.Item label='Select Member' value='0' />
+                {this.state.Memer_relation_member.map((item, key) => (
+                  <Picker.Item
+                    label={item.member_name}
+                    value={item.id}
+                    key={key}
+                  />
+                ))}
+              </Picker>
+            </View>
             <View
               style={{
                 justifyContent: 'center',
@@ -365,7 +419,7 @@ onValueStateChange = value => {
                 </Picker>
               </View>
 
-              <View
+            <View
               style={{
                 justifyContent: 'center',
                 flexDirection: 'row',
@@ -401,6 +455,7 @@ onValueStateChange = value => {
                 </Picker>
               </View>
             
+                    
             <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Name</Text>
             <Input
               style={[Style.Textstyle, { borderBottomWidth: 1 }]}

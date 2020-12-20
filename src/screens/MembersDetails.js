@@ -140,7 +140,7 @@ class MembersDetails extends Component {
           this.setState({
             memberDetails: res.data.member_details,
             profile_pic_url: res.data.member_photo,
-            profilepic: res.data.member_details.member_photo === null ? AppImages.placeHolder : res.data.member_photo + res.data.member_details.member_photo
+            profilepic: res.data.member_details.member_photo 
           })
         }
       })
@@ -210,7 +210,7 @@ class MembersDetails extends Component {
       isFiles, editFb, editInsta, editLinked, editTwitter, editWapp,
       member_id, fb, instagram, whatsapp, linkedin, twitter
     } = this.state
-    
+    console.log("profilepic ===>",profilepic)
     return (
       <SafeAreaView style={Style.cointainer1}>
         <StatusBar
@@ -221,7 +221,9 @@ class MembersDetails extends Component {
           <Image
             resizeMode='stretch'
             source={
-              profilepic 
+              profilepic === null || profilepic === ''
+                ? AppImages.placeHolder
+                : { uri: profile_pic_url + profilepic }
             }
             style={{
               backgroundColor: Colors.white,

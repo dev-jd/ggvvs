@@ -53,7 +53,7 @@ class Login extends Component {
     deviceId: '',
     playerId: '',
     countrycode: [],
-    code: 'code'
+    code: '91'
   }
 
   componentWillUnmount() {
@@ -299,9 +299,12 @@ class Login extends Component {
                         alignSelf: 'center'
                       }}
                     />
-                    <TouchableOpacity onPress={() => this.setState({ visibleModal: 'bottom' })}>
+                    <TouchableOpacity>
                       <Text style={[Style.body,{ width: '100%' }]}>{this.state.code}</Text>
                     </TouchableOpacity>
+                    {/* <TouchableOpacity onPress={() => this.setState({ visibleModal: 'bottom' })}>
+                      <Text style={[Style.body,{ width: '100%' }]}>{this.state.code}</Text>
+                    </TouchableOpacity> */}
                     {/*
                     <Text
                       style={[
@@ -310,7 +313,7 @@ class Login extends Component {
                       ]}
                     >
                       Code
-              </Text>
+                    </Text>
                     <Picker
                       selectedValue={this.state.code}
                       onValueChange={(itemValue, itemIndex) => this.setState({ code: itemValue })}
