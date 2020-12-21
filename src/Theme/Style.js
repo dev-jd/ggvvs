@@ -274,6 +274,11 @@ const styles = StyleSheet.create({
         backgroundColor:Colors.white,
         elevation:2,
         padding: '3%',
+    },
+    flexView:{
+        flexDirection:'row',
+        justifyContent:'center',
+        alignItems:'center'
     }
 })
 

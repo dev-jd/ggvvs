@@ -136,7 +136,7 @@ const topTabNaviTree = createMaterialTopTabNavigator({
     FamilyTreeRequest: {
         screen: FamilyTreeRequest,
         navigationOptions: {
-            title: 'Family Request',
+            title: 'Family Photos',
         }
     },
 }, {

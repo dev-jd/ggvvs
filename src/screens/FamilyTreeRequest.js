@@ -64,28 +64,28 @@ export default class FamilyTreeRequest extends Component {
       member_type: member_type
     })
 
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
-        // this.getFamilyList()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
+    // NetInfo.isConnected.addEventListener(
+    //   'connectionChange',
+    //   this._handleConnectivityChange
+    // )
+    // NetInfo.isConnected.fetch().done(isConnected => {
+    //   if (isConnected == true) {
+    //     this.setState({ connection_Status: true })
+    //     // this.getFamilyList()
+    //   } else {
+    //     this.setState({ connection_Status: false })
+    //   }
+    // })
   }
 
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      // this.getFamilyList()
-    } else {
-      this.setState({ connection_Status: false })
-    }
-  }
+  // _handleConnectivityChange = isConnected => {
+  //   if (isConnected == true) {
+  //     this.setState({ connection_Status: true })
+  //     // this.getFamilyList()
+  //   } else {
+  //     this.setState({ connection_Status: false })
+  //   }
+  // }
 
   async getFamilyList () {
     const formData = new FormData()

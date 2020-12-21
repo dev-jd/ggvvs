@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {
   ScrollView, TouchableOpacity, Picker, Image, PermissionsAndroid, ActivityIndicator,
-  ToastAndroid, SafeAreaView
+  ToastAndroid, SafeAreaView, Switch
 } from 'react-native'
 import CustomeFonts from '../../Theme/CustomeFonts'
 import { Form, Item, Input, Label, Text, View } from 'native-base'
@@ -124,7 +124,8 @@ class ViewOtherPersionalDetails extends Component {
       isdobSelect: false,
       profile_pic_url: '',
       member_proof: '',
-      family_pic_url: ''
+      family_pic_url: '', alive: true, placeofbirth: '', placeofdeath: '', dod: '',
+      isdodSelect: false,
     }
   }
   async componentWillMount() {
@@ -173,7 +174,7 @@ class ViewOtherPersionalDetails extends Component {
       })
     }
 
-    if (details.member_marriage_anniversary === invalid || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined'||details.member_marriage_anniversary === 'null') {
+    if (details.member_marriage_anniversary === invalid || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined' || details.member_marriage_anniversary === 'null') {
       this.setState({ anniversary: '' })
     } else {
       this.setState({ anniversary: details.member_marriage_anniversary, })
@@ -199,7 +200,7 @@ class ViewOtherPersionalDetails extends Component {
       email2: otherDetails.member_email,
 
       phone: otherDetails.member_ll,
-      
+
       nativePlace: otherDetails.member_native_place,
       education: otherDetails.member_eq_id,
       profession: otherDetails.member_pm_id,
@@ -276,20 +277,20 @@ class ViewOtherPersionalDetails extends Component {
         this.setState({ isLoding: false })
       })
 
-      axois.get(base_url + 'cast_list?samaj_id='+this.state.samaj_id)
-        .then(res => {
-          if (res.data.success === true) {
-            this.setState({
-              cast: res.data.data
-            })
-          }
-        })
-        .catch(err => {
-          console.log(err)
-          this.setState({ isLoding: false })
-        })
+    axois.get(base_url + 'cast_list?samaj_id=' + this.state.samaj_id)
+      .then(res => {
+        if (res.data.success === true) {
+          this.setState({
+            cast: res.data.data
+          })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        this.setState({ isLoding: false })
+      })
 
-        
+
   }
 
   async stateApiCall(value) {
@@ -336,14 +337,9 @@ class ViewOtherPersionalDetails extends Component {
 
   async postApiCall() {
     var aniversary
-    if (this.state.maritalstatus === 2 || this.state.maritalstatus === 3) {
+    if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
       this.apiCallPost()
-    } else if (
-      this.state.maritalstatus === 1 ||
-      this.state.maritalstatus === 4 ||
-      this.state.maritalstatus === 5 ||
-      this.state.maritalstatus === 6
-    ) {
+    } else {
       if (
         this.state.anniversary === null ||
         this.state.anniversary === '' ||
@@ -353,8 +349,6 @@ class ViewOtherPersionalDetails extends Component {
       } else {
         this.apiCallPost()
       }
-    } else {
-      this.apiCallPost()
     }
   }
   apiCallPost() {
@@ -364,7 +358,13 @@ class ViewOtherPersionalDetails extends Component {
     console.log('dob select ', this.state.isdobSelect)
     console.log('aniversary select', this.state.isanySelect)
 
+    var isalive
 
+    if (this.state.alive) {
+      isalive = 0
+    } else {
+      isalive = 1
+    }
     // console.log('dob moment', Moment(this.state.dob).format('YYYY-MM-DD'))
     // var dob = Moment(this.state.dob).format('YYYY-MM-DD')
     if (
@@ -411,7 +411,7 @@ class ViewOtherPersionalDetails extends Component {
           formdata.append('member_birth_date', this.state.dob)
         }
 
-        if (this.state.maritalstatus === 2 || this.state.maritalstatus === 3) {
+        if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
           formdata.append('member_marriage_anniversary', '')
         } else {
           formdata.append('member_marriage_anniversary', this.state.anniversary)
@@ -526,7 +526,7 @@ class ViewOtherPersionalDetails extends Component {
             formdata.append('member_gotra', this.state.gotra)
           }
         }
-        console.log("idImage",this.state.idImage)
+        console.log("idImage", this.state.idImage)
         if (
           this.state.idPath === '' ||
           this.state.idPath === null || this.state.idPath === 'null' ||
@@ -553,6 +553,10 @@ class ViewOtherPersionalDetails extends Component {
             type: this.state.photoType
           })
         }
+        formdata.append('member_is_alive', isalive)
+        formdata.append('place_birth', this.state.placeofbirth)
+        formdata.append('place_death', this.state.placeofdeath)
+        formdata.append('member_death_date', this.state.dod)
 
         console.log('edit details form data', formdata)
 
@@ -664,7 +668,7 @@ class ViewOtherPersionalDetails extends Component {
   }
 
   render() {
-    
+
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -715,12 +719,12 @@ class ViewOtherPersionalDetails extends Component {
                 >
                   <Picker.Item label='Select Marital Status' value='0' />
                   {this.state.status.map((item, key) => (
-                    <Picker.Item label={item.id} value={item.id+''} key={key} />
+                    <Picker.Item label={item.id} value={item.id + ''} key={key} />
                   ))}
                 </Picker>
               </View>
-              {this.state.maritalstatus === 2 ||
-                this.state.maritalstatus === 3 ? null : (
+              {this.state.maritalstatus === 'Never Married' ||
+                this.state.maritalstatus === 'Divorcee' ? null : (
                   <View
                     style={{
                       flexDirection: 'row',
@@ -735,7 +739,7 @@ class ViewOtherPersionalDetails extends Component {
                         { width: '45%', color: Colors.black }
                       ]}
                     >
-                      Anniversary* 
+                      Anniversary*
                 </Text>
                     <View
                       style={{
@@ -753,7 +757,7 @@ class ViewOtherPersionalDetails extends Component {
                       androidMode='spinner'
                       placeholder={
                         this.state.anniversary === '' ||
-                          this.state.anniversary === null||this.state.anniversary === "null"
+                          this.state.anniversary === null || this.state.anniversary === "null"
                           ? 'Select date'
                           : this.state.anniversary
                       }
@@ -776,34 +780,6 @@ class ViewOtherPersionalDetails extends Component {
                         })
                       }}
                     />
-
-                    {/* <DatePicker
-                    maximumDate={new Date()}
-                    modalTransparent={true}
-                    animationType={'fade'}
-                    androidMode={'default'}
-                    placeHolderText={
-                      this.state.anniversary === '' ||
-                        this.state.anniversary === null
-                        ? 'Select date'
-                        : Moment(this.state.anniversary).format('DD-MM-YYYY')
-                    }
-                    textStyle={Style.Textmainstyle}
-                    placeHolderTextStyle={Style.Textmainstyle}
-                    onDateChange={setDate => {
-                      this.setState({
-                        anniversary: Moment(setDate).format('YYYY-MM-DD'),
-                        isanySelect: true
-                      })
-                    }}
-                    disabled={false}
-                    style={{
-                      flex: 1,
-                      width: '50%',
-                      fontFamily: CustomeFonts.reguar,
-                      color: Colors.black
-                    }}
-                  /> */}
                   </View>
                 )}
               <View
@@ -862,54 +838,28 @@ class ViewOtherPersionalDetails extends Component {
                   }}
                 />
 
-                {/* <DatePicker
-                maximumDate={new Date()}
-                modalTransparent={true}
-                animationType={'fade'}
-                androidMode={'default'}
-                placeHolderText={
-                  this.state.dob === '' || this.state.dob === null
-                    ? 'Select date'
-                    : Moment(this.state.dob).format('DD-MM-YYYY')
-                }
-                textStyle={Style.Textmainstyle}
-                placeHolderTextStyle={Style.Textmainstyle}
-                onDateChange={setDate => {
-                  this.setState({
-                    dob: Moment(setDate).format('YYYY-MM-DD'),
-                    isdobSelect: true
-                  })
-                }}
-                disabled={false}
-                style={{
-                  flex: 1,
-                  width: '50%',
-                  fontFamily: CustomeFonts.reguar,
-                  color: Colors.black
-                }}
-              /> */}
               </View>
-              {/* <Form>
-              <Item stackedLabel>
-                <Label
-                  style={[
-                    Style.Textstyle,
-                    (style = {
-                      color: Colors.black,
-                      fontFamily: CustomeFonts.medium
-                    })
-                  ]}
-                >
-                  Date Of Birth
+              <Form>
+                <Item stackedLabel>
+                  <Label
+                    style={[
+                      Style.Textstyle,
+                      (style = {
+                        color: Colors.black,
+                        fontFamily: CustomeFonts.medium
+                      })
+                    ]}
+                  >
+                    Place Of Birth
                 </Label>
-                <Input
-                  style={Style.Textstyle}
-                  multiline={true}
-                  onChangeText={value => this.setState({ dob: value })}
-                  value={this.state.dob}
-                ></Input>
-              </Item>
-            </Form> */}
+                  <Input
+                    style={Style.Textstyle}
+                    multiline={true}
+                    onChangeText={value => this.setState({ placeofbirth: value })}
+                    value={this.state.placeofbirth}
+                  ></Input>
+                </Item>
+              </Form>
               {this.state.member_type === '1' ? (
                 <View>
                   <Form>
@@ -1238,66 +1188,45 @@ class ViewOtherPersionalDetails extends Component {
                     </Item>
                   </Form>
 
-                  {/* <Form>
-                    <Item stackedLabel>
-                      <Label
-                        style={[
-                          Style.Textstyle,
-                          (style = {
-                            color: Colors.black,
-                            fontFamily: CustomeFonts.medium
-                          })
-                        ]}
-                      >
-                        Cast
-                    </Label>
-                      <Input
-                        style={Style.Textstyle}
-                        onChangeText={value => this.setState({ cast: value })}
-                        value={this.state.cast}
-                      ></Input>
-                    </Item>
-                  </Form> */}
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: 15
-                }}
-              >
-                <Text
-                  style={[
-                    Style.Textmainstyle,
-                    { width: '45%', color: Colors.black }
-                  ]}
-                >
-                  Cast
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginLeft: 15
+                    }}
+                  >
+                    <Text
+                      style={[
+                        Style.Textmainstyle,
+                        { width: '45%', color: Colors.black }
+                      ]}
+                    >
+                      Cast
               </Text>
-                <Picker
-                  selectedValue={this.state.casttatus}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ casttatus: itemValue })
-                  }
-                  mode={'dialog'}
-                  style={{
-                    flex: 1,
-                    width: '100%',
-                    fontFamily: CustomeFonts.reguar,
-                    color: Colors.black
-                  }}
-                >
-                  <Picker.Item label='Select Cast' value='0' />
-                  {this.state.cast.map((item, key) => (
-                    <Picker.Item
-                      label={item.cast_name}
-                      value={item.id}
-                      key={key}
-                    />
-                  ))}
-                </Picker>
-              </View>
+                    <Picker
+                      selectedValue={this.state.casttatus}
+                      onValueChange={(itemValue, itemIndex) =>
+                        this.setState({ casttatus: itemValue })
+                      }
+                      mode={'dialog'}
+                      style={{
+                        flex: 1,
+                        width: '100%',
+                        fontFamily: CustomeFonts.reguar,
+                        color: Colors.black
+                      }}
+                    >
+                      <Picker.Item label='Select Cast' value='0' />
+                      {this.state.cast.map((item, key) => (
+                        <Picker.Item
+                          label={item.cast_name}
+                          value={item.id}
+                          key={key}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
 
                   <Form>
                     <Item stackedLabel>
@@ -1405,6 +1334,107 @@ class ViewOtherPersionalDetails extends Component {
                   ></Input>
                 </Item>
               </Form>
+              <Form>
+                <View style={[Style.flexView, { justifyContent: 'flex-start', paddingVertical: '3%', paddingHorizontal: '5%' }]}>
+                  <Text style={[Style.Textmainstyle]}>Is Alive</Text>
+                  <Switch
+                    value={this.state.alive}
+                    onValueChange={alive => {
+                      console.log('check alive', alive)
+                      this.setState({ alive: !this.state.alive })
+                    }
+                    }
+                    thumbColor={
+                      this.state.alive
+                        ? Colors.Theme_color
+                        : Colors.light_pink
+                    }
+                    trackColor={Colors.lightThem}
+                  />
+                </View>
+              </Form>
+              {this.state.alive ? null :
+                <View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginLeft: 15,
+                      marginTop: 5
+                    }}
+                  >
+                    <Text
+                      style={[
+                        Style.Textmainstyle,
+                        { width: '45%', color: Colors.black }
+                      ]}
+                    >
+                      Date Of Death*
+              </Text>
+                    <View
+                      style={{
+                        flex: 1,
+                        width: '50%',
+                        fontFamily: CustomeFonts.reguar,
+                        color: Colors.black
+                      }}
+                    ></View>
+                    <DatePicker
+                      style={{ width: 170 }}
+                      date={this.state.dod}
+                      mode='date'
+                      androidMode='spinner'
+                      placeholder={
+                        this.state.dod === '' || this.state.dod === null
+                          ? 'Select date'
+                          : this.state.dod
+                      }
+                      format='DD-MM-YYYY'
+                      confirmBtnText='Confirm'
+                      cancelBtnText='Cancel'
+                      customStyles={{
+                        dateIcon: {
+                          position: 'absolute',
+                          left: 0,
+                          top: 4,
+                          marginLeft: 0
+                        },
+                        dateInput: { marginLeft: 36 }
+                      }}
+                      onDateChange={setDate => {
+                        this.setState({
+                          dod: setDate,
+                          isdodSelect: true
+                        })
+                      }}
+                    />
+
+                  </View>
+                  <Form>
+                    <Item stackedLabel>
+                      <Label
+                        style={[
+                          Style.Textstyle, {
+                            color: Colors.black,
+                            fontFamily: CustomeFonts.medium
+                          }
+                        ]}
+                      >
+                        Place Of Death
+                </Label>
+                      <Input
+                        style={[Style.Textstyle, { borderBottomWidth: 1 }]}
+                        placeholder={'Place Of Death'}
+                        keyboardType='default'
+                        numberOfLines={1}
+                        onChangeText={value => this.setState({ placeofdeath: value })}
+                        value={this.state.placeofdeath}
+                      ></Input>
+                    </Item>
+                  </Form>
+                </View>
+              }
               {this.state.member_type === '1' ? (
                 <Form>
                   <Item stackedLabel>
