@@ -175,8 +175,6 @@ class MembersDetails extends Component {
     formdata.append('member_id', this.state.member_id)
     formdata.append('type', this.state.member_type)
     formdata.append(paramkey, value)
-    //     formdata.append('member_samaj_id', this.state.samaj_id)
-    //     formdata.append('type', this.state.member_type)
 
     console.log('check formdata profile --> ', formdata)
     axois

@@ -55,7 +55,7 @@ export default class App extends Component {
     }
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       gender: '',
@@ -64,7 +64,7 @@ export default class App extends Component {
       toage: null,
       banner_img: '',
       banner_url: '',
-      image_url:'',
+      image_url: '',
       main_member_data: [],
       family_data: [],
       dataSource: [],
@@ -89,7 +89,7 @@ export default class App extends Component {
     }
   }
 
-  async componentWillMount () {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
     const banner = this.props.navigation.getParam('banner_image')
@@ -103,31 +103,13 @@ export default class App extends Component {
       banner_img: banner,
       banner_url: banner_url
     })
+    this.apiCalling()
 
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
-        this.apiCalling()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
   }
 
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      this.apiCalling()
-    } else {
-      this.setState({ connection_Status: false })
-    }
-  }
 
-  async apiCalling () {
+
+  async apiCalling() {
     console.log('api call', base_url + 'genderList')
     axois
       .get(base_url + 'genderList')
@@ -136,7 +118,6 @@ export default class App extends Component {
         if (res.data.success === true) {
           this.setState({
             dataSource: res.data.data,
-            
           })
         }
       })
@@ -145,7 +126,7 @@ export default class App extends Component {
       })
   }
 
-  searchMember () {
+  searchMember() {
     if (this.state.gender === '0') {
       Toast.show('Select Gender')
     } else if (!this.state.fromage) {
@@ -161,7 +142,7 @@ export default class App extends Component {
     }
   }
 
-  async searchMemberApi () {
+  async searchMemberApi() {
     var formdata = new FormData()
     formdata.append('md_gender_id', this.state.gender)
     // formdata.append('md_marital_status', this.state.maritalstatus)
@@ -180,8 +161,8 @@ export default class App extends Component {
           this.props.navigation.navigate('MatrimonyList', {
             itemData: res.data.family_data,
             mainmember: res.data.main_member_data,
-            imageUrlKundli:res.data.kundli,
-            imageUrlMember:res.data.member
+            imageUrlKundli: res.data.kundli,
+            imageUrlMember: res.data.member
           })
         } else {
           Toast.show('No Data Available')
@@ -192,7 +173,7 @@ export default class App extends Component {
       })
   }
 
-  render () {
+  render() {
     const { banner_img, banner_url } = this.state
 
     return (
@@ -202,31 +183,13 @@ export default class App extends Component {
             backgroundColor={Colors.Theme_color}
             barStyle='light-content'
           />
-          <View style={{paddingHorizontal:'2%',paddingVertical:'2%'}}>
+          <View style={{ paddingHorizontal: '2%', paddingVertical: '2%' }}>
             <View
               style={[
                 Style.cardback,
                 (style = { flexDirection: 'column', padding: 10 })
               ]}
             >
-              <Image
-                resizeMode='stretch'
-                // source={require('../images/matrimony.jpeg')}
-                source={
-                  banner_img === null ||
-                  banner_img === '' ||
-                  banner_img === undefined
-                    ? AppImages.placeHolder
-                    : {
-                        uri: banner_url + banner_img
-                      }
-                }
-                style={{
-                  backgroundColor: Colors.white,
-                  height: 200,
-                  width: '100%'
-                }}
-              />
 
               <View style={{ justifyContent: 'center', padding: 10 }}>
                 <Text

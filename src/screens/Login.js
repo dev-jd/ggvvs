@@ -88,7 +88,7 @@ class Login extends Component {
 
     if (this.state.connection_Status === true) {
       var id = DeviceInfo.getUniqueId()
-      this.countryApi()
+      // this.countryApi()
       this.setState({
         connection_Status: true,
         deviceId: id

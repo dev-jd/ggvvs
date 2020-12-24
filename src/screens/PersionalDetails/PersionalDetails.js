@@ -446,7 +446,7 @@ class PersionalDetails extends Component {
                 <TouchableOpacity
                   style={[Style.Buttonback, { margin: 10 }]}
                   onPress={() =>
-                   Toast.show('Comming soon')
+                    Toast.show('Comming soon')
                   }
                 >
                   <Text style={Style.buttonText}>Personal documents</Text>
@@ -502,6 +502,48 @@ class PersionalDetails extends Component {
                       trackColor={Colors.lightThem}
                     />
                   </View>
+                  {/* Matrimony Swithch */}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.black }]}> Looking for Matrimony?</Text>
+                    {this.state.matrimonySwitch ? (
+                      <TouchableOpacity
+                        style={[
+                          Style.lightbutton,
+                          { position: 'absolute', right: 50 }
+                        ]}
+                        onPress={() =>
+                          this.props.navigation.navigate('LookinForMatrimony', {
+                            itemData: this.state.matrimony_details,
+                            image_url: this.state.member_kundli,
+                            member_id: this.state.member_id,
+                            type: this.state.member_type
+                          })
+                        }
+                      >
+                        <Text
+                          style={[
+                            Style.Textmainstyle,
+                            { color: Colors.Theme_color, textAlign: 'center' }
+                          ]}
+                        >
+                          View
+                    </Text>
+                      </TouchableOpacity>
+                    ) : null}
+                    <Switch
+                      style={{ position: 'absolute', right: 0 }}
+                      value={this.state.matrimonySwitch}
+                      onValueChange={matrimonySwitch =>
+                        this.metrimony_swich_apicall(matrimonySwitch)
+                      }
+                      thumbColor={
+                        this.state.matrimonySwitch
+                          ? Colors.Theme_color
+                          : Colors.light_pink
+                      }
+                      onTintColor={Colors.lightThem}
+                    />
+                  </View>
 
                   {/* Job Swithch */}
                   {/* <View
@@ -552,56 +594,6 @@ class PersionalDetails extends Component {
                     />
                   </View> */}
 
-                  {/* Matrimony Swithch */}
-                  {/* <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: 5
-                    }}
-                  >
-                    <Text style={[Style.Textmainstyle, { color: Colors.black }]}>
-                      Looking for Matrimony?
-                </Text>
-                    {this.state.matrimonySwitch ? (
-                      <TouchableOpacity
-                        style={[
-                          Style.lightbutton,
-                          { position: 'absolute', right: 50 }
-                        ]}
-                        onPress={() =>
-                          this.props.navigation.navigate('LookinForMatrimony', {
-                            itemData: this.state.matrimony_details,
-                            image_url: this.state.member_kundli,
-                            member_id: this.state.member_id,
-                            type: this.state.member_type
-                          })
-                        }
-                      >
-                        <Text
-                          style={[
-                            Style.Textmainstyle,
-                            { color: Colors.Theme_color, textAlign: 'center' }
-                          ]}
-                        >
-                          View
-                    </Text>
-                      </TouchableOpacity>
-                    ) : null}
-                    <Switch
-                      style={{ position: 'absolute', right: 0 }}
-                      value={this.state.matrimonySwitch}
-                      onValueChange={matrimonySwitch =>
-                        this.metrimony_swich_apicall(matrimonySwitch)
-                      }
-                      thumbColor={
-                        this.state.matrimonySwitch
-                          ? Colors.Theme_color
-                          : Colors.light_pink
-                      }
-                      onTintColor={Colors.lightThem}
-                    />
-                  </View> */}
 
                   {/* Provider Swithch */}
                   {/* <View

@@ -80,35 +80,11 @@ export default class FamilyTree extends Component {
       samaj_id: samaj_id,
       member_type: member_type
     })
-
-    // NetInfo.isConnected.addEventListener(
-    //   'connectionChange',
-    //   this._handleConnectivityChange
-    // )
-    // NetInfo.isConnected.fetch().done(isConnected => {
-    //   if (isConnected == true) {
-    //     this.setState({ connection_Status: true })
-    //     // this.getFamilyList()
-    //   } else {
-    //     this.setState({ connection_Status: false })
-    //   }
-    // })
   }
-
-  // _handleConnectivityChange = isConnected => {
-  //   if (isConnected == true) {
-  //     this.setState({ connection_Status: true })
-  //     // this.getFamilyList()
-  //   } else {
-  //     this.setState({ connection_Status: false })
-  //   }
-  // }
-
 
   render() {
     console.log('family tree --> '+'http://new.mysamaaj.com/familyChart/'+this.state.member_id)
-    //console.log('mainMemberID --> ',this.state.member_id)
-    // const { title, titleStyle, titleColor } = this.props
+
     if (this.state.isLoading) {
       return (
         <View
@@ -147,53 +123,3 @@ export default class FamilyTree extends Component {
     }
   }
 }
-// FamilyTree.defaultProps = {
-//   title: 'My Family Tree',
-//   titleStyle: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//     textAlign: 'center',
-//     fontFamily: CustomeFonts.medium
-//   },
-//   titleColor: 'black',
-//   data: Sample,
-//   nodeStyle: {
-//     width: 100,
-//     height: 100,
-//     borderRadius: 50,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     resizeMode: 'cover'
-//   },
-//   nodeTitleStyle: {
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//     fontFamily: CustomeFonts.medium
-//   },
-//   pathColor: Colors.Theme_color,
-//   siblingGap: 50,
-//   imageStyle: {
-//     width: '70%',
-//     height: '70%',
-//     borderRadius: 50,
-//     resizeMode: 'cover'
-//   },
-//   nodeTitleColor: Colors.black,
-//   familyGap: 10,
-//   strokeWidth: 5
-// }
-
-// FamilyTree.propTypes = {
-//   title: PropTypes.string,
-//   titleStyle: PropTypes.object,
-//   data: PropTypes.array,
-//   nodeStyle: PropTypes.object,
-//   nodeTitleStyle: PropTypes.object,
-//   pathColor: PropTypes.string,
-//   siblingGap: PropTypes.number,
-//   imageStyle: PropTypes.object,
-//   nodeTitleColor: PropTypes.string,
-//   familyGap: PropTypes.number,
-//   strokeWidth: PropTypes.number,
-//   titleColor: PropTypes.string
-// }

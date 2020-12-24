@@ -142,7 +142,7 @@ export default class App extends Component {
         }
       })
       .catch(err => {
-        console.log('profile_data error',err)
+        console.log('profile_data error', err)
         this.setState({ isLoding: false })
       })
   }
@@ -391,178 +391,74 @@ export default class App extends Component {
     }
   }
 
-  categoryRendeItem = ({ item, index }) => {
-    // console.log('item ', item)
+  render() {
+    // console.log('render call -->', this.state.postData.length)
+
     return (
-      <Content>
-        <Card>
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate('PostDetails', {
-                postData: item,
-                imgUrl: pic_url
-              })
-            }
-          >
-            <CardItem>
-              <Left>
-                <Thumbnail
-                  source={images.logo}
-                  style={{
-                    backgroundColor: Colors.divider,
-                    height: 50,
-                    width: 50
-                  }}
-                />
-                <Body>
-                  <Text style={Style.Textstyle}>Admin</Text>
-                  {/* <Text style={Style.Textstyle}>{item.member_name}</Text> */}
-                  <Text style={Style.Textstyle} note>
-                    {/* {Moment(item.date).format('LLL')} */}
-                    {Moment(item.date).format('DD-MM-YYYY')}
-                  </Text>
-                </Body>
-              </Left>
-            </CardItem>
-            <View style={{ flexDirection: 'column' }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar
+          backgroundColor={Colors.Theme_color}
+          barStyle='light-content'
+        />
+        <NavigationEvents
+          onWillFocus={payload => this.getPostList()}
+        />
+        <View
+          style={{
+            flex: 0.5,
+            backgroundColor: Colors.Theme_color,
+            flexDirection: 'row',
+            justifyContent: 'center', alignItems: 'center'
+          }}
+        >
+          <View style={{ flex: 7, paddingLeft: 5 }}>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('OurSamaj')}
+            >
               <Text
                 style={[
                   Style.Textstyle,
-                  { paddingBottom: 6, paddingLeft: 6, paddingRight: 10 }
+                  {
+                    color: Colors.white,
+                    fontFamily: CustomeFonts.medium,
+                    fontSize: 18
+                  }
                 ]}
-                numberOfLines={2}
-                note
               >
-                {item.description}
+                {this.state.samaajname}
               </Text>
-              {/* <HTML
-              html={post_details} {...htmlConfig}
-              imagesMaxWidth={Dimensions.get('window').width}
-              baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium }}
-            /> */}
-              {item.post_image === null ||
-                item.post_image === '' ||
-                item.post_image === undefined ? null : (
-                  <Image
-                    source={{ uri: this.state.imgUrl + item.post_image }}
-                    style={{ height: 150, flex: 1 }}
-                    resizeMode='contain'
-                    resizeMethod='resize'
-                  />
-                )}
-            </View>
-          </TouchableOpacity>
-          <CardItem>
-            <View style={{ flexDirection: 'row', flex: 1 }}>
-              <TouchableOpacity
-                transparent
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  justifyContent: 'center'
-                }}
-                onPress={() => this.addLike(item.id)}
-              >
-                {item.like_unlike === 1 ? (
-                  <Icon
-                    color={Colors.Theme_color}
-                    name='thumbs-up'
-                    size={20}
-                    style={{ alignSelf: 'center' }}
-                  />
-                ) : (
-                    <Icon
-                      name='thumbs-up'
-                      size={20}
-                      style={{ alignSelf: 'center' }}
-                    />
-                  )}
-
-                <Text
-                  style={[
-                    Style.Textstyle,
-                    { alignSelf: 'center', marginLeft: 3 }
-                  ]}
-                  uppercase={false}
-                >
-                  {item.like_count} Likes
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </CardItem>
-        </Card>
-      </Content>
-    )
-  }
-
-  render() {
-    // console.log('render call -->', this.state.postData.length)
-    
-      return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <StatusBar
-            backgroundColor={Colors.Theme_color}
-            barStyle='light-content'
+            </TouchableOpacity>
+          </View>
+          <Image
+            source={{ uri: this.state.logourl + this.state.samaajlogo }}
+            // source={AppImages.logo}
+            style={{ height: 30, width: 30, borderRadius: 30 / 2 }}
+            borderRadius={100}
+            resizeMode='contain'
+            resizeMethod='resize'
           />
-          <NavigationEvents
-            onWillFocus={payload => this.getPostList()}
+          <Icon
+            style={{ flex: 1, paddingRight: '1%', marginLeft: '2%' }}
+            name='bell'
+            size={25}
+            color={Colors.white}
+            onPress={() => this.props.navigation.navigate('Notification')}
           />
-          <View
-            style={{
-              flex: 0.5,
-              backgroundColor: Colors.Theme_color,
-              flexDirection: 'row',
-              justifyContent: 'center', alignItems: 'center'
-            }}
-          >
-            <View style={{ flex: 7, paddingLeft: 5 }}>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('OurSamaj')}
-              >
-                <Text
-                  style={[
-                    Style.Textstyle,
-                    {
-                      color: Colors.white,
-                      fontFamily: CustomeFonts.medium,
-                      fontSize: 18
-                    }
-                  ]}
-                >
-                  {this.state.samaajname}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <Image
-              source={{ uri: this.state.logourl + this.state.samaajlogo }}
-              // source={AppImages.logo}
-              style={{ height: 30, width: 30, borderRadius:30/2 }}
-              borderRadius={100}
-              resizeMode='contain'
-              resizeMethod='resize'
-            />
-            <Icon
-              style={{ flex: 1, paddingRight: '1%', marginLeft: '2%' }}
-              name='bell'
-              size={25}
-              color={Colors.white}
-              onPress={() => this.props.navigation.navigate('Notification')}
-            />
-            {/* <Icon
+          {/* <Icon
               style={{ flex: 1, paddingHorizontal: '1%' }}
               name='sign-out'
               size={25}
               color={Colors.white}
               onPress={() => this.onLogout()}
             /> */}
-          </View>
-          {/* banner  */}
-          {this.state.isAdLoading ? 
-          <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <ActivityIndicator size='large' color={Colors.Theme_color} />
         </View>
+        {/* banner  */}
+        {this.state.isAdLoading ?
+          <View
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          >
+            <ActivityIndicator size='large' color={Colors.Theme_color} />
+          </View>
           :
           <View style={{ height: 70, justifyContent: 'center' }}>
             <Swiper
@@ -598,46 +494,77 @@ export default class App extends Component {
               })}
             </Swiper>
           </View>
-          }
-          
-          <View style={{ flex: 7 }}>
+        }
+
+        <View style={{ flex: 7 }}>
           {this.state.isLoading ?
-            
+
             <View
               style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
             >
               <ActivityIndicator size='large' color={Colors.Theme_color} />
             </View>
             :
-              <View
-                style={{
-                  flex: 2,
-                  backgroundColor: Colors.divider,
-                  padding: '1%'
-                }}
-              >
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  {this.state.postData.map((item, index) => (
-                    <Content>
-                      {index === 2 ? <View>
+            <View
+              style={{
+                flex: 2,
+                backgroundColor: Colors.divider,
+                padding: '1%'
+              }}
+            >
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {this.state.postData.map((item, index) => (
+                  <Content>
+                    {index === 2 ? <View>
+                      <Card>
+                        {this.state.postAdsArray.length > 0 ?
+                          <TouchableOpacity
+                            style={{ padding: '2%', height: 90 }}
+                            onPress={() =>
+                              this.props.navigation.navigate('AdDetails', {
+                                itemData: this.state.postAdsArray[0],
+                                img_url: this.state.postadimageUrl + '/'
+                              })
+                            }
+                          >
+                            {this.state.postAdsArray[0].sa_image === null || this.state.postAdsArray[0].sa_image === undefined || this.state.postAdsArray[0].sa_image === '' ?
+                              <Image
+                                source={AppImages.logo}
+                                style={{ height: 70 }}
+                                resizeMode='contain'
+                              /> : <Image
+                                source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[0].sa_image }}
+                                style={{ height: 70 }}
+                                resizeMode='contain'
+                              />}
+                          </TouchableOpacity>
+                          : <Image
+                            source={AppImages.logo}
+                            style={{ height: 70 }}
+                            resizeMode='contain'
+                          />}
+                      </Card>
+                    </View> : null}
+                    <View>
+                      {index === 4 ? <View>
                         <Card>
                           {this.state.postAdsArray.length > 0 ?
                             <TouchableOpacity
                               style={{ padding: '2%', height: 90 }}
                               onPress={() =>
                                 this.props.navigation.navigate('AdDetails', {
-                                  itemData: this.state.postAdsArray[0],
+                                  itemData: this.state.postAdsArray[1],
                                   img_url: this.state.postadimageUrl + '/'
                                 })
                               }
                             >
-                              {this.state.postAdsArray[0].sa_image === null || this.state.postAdsArray[0].sa_image === undefined || this.state.postAdsArray[0].sa_image === '' ?
+                              {checkempty(this.state.postAdsArray[1].sa_image) ?
                                 <Image
-                                  source={AppImages.logo}
+                                  source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[1].sa_image }}
                                   style={{ height: 70 }}
                                   resizeMode='contain'
                                 /> : <Image
-                                  source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[0].sa_image }}
+                                  source={AppImages.logo}
                                   style={{ height: 70 }}
                                   resizeMode='contain'
                                 />}
@@ -649,313 +576,281 @@ export default class App extends Component {
                             />}
                         </Card>
                       </View> : null}
-                      <View>
-                        {index === 4 ? <View>
-                          <Card>
-                            {this.state.postAdsArray.length > 0 ?
-                              <TouchableOpacity
-                                style={{ padding: '2%', height: 90 }}
-                                onPress={() =>
-                                  this.props.navigation.navigate('AdDetails', {
-                                    itemData: this.state.postAdsArray[1],
-                                    img_url: this.state.postadimageUrl + '/'
-                                  })
-                                }
-                              >
-                                {checkempty(this.state.postAdsArray[1].sa_image) ?
-                                  <Image
-                                    source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[1].sa_image }}
-                                    style={{ height: 70 }}
-                                    resizeMode='contain'
-                                  /> : <Image
-                                    source={AppImages.logo}
-                                    style={{ height: 70 }}
-                                    resizeMode='contain'
-                                  />}
-                              </TouchableOpacity>
-                              : <Image
-                                source={AppImages.logo}
-                                style={{ height: 70 }}
-                                resizeMode='contain'
-                              />}
-                          </Card>
-                        </View> : null}
-                      </View>
-                      <Card>
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.props.navigation.navigate('PostDetails', {
-                              postData: item,
-                              imgUrl: this.state.postDataURL,
-                              m_URL: this.state.m_URL,
-                              audioUrl: this.state.audioUrl
-                            })
-                          }
+                    </View>
+                    <Card>
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.props.navigation.navigate('PostDetails', {
+                            postData: item,
+                            imgUrl: this.state.postDataURL,
+                            m_URL: this.state.m_URL,
+                            audioUrl: this.state.audioUrl
+                          })
+                        }
 
-                        >
-                          <CardItem>
-                            <Left>
-                              <Thumbnail
-                                source={
-                                  item.member_pic === null
-                                    ? images.logo
-                                    : { uri: this.state.m_URL + item.member_pic }
-                                }
-                                style={{
-                                  backgroundColor: Colors.divider,
-                                  height: 50,
-                                  width: 50
-                                }}
-                              />
-                              <Body>
-                                <Text style={Style.Textstyle}>
-                                  {item.member_name}
-                                </Text>
-                                <Text style={Style.Textstyle} note>
-                                  {Moment(item.date).format('DD-MM-YYYY')}
-                                </Text>
-                              </Body>
-                            </Left>
-                          </CardItem>
-                          <View style={{ flexDirection: 'column' }}>
-
-                            {item.post_image === null ||
-                              item.post_image === '' ||
-                              item.post_image === undefined ? null : (
-                                <Image
-                                  source={{
-                                    uri: this.state.postDataURL + item.post_image
-                                  }}
-                                  style={{ height: 200, flex: 1 }}
-                                  resizeMode='contain'
-                                  resizeMethod='resize'
-                                />
-                              )}
-                          </View>
-                        </TouchableOpacity>
-                        <View style={{ padding: '2%' }}>
-                          <HTML
-                            html={item.description}
-                            imagesMaxWidth={Dimensions.get('window').width}
-                            baseFontStyle={{
-                              fontSize: 14,
-                              fontFamily: CustomeFonts.medium,
-                              color: Colors.black
-                            }}
-                          />
-                        </View>
-                        {item.p_audio === null ||
-                          item.p_audio === '' ||
-                          item.p_audio === undefined ? null : (
-                            <TouchableOpacity
-                              transparent
-                              style={{
-                                paddingHorizontal: '4%',
-                                flexDirection: 'row',
-                                justifyContent: 'center'
-                              }}
-                              onPress={() =>
-                                this.props.navigation.navigate('PlayAudio', {
-                                  id: item.id,
-                                  title: item.p_audio,
-                                  audioUrl: this.state.audioUrl
-                                })
+                      >
+                        <CardItem>
+                          <Left>
+                            <Thumbnail
+                              source={
+                                item.member_pic === null
+                                  ? images.logo
+                                  : { uri: this.state.m_URL + item.member_pic }
                               }
-                            >
-                              <Text style={[Style.Textstyle]} uppercase={false}>
-                                {item.p_audio}
+                              style={{
+                                backgroundColor: Colors.divider,
+                                height: 50,
+                                width: 50
+                              }}
+                            />
+                            <Body>
+                              <Text style={Style.Textstyle}>
+                                {item.member_name}
                               </Text>
+                              <Text style={Style.Textstyle} note>
+                                {Moment(item.date).format('DD-MM-YYYY')}
+                              </Text>
+                            </Body>
+                          </Left>
+                        </CardItem>
+                        <View style={{ flexDirection: 'column' }}>
+
+                          {item.post_image === null ||
+                            item.post_image === '' ||
+                            item.post_image === undefined ? null : (
+                              <Image
+                                source={{
+                                  uri: this.state.postDataURL + item.post_image
+                                }}
+                                style={{ height: 200, flex: 1 }}
+                                resizeMode='contain'
+                                resizeMethod='resize'
+                              />
+                            )}
+                        </View>
+                      </TouchableOpacity>
+                      <View style={{ padding: '2%' }}>
+                        <HTML
+                          html={item.description}
+                          imagesMaxWidth={Dimensions.get('window').width}
+                          baseFontStyle={{
+                            fontSize: 14,
+                            fontFamily: CustomeFonts.medium,
+                            color: Colors.black
+                          }}
+                        />
+                      </View>
+                      {item.p_audio === null ||
+                        item.p_audio === '' ||
+                        item.p_audio === undefined ? null : (
+                          <TouchableOpacity
+                            transparent
+                            style={{
+                              paddingHorizontal: '4%',
+                              flexDirection: 'row',
+                              justifyContent: 'center'
+                            }}
+                            onPress={() =>
+                              this.props.navigation.navigate('PlayAudio', {
+                                id: item.id,
+                                title: item.p_audio,
+                                audioUrl: this.state.audioUrl
+                              })
+                            }
+                          >
+                            <Text style={[Style.Textstyle]} uppercase={false}>
+                              {item.p_audio}
+                            </Text>
+                            <Icon
+                              name='music'
+                              size={20}
+                              style={{ alignSelf: 'center' }}
+                            />
+                          </TouchableOpacity>
+                        )}
+                      <CardItem>
+                        <View style={{ flexDirection: 'row', flex: 1 }}>
+                          <TouchableOpacity
+                            transparent
+                            style={{
+                              flex: 0.2,
+                              flexDirection: 'row',
+                              justifyContent: 'center', alignItems: 'center'
+                            }}
+                            onPress={() => this.addLike(item.id)}
+                          >
+                            {item.like_unlike === 1 ? (
                               <Icon
-                                name='music'
+                                color={Colors.Theme_color}
+                                name='thumbs-up'
                                 size={20}
                                 style={{ alignSelf: 'center' }}
                               />
-                            </TouchableOpacity>
-                          )}
-                        <CardItem>
-                          <View style={{ flexDirection: 'row', flex: 1 }}>
-                            <TouchableOpacity
-                              transparent
-                              style={{
-                                flex: 0.2,
-                                flexDirection: 'row',
-                                justifyContent: 'center', alignItems: 'center'
-                              }}
-                              onPress={() => this.addLike(item.id)}
-                            >
-                              {item.like_unlike === 1 ? (
+                            ) : (
                                 <Icon
-                                  color={Colors.Theme_color}
                                   name='thumbs-up'
                                   size={20}
                                   style={{ alignSelf: 'center' }}
                                 />
-                              ) : (
-                                  <Icon
-                                    name='thumbs-up'
-                                    size={20}
-                                    style={{ alignSelf: 'center' }}
-                                  />
-                                )}
+                              )}
 
-                              <Text
-                                style={[
-                                  Style.Textstyle,
-                                  { alignSelf: 'center', marginLeft: 3, paddingHorizontal: 5 }
-                                ]}
-                                uppercase={false}
-                              >
-                                {item.like_count} Likes
-                              </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              transparent
-                              style={{
-                                flex: 0.3,
-                                flexDirection: 'row',
-                              }}
-                              onPress={() => this.onShare(item)}
+                            <Text
+                              style={[
+                                Style.Textstyle,
+                                { alignSelf: 'center', marginLeft: 3, paddingHorizontal: 5 }
+                              ]}
+                              uppercase={false}
                             >
-                              <IconFeather
-                                color={Colors.Theme_color}
-                                name='share-2'
-                                size={20}
-                                style={{ alignSelf: 'center' }}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        </CardItem>
-                      </Card>
-                    </Content>
-                  ))}
-                </ScrollView>
-              </View>
-            }
-            <View
+                              {item.like_count} Likes
+                              </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            transparent
+                            style={{
+                              flex: 0.3,
+                              flexDirection: 'row',
+                            }}
+                            onPress={() => this.onShare(item)}
+                          >
+                            <IconFeather
+                              color={Colors.Theme_color}
+                              name='share-2'
+                              size={20}
+                              style={{ alignSelf: 'center' }}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      </CardItem>
+                    </Card>
+                  </Content>
+                ))}
+              </ScrollView>
+            </View>
+          }
+          <View
+            style={{
+              position: 'absolute',
+              right: 0,
+              backgroundColor: Colors.transparent,
+              padding: '1%'
+            }}
+          >
+            <ScrollView
+              showsVerticalScrollIndicator={false}
               style={{
-                position: 'absolute',
-                right: 0,
-                backgroundColor: Colors.transparent,
-                padding: '1%'
+                height: Math.round(Dimensions.get('window').height) - 70
               }}
             >
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={{
-                  height: Math.round(Dimensions.get('window').height) - 70
-                }}
-              >
-                <View>
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('OurSamaj', {
-                          banner_url: this.state.banner_paths.bn_samaj + '/',
-                          banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_samaj : null
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='center'
-                          style={Style.dashimage}
-                          source={{ uri: this.state.logourl + this.state.samaajlogo }}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          We
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  {this.state.member_can_post === '1' ? (
-                    <View style={[Style.dashcard, { marginTop: 10 }]}>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.props.navigation.navigate('Addnewpost')
-                        }
-                      >
-                        <View style={{ alignItems: 'center' }}>
-                          <Image
-                            resizeMode='cover'
-                            style={Style.dashimage}
-                            source={images.add_user}
-                          />
-                        </View>
-                        <View style={{ alignItems: 'center', }}>
-                          <Text
-                            numberOfLines={2}
-                            ellipsizeMode='tail'
-                            style={[Style.dashtext, { textAlign: 'center' }]}
-                          >
-                            Create Post
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+              <View>
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('OurSamaj', {
+                        banner_url: this.state.banner_paths.bn_samaj + '/',
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_samaj : null
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='center'
+                        style={Style.dashimage}
+                        source={{ uri: this.state.logourl + this.state.samaajlogo }}
+                      />
                     </View>
-                  ) : null}
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        We
+                        </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                {this.state.member_can_post === '1' ? (
                   <View style={[Style.dashcard, { marginTop: 10 }]}>
                     <TouchableOpacity
                       onPress={() =>
-                        this.props.navigation.navigate('MembersDetails', {
-                          banner_url: this.state.banner_paths.bn_member + '/',
-                          banner_image: this.state.banner_data.length > 0 ? this.state.banner_data
-                            .bn_registered_member : null
-                        })
+                        this.props.navigation.navigate('Addnewpost')
                       }
                     >
                       <View style={{ alignItems: 'center' }}>
                         <Image
                           resizeMode='cover'
                           style={Style.dashimage}
-                          source={images.Family}
+                          source={images.add_user}
                         />
                       </View>
-                      <View style={{ alignItems: 'center' }}>
+                      <View style={{ alignItems: 'center', }}>
                         <Text
                           numberOfLines={2}
                           ellipsizeMode='tail'
                           style={[Style.dashtext, { textAlign: 'center' }]}
                         >
-                          My Family
-                        </Text>
+                          Create Post
+                          </Text>
                       </View>
                     </TouchableOpacity>
                   </View>
-                  {/* {this.state.member_type === '1' ? (
-                    <View style={[Style.dashcard, { marginTop: 10 }]}>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.props.navigation.navigate('FamilyTree', {
-                            title: 'Family Tree'
-                          })
-                        }
-                      >
-                        <View style={{ alignItems: 'center' }}>
-                          <Image
-                            resizeMode='cover'
-                            style={Style.dashimage}
-                            source={images.familytree}
-                          />
-                        </View>
-                        <View style={{ alignItems: 'center' }}>
-                          <Text
-                            numberOfLines={2}
-                            ellipsizeMode='tail'
-                            style={[Style.dashtext,{textAlign:'centeraq'}]}
-                          >
-                            Family Tree{' '}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
+                ) : null}
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('MembersDetails', {
+                        banner_url: this.state.banner_paths.bn_member + '/',
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data
+                          .bn_registered_member : null
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.Family}
+                      />
                     </View>
-                  ) : null} */}
-                  {/* 
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={[Style.dashtext, { textAlign: 'center' }]}
+                      >
+                        My Family
+                        </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('Matrimony', {
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_matrimony : null,
+                        banner_url: this.state.banner_paths.bn_matrimony + '/'
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.matromoney}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={[Style.dashtext,{textAlign:'center'}]}
+                      >
+                        Matrimony
+                        </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                {/* 
                   <View style={[Style.dashcard, { marginTop: 10 }]}>
                     <TouchableOpacity
                       onPress={() =>
@@ -980,115 +875,89 @@ export default class App extends Component {
                       </View>
                     </TouchableOpacity>
                   </View> */}
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('NewsList', {
-                          banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_news : null,
-                          banner_url: this.state.banner_paths.bn_news + '/'
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.news}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          News
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('NewsList', {
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_news : null,
+                        banner_url: this.state.banner_paths.bn_news + '/'
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.news}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        News
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
 
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('CircularList', {
-                          banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_circular : null,
-                          banner_url: this.state.banner_paths.bn_circular + '/'
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.circular}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Circulars
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('CircularList', {
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_circular : null,
+                        banner_url: this.state.banner_paths.bn_circular + '/'
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.circular}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        Circulars
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
 
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('BusinessInfo')
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.businessinfo}
-                        />
-                      </View>
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('BusinessInfo')
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.businessinfo}
+                      />
+                    </View>
 
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={4}
-                          ellipsizeMode='tail'
-                          style={[Style.dashtext]}
-                        >
-                          Buz. Dir
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={4}
+                        ellipsizeMode='tail'
+                        style={[Style.dashtext]}
+                      >
+                        Buz. Dir
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
 
-                  {/* <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('Matrimony', {
-                          banner_image: this.state.banner_data.length>0?this.state.banner_data.bn_matrimony:null,
-                          banner_url: this.state.banner_paths.bn_matrimony + '/'
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.matromoney}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Matrimony
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                {/* 
 
                   <View style={[Style.dashcard, { marginTop: 10 }]}>
                     <TouchableOpacity
@@ -1118,85 +987,85 @@ export default class App extends Component {
                       </View>
                     </TouchableOpacity>
                   </View> */}
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('EventLIst', {
-                          banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_event : null,
-                          banner_url: this.state.banner_paths.bn_event + '/'
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.events}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Events
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('EventLIst', {
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_event : null,
+                        banner_url: this.state.banner_paths.bn_event + '/'
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.events}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        Events
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
 
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('YojnaList', {
-                          banner_url: this.state.banner_paths.bn_member + '/',
-                          banner_image: this.state.banner_data.length > 0 ? this.state.banner_data
-                            .bn_registered_member : null
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.plan}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Yojna
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('YojnaList', {
+                        banner_url: this.state.banner_paths.bn_member + '/',
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data
+                          .bn_registered_member : null
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.plan}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        Yojna
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('Gallery')}
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.gallery}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Gallery
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('Gallery')}
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.gallery}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        Gallery
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  {/* 
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                {/* 
                   <View style={[Style.dashcard, { marginTop: 10 }]}>
                     <TouchableOpacity
                       onPress={() =>
@@ -1225,87 +1094,87 @@ export default class App extends Component {
                     </TouchableOpacity>
                   </View> */}
 
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('Donor', {
-                          banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_donation : null,
-                          banner_url: this.state.banner_paths.bn_donation + '/'
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.donors}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Donors
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('Donor', {
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_donation : null,
+                        banner_url: this.state.banner_paths.bn_donation + '/'
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.donors}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        Donors
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('Suggestion')
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.suggestion}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={[Style.dashtext, { textAlign: 'center' }]}
-                        >
-                          Suggestion
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('Faq')}
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.faqs}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          FAQ
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
                 </View>
-                <View style={{ height: 70 }} />
-              </ScrollView>
-            </View>
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('Suggestion')
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.suggestion}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={[Style.dashtext, { textAlign: 'center' }]}
+                      >
+                        Suggestion
+                        </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('Faq')}
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.faqs}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        FAQ
+                        </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={{ height: 70 }} />
+            </ScrollView>
           </View>
-          
-        </SafeAreaView>
-      )
-    
+        </View>
+
+      </SafeAreaView>
+    )
+
   }
 }
