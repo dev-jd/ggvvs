@@ -94,6 +94,7 @@ const validationempty = (value) => {
     } else if (value === undefined) {
     } else if (value === null) {
     } else if (value.length < 1) {
+    } else if (value === 'Null') {
     } else if (value === 'None') {
     } else {
         return true

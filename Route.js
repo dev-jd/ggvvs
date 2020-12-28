@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Image, View } from 'react-native';
-import { createAppContainer,createSwitchNavigator  } from "react-navigation";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 
 import Iconfont from 'react-native-vector-icons/MaterialCommunityIcons'
 import Colors from './src/Theme/Colors'
@@ -82,6 +82,43 @@ import Notification from './src/screens/Notification';
 import CompanyDetails from './src/screens/CompanyDetails';
 import EditProduct from './src/screens/PersionalDetails/EditProduct';
 
+const matrimoneyNavi = createMaterialTopTabNavigator({
+    LookinForMatrimony: {
+        screen: LookinForMatrimony,
+        navigationOptions: {
+            title: 'Register'
+        }
+    },
+    Matrimony: {
+        screen: Matrimony,
+        navigationOptions: {
+            title: 'Search'
+        }
+    }
+}, {
+    initialRouteName: 'LookinForMatrimony',
+    tabBarOptions: {
+        upperCaseLabel: false,
+        style: {
+            backgroundColor: Colors.Theme_color,
+        },
+        headerTitleStyle: {
+            width: '100%',
+            fontSize: 16,
+            fontFamily: CustomeFonts.regular
+        },
+        labelStyle: {
+            color: Colors.white,
+            fontSize: 16,
+            fontFamily: CustomeFonts.medium,
+        },
+        indicatorStyle: {
+            backgroundColor: Colors.white,
+            borderRadius: 10,
+        },
+    }
+})
+
 const topTabNavi = createMaterialTopTabNavigator({
     Photos: {
         screen: Gallery,
@@ -91,7 +128,7 @@ const topTabNavi = createMaterialTopTabNavigator({
                 width: '100%',
                 fontWeight: '200',
                 fontFamily: CustomeFonts.regular
-              }
+            }
         }
     },
     Videos: {
@@ -102,7 +139,7 @@ const topTabNavi = createMaterialTopTabNavigator({
                 width: '100%',
                 fontWeight: '200',
                 fontFamily: CustomeFonts.regular
-              }
+            }
         }
     }
 }, {
@@ -131,7 +168,7 @@ const topTabNaviTree = createMaterialTopTabNavigator({
         navigationOptions: {
             title: 'Family Tree',
         },
-        
+
     },
     FamilyTreeRequest: {
         screen: FamilyTreeRequest,
@@ -150,7 +187,7 @@ const topTabNaviTree = createMaterialTopTabNavigator({
             width: '100%',
             fontWeight: '200',
             fontFamily: CustomeFonts.regular
-          },    
+        },
         labelStyle: {
             color: Colors.white,
             fontSize: 16,
@@ -225,7 +262,10 @@ const Stack_Navi = createStackNavigator(
             screen: PropertyBookingList,
         },
         Matrimony: {
-            screen: Matrimony,
+            screen: matrimoneyNavi,
+            navigationOptions: {
+                header: null
+            }
         },
         Employment: {
             screen: Employment,
@@ -268,7 +308,7 @@ const Stack_Navi = createStackNavigator(
         },
         FamilyTreeRequest: {
             screen: FamilyTreeRequest,
-           
+
         },
         FamilyDetails: {
             screen: FamilyDetails,
@@ -357,7 +397,10 @@ const Stack_Navi = createStackNavigator(
             screen: LookingForJob
         },
         LookinForMatrimony: {
-            screen: LookinForMatrimony
+            screen: LookinForMatrimony,
+            navigationOptions: {
+                header: null
+            }
         },
         ViewJobProvider: {
             screen: ViewJobProvider
@@ -402,18 +445,18 @@ const Stack_Navi = createStackNavigator(
             screen: Notification
         },
     },
-    )
+)
 
-    const prefix = Platform.OS == 'android' ? base_url_1 : base_url_1;
+const prefix = Platform.OS == 'android' ? base_url_1 : base_url_1;
 
-    // const AppContainer = createAppContainer(Stack_Navi)
+// const AppContainer = createAppContainer(Stack_Navi)
 
-    // export default () => {
-    //     const prefix = 'myapp://'
-    //     return <AppContainer uriPrefix={prefix} />
-    // }
+// export default () => {
+//     const prefix = 'myapp://'
+//     return <AppContainer uriPrefix={prefix} />
+// }
 
-    const App = createAppContainer(Stack_Navi)
-    const MainApp = () => <App uriPrefix={prefix} />;
-    export default MainApp
+const App = createAppContainer(Stack_Navi)
+const MainApp = () => <App uriPrefix={prefix} />;
+export default MainApp
     //export default createAppContainer(Stack_Navi)

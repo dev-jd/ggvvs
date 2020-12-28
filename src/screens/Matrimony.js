@@ -178,11 +178,8 @@ export default class App extends Component {
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
+           <StatusBar backgroundColor={Colors.Theme_color} barStyle='light-content'/>
         <ScrollView style={Style.cointainer1}>
-          <StatusBar
-            backgroundColor={Colors.Theme_color}
-            barStyle='light-content'
-          />
           <View style={{ paddingHorizontal: '2%', paddingVertical: '2%' }}>
             <View
               style={[

@@ -503,7 +503,7 @@ class PersionalDetails extends Component {
                     />
                   </View>
                   {/* Matrimony Swithch */}
-                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                  {/* <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                     <Text style={[Style.Textmainstyle, { color: Colors.black }]}> Looking for Matrimony?</Text>
                     {this.state.matrimonySwitch ? (
                       <TouchableOpacity
@@ -543,7 +543,7 @@ class PersionalDetails extends Component {
                       }
                       onTintColor={Colors.lightThem}
                     />
-                  </View>
+                  </View> */}
 
                   {/* Job Swithch */}
                   {/* <View
