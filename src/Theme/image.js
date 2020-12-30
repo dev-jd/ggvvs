@@ -22,6 +22,7 @@ const AppImages =
     placeHolder:require('../images/placeholder.png'),
     wishlist:require('../images/wishlist.png'),
     logo:require('../images/samaj.png'),
+    uploadimage:require('../images/uploadimage.png'),
     
 
 }

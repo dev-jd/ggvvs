@@ -279,6 +279,14 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'center',
         alignItems:'center'
+    },
+    centerView:{
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    flexView2:{
+        flexDirection:'row',
+        alignItems:'center'
     }
 })
 

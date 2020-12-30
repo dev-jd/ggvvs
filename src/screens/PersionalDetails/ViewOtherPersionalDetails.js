@@ -294,10 +294,6 @@ class ViewOtherPersionalDetails extends Component {
   }
 
   async stateApiCall(value) {
-    console.log(
-      'state api --> ',
-      base_url + 'stateList/' + this.state.samaj_id + '/' + value
-    )
     axois
       .get(base_url + 'stateList?country_id=' + value)
       .then(res => {

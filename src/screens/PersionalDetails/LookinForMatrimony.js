@@ -11,9 +11,6 @@ import {
 } from 'react-native'
 import CustomeFonts from '../../Theme/CustomeFonts'
 import {
-  Form,
-  Item,
-  Input,
   Label,
   Text,
   View,
@@ -32,21 +29,14 @@ import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import Modal from 'react-native-modal'
 import { Collapse, CollapseHeader, CollapseBody } from "accordion-collapse-react-native";
-import AnimatedMultistep from "react-native-animated-multistep";
-import PersonalStep from '../MatrimoneyForm/PersonalStep'
-import EducationalStep from '../MatrimoneyForm/EducationalStep'
-import ProfessionalStep from '../MatrimoneyForm/ProfessionalStep'
-import LifestyleStep from '../MatrimoneyForm/LifestyleStep'
-import FamilydetailsStep from '../MatrimoneyForm/FamilydetailsStep'
-import CommunicationStep from '../MatrimoneyForm/CommunicationStep'
-import Generalquestioner from '../MatrimoneyForm/Generalquestioner'
-import AdditionalPhotoStep from '../MatrimoneyForm/AdditionalPhotoStep'
 import { Icon } from 'react-native-elements'
 import TextInputCustome from '../../Compoment/TextInputCustome'
 import { Helper } from '../../Helper/Helper'
 import { Dimensions } from 'react-native'
 import { validationempty } from '../../Theme/Const'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { RadioButton } from 'react-native-paper';
+import DocumentPicker from 'react-native-document-picker'
 
 const options = {
   title: 'Select Image',
@@ -56,19 +46,10 @@ const options = {
   maxWidth: 300,
   maxHeight: 300,
   storageOptions: {
-    skipBackup: true
+    skipBackup: false
   }
 }
-const allSteps = [
-  { name: "step 1", component: PersonalStep },
-  { name: "step 2", component: EducationalStep },
-  { name: "step 3", component: ProfessionalStep },
-  { name: "step 4", component: FamilydetailsStep },
-  { name: "step 5", component: LifestyleStep },
-  { name: "step 6", component: CommunicationStep },
-  { name: "step 7", component: Generalquestioner },
-  { name: "step 8", component: AdditionalPhotoStep },
-];
+
 export default class LookinForMatrimony extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -84,40 +65,66 @@ export default class LookinForMatrimony extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      birthPlace: '',
+      birthPlace: 'Billimora',
       birthTime: new Date(),
-      btime: '',
+      btime: '14:10',
       gotra: '',
-      heightfFeet: '', heightInch: '',
-      weight: '',
-      skinColor: '',
-      expectation: '',
-      income: '',
+      heightfFeet: '5', heightInch: '3', weight: '45',
+      skinColor: 'brown', expectation: 'no any bed habit',
       isManglik: false,
-      kundliImage: '',
-      kundliPath: '',
-      kundliFileName: '',
-      kundliType: '',
+      kundliImage: '', kundliPath: '', kundliFileName: '', kundliType: '',
       img_url: '',
       samaj_id: '', casttatus: '', cast: [],
       member_id: '',
       connection_Status: '',
       defaultImage: '',
       isLoding: false, packageId: '',
-      member_type: '', name: '', profiletagline: '',
+      member_type: '', name: '', profiletagline: 'understanding',dob:new Date(),
       idSelect: false, visibleModal: null,
-      personaldesc: '', packageList: [],
+      personaldesc: 'nothing', packageList: [],
       isdobSelect: false, isbirthtimeSelect: false, showTimepicker: false,
-      kundliBelive: false,education:'',educationdesc:'',lifestylechoice:''
+      kundliBelive: false, education: '', educationdesc: 'nothing', lifestylechoice: 'nothing',
+      fathername: '', fatherProfession: 'electriction', mothername: '', motherprofession: 'House Wife', otherfamilydetails: 'Younger Brother Kishan Studay at now', nativeplace: '', familydesc: 'nothing',
+      profession: '', professiondesc: 'Developing Mobile application', income: '25000', isPustimarg: false, religion: 'Hindu', negativePoint: 'nothing', positivePoint: 'nothing',
+      mobile: '', country: '', state: '', city: '', email: '', address: '', countryArray: [], stateArray: [], cityarray: [], fbuser: 'Facebook', instauser: 'Instagram', linkedin: 'Linkedin', wappno: '918866310968',
+      takedrink: '', smoke: '', nonveg: '', eggs: '', lookfornri: '',
+      member1image: '', memberimage1: {}, member2image: '', memberimage2: {}, member3image: '', memberimage3: {}, member4image: '', memberimage4: {}, member5image: '', memberimage5: {}
+      // birthPlace: '',
+      // birthTime: new Date(),
+      // btime: '',
+      // gotra: '',
+      // heightfFeet: '', heightInch: '', weight: '',
+      // skinColor: '', expectation: '',
+      // isManglik: false,
+      // kundliImage: '', kundliPath: '', kundliFileName: '', kundliType: '',
+      // img_url: '',
+      // samaj_id: '', casttatus: '', cast: [],
+      // member_id: '',
+      // connection_Status: '',
+      // defaultImage: '',
+      // isLoding: false, packageId: '',
+      // member_type: '', name: '', profiletagline: '',dob:new Date(),
+      // idSelect: false, visibleModal: null,
+      // personaldesc: '', packageList: [],
+      // isdobSelect: false, isbirthtimeSelect: false, showTimepicker: false,
+      // kundliBelive: false, education: '', educationdesc: '', lifestylechoice: '',
+      // fathername: '', fatherProfession: '', mothername: '', motherprofession: '', otherfamilydetails: '', nativeplace: '', familydesc: '',
+      // profession: '', prfessiondesc: '', income: '', isPustimarg: false, religion: '', negativePoint: '', positivePoint: '',
+      // mobile: '', country: '', state: '', city: '', email: '', address: '', countryArray: [], stateArray: [], cityarray: [], fbuser: '', instauser: '', linkedin: '', wappno: '',
+      // takedrink: '', smoke: '', nonveg: '', eggs: '', lookfornri: '',
+      // member1image: '', memberimage1: {}, member2image: '', memberimage2: {}, member3image: '', memberimage3: {}, member4image: '', memberimage4: {}, member5image: '', memberimage5: {}
+
     }
   }
   async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-    const membedId = this.props.navigation.getParam('member_id')
-    const member_type = this.props.navigation.getParam('type')
+    const membedId = await AsyncStorage.getItem('member_id')
+    const member_type = await AsyncStorage.getItem('type')
     const isTermsAccept = await AsyncStorage.getItem('isTermsAccept')
 
     console.log('samaj id ', samaj_id)
+    console.log('membedId ', membedId)
+    console.log('member_type ', member_type)
     this.setState({
       samaj_id: samaj_id,
       member_id: membedId,
@@ -136,50 +143,73 @@ export default class LookinForMatrimony extends Component {
       } else {
         this.setState({ visibleModal: 'bottom' })
       }
-      // this.apiCalling()
+      this.apiCalling()
       this.packageApi()
+      this.countryApi()
       this.castApi()
     }
   }
   packageApi = async () => {
     var response = await Helper.GET('package_list?samaj_id=' + this.state.samaj_id)
-    console.log('check the response packages', response)
+    // console.log('check the response packages', response)
     this.setState({ packageList: response.data })
   }
   castApi = async () => {
     var response = await Helper.GET('cast_list?samaj_id=' + this.state.samaj_id)
-    console.log('check the response packages', response)
+    // console.log('check the response packages', response)
     this.setState({ cast: response.data })
   }
-  async apiCalling() {
-    const details = this.props.navigation.getParam('itemData')
-    const url = this.props.navigation.getParam('image_url')
-
-    console.log('item Data -->', url)
-    console.log('item Data -->', details)
-    if (details.member_manglik === 1) {
-      this.setState({ isSwitch: true })
-    } else {
-      this.setState({ isSwitch: false })
+  countryApi = async () => {
+    var responce = await Helper.GET('countryList')
+    // console.log('check the response ', responce)
+    if (responce.success) {
+      this.setState({ countryArray: responce.data })
     }
+  }
+  stateApiCall = async (country) => {
+    var responce = await Helper.GET('stateList?country_id=' + country)
+    console.log('check the response state', responce)
+    if (responce.success) {
+      this.setState({ stateArray: responce.data })
+    }
+  }
+  cityApiCall = async (state) => {
+    var responce = await Helper.GET('cityList?state_id=' + state)
+    console.log('check the response state', responce)
+    if (responce.success) {
+      this.setState({ cityarray: responce.data })
+    }
+  }
+  async apiCalling() {
+    var formdata = new FormData()
+    formdata.append('samaj_id', this.state.samaj_id)
+    formdata.append('member_id', this.state.member_id)
+    formdata.append('type', this.state.member_type)
+
+    var response = await Helper.POST('profile_data', formdata)
+    console.log('check the response -- > ', response)
 
     this.setState({
-      details: details,
-      img_url: url,
-      birthPlace: details.member_birth_place,
-      birthTime: details.member_birth_time,
-      gotra: details.member_gotra,
-      height: details.member_height,
-      weight: details.member_weight,
-      skinColor: details.skin_color,
-      expectation: details.member_lifepartner_expectations,
-      income: details.member_annual_income + '',
-      kundliImage: details.member_kundli,
-      defaultImage: details.member_kundli
+      name: response.member_details.member_name,
+      dob: response.member_details.member_birth_date,
+      birthPlace: response.member_details.place_birth,
+      fathername: response.other_information.member_father,
+      mothername: response.other_information.member_mother,
+      nativeplace: response.other_information.member_native_place,
+      email: response.other_information.member_email,
+      country: response.other_information.member_country_id,
+      state: response.other_information.member_state_id,
+      city: response.other_information.member_city_id,
+      address: response.other_information.member_address,
+      education: response.other_information.member_eq_id,
+      profession: response.other_information.member_pm_id,
+      mobile:'+'+response.member_details.member_mobile
     })
+    this.stateApiCall(response.other_information.member_country_id)
+    this.cityApiCall(response.other_information.member_state_id)
   }
 
-  async CapturePhoto() {
+  async CapturePhoto(type) {
     console.log('click on image ')
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -194,21 +224,38 @@ export default class LookinForMatrimony extends Component {
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       console.log('You can use the camera')
       ImagePicker.showImagePicker(options, response => {
-        console.log('responce cammera', response)
-
         if (response.didCancel) {
           console.log('responce didCancel')
         } else if (response.error) {
           console.log('responce error')
         } else {
           const source = response.uri
-          this.setState({
-            kundliImage: source,
-            kundliPath: response.path,
-            kundliFileName: response.fileName,
-            kundliType: response.type,
-            idSelect: true
-          })
+          console.log('response.type',response.type
+          )
+
+          if (type === 1) {
+            this.setState({ kundliImage: source, kundliPath: response.path, kundliFileName: response.fileName, kundliType: response.type, idSelect: true })
+          } else if (type === 2) {
+            this.setState({
+              memberimage1: { uri: 'file://' + response.path, name: response.fileName, type: response.type }, member1image: source
+            })
+          } else if (type === 3) {
+            this.setState({
+              memberimage2: { uri: 'file://' + response.path, name: response.fileName, type: response.type }, member2image: source
+            })
+          } else if (type === 4) {
+            this.setState({
+              memberimage3: { uri: 'file://' + response.path, name: response.fileName, type: response.type }, member3image: source
+            })
+          } else if (type === 5) {
+            this.setState({
+              memberimage4: { uri: 'file://' + response.path, name: response.fileName, type: response.type }, member4image: source
+            })
+          } else if (type === 6) {
+            this.setState({
+              memberimage5: { uri: 'file://' + response.path, name: response.fileName, type: response.type }, member5image: source
+            })
+          }
         }
       })
     } else {
@@ -217,63 +264,113 @@ export default class LookinForMatrimony extends Component {
   }
 
   async editData() {
-    var isManglik
+    var { name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
+      education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
+      isPustimarg, religion, packageId,negativePoint, positivePoint, mobile, email, country, state, city, address, fbuser, instauser, linkedin, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
+      member1image, memberimage1, member2image, memberimage2, member3image, memberimage3, member4image, memberimage4, member5image, memberimage5, member_id, samaj_id } = this.state
+
+    var isManglik, isPustimarg
     if (this.state.isManglik) {
       isManglik = 1
     } else {
-      isManglik = 0
+      isManglik = 2
+    }
+    if (this.state.isPustimarg) {
+      isPustimarg = 1
+    } else {
+      isPustimarg = 2
     }
 
-    if (this.state.income === null || this.state.income === '') {
-      await this.setState({ income: 0 })
-    }
+
 
     this.setState({ isLoding: true })
-    const formData = new FormData()
-    formData.append('member_id', this.state.member_id)
-    formData.append('member_samaj_id', this.state.samaj_id)
-    formData.append('member_birth_place', this.state.birthPlace)
-    formData.append('member_birth_time', this.state.birthTime)
-    formData.append('member_height', this.state.height)
-    formData.append('member_weight', this.state.weight)
-    formData.append('skin_color', this.state.skinColor)
-    formData.append('member_manglik', isManglik)
-    formData.append('member_lifepartner_expectations', this.state.expectation)
-    formData.append('member_annual_income', this.state.income)
-    formData.append('member_type', this.state.member_type)
-    // formData.append('member_gotra', this.state.gotra)
-    if (this.state.kundliPath === '' || this.state.kundliPath === null) {
-      formData.append('member_kundli', this.state.defaultImage)
-    } else {
-      formData.append('member_kundli', {
-        uri: 'file://' + this.state.kundliPath,
-        name: this.state.kundliFileName,
-        type: this.state.kundliType
-      })
+    const formdata = new FormData()
+    formdata.append('mm_samaj_id', samaj_id)
+    formdata.append('mm_member_id', member_id)
+    formdata.append('package_id', packageId)
+    formdata.append('profile_tag_line', profiletagline)
+    formdata.append('person_description', personaldesc)
+    formdata.append('mm_birth_place', birthPlace)
+    formdata.append('mm_birth_time', birthTime)
+    formdata.append('mm_height', heightfFeet)
+    formdata.append('mm_height_inch', heightInch)
+    formdata.append('mm_weight', weight)
+    formdata.append('mm_color', skinColor)
+    formdata.append('mm_manglik', isManglik)
+    formdata.append('mm_education', educationdesc)
+    formdata.append('family_details', familydesc)
+    formdata.append('mm_expectations', expectation)
+    formdata.append('sp_path', religion)
+    formdata.append('mm_income', validationempty(income) ? income : '')
+    formdata.append('mm_drink', takedrink)
+    formdata.append('pustimarg', isPustimarg)
+    formdata.append('looking_for_nri', lookfornri)
+    formdata.append('lifestyle_choice', lifestylechoice)
+    formdata.append('mm_smoke', smoke)
+    formdata.append('mm_nonveg', nonveg)
+    formdata.append('mm_egg', eggs)
+    formdata.append('negative_point', negativePoint)
+    formdata.append('dont_believe_in_kundali', kundliBelive)
+    formdata.append('positive_point', positivePoint)
+    formdata.append('member_eq_id', education),// chec
+    formdata.append('member_father', fathername)
+    formdata.append('member_native_place', nativeplace)
+    formdata.append('member_mother', mothername)
+    formdata.append('member_email', email)
+    formdata.append('countryid', country)
+    formdata.append('stateid', state)
+    formdata.append('cityid', city)
+    formdata.append('member_address', address)
+    formdata.append('member_fb', fbuser)
+    formdata.append('member_insta', instauser)
+    formdata.append('member_linkedin', linkedin)
+    formdata.append('member_whatsapp', wappno)
+    // formdata.append('matrimony_id', 9)
+    formdata.append('profession', profession)
+    formdata.append('profession_details', professiondesc)
+    formdata.append('father_profession', fatherProfession)
+    formdata.append('mother_profession', motherprofession)
+    formdata.append('family_other_details', otherfamilydetails)
+    if(validationempty(this.state.kundliPath)){
+    formdata.append('mm_kundali', {
+      uri: 'file://' + this.state.kundliPath,
+      name: this.state.kundliFileName,
+      type: this.state.kundliType,
+    })}else{
+      formdata.append('mm_kundali','')
+    }
+    if(!validationempty(member1image)){
+      formdata.append('member_photo_1', '')
+    }else{
+      formdata.append('member_photo_1', memberimage1)
+    }
+    if(!validationempty(member2image)){
+      formdata.append('member_photo_2', '')
+    }else{
+      formdata.append('member_photo_2', memberimage2)
+    }
+    if(!validationempty(member3image)){
+      formdata.append('member_photo_3', '')
+    }else{
+      formdata.append('member_photo_3', memberimage3)
+    }
+    if(!validationempty(member4image)){
+      formdata.append('member_photo_4', '')
+    }else{
+      formdata.append('member_photo_4', memberimage4)
+    }
+    if(!validationempty(member5image)){
+      formdata.append('member_photo_5', '')
+    }else{
+      formdata.append('member_photo_5', memberimage5)
     }
 
-    console.log('formdata-->', formData)
 
-    if (this.state.connection_Status) {
-      axois
-        .post(base_url + 'matrimony_update', formData)
-        .then(res => {
-          this.setState({ isLoding: false })
-          console.log('matrimony edit res--->', res.data)
-          if (res.data.status === true) {
-            Toast.show(res.data.message)
-            this.props.navigation.navigate('Dashboard')
-          } else {
-            Toast.show(res.data.message)
-          }
-        })
-        .catch(err => {
-          this.setState({ isLoding: false })
-          console.log('err', err)
-        })
-    } else {
-      Toast.show('No Internet Connection')
-    }
+    console.log('formdata-->', formdata)
+
+    var response = await Helper.POSTFILE('matrimonyAdd',formdata)
+    console.log('check the response',response)
+
   }
   onChangeTime = (event, selectedDate) => {
     // console.log('check the time', event)
@@ -281,13 +378,16 @@ export default class LookinForMatrimony extends Component {
     if (event.type === 'dismissed') {
       this.setState({ birthTime: new Date(), btime: '', showTimepicker: false })
     } else {
-      var timeview = moment(selectedDate).format('HH:mm:ss')
+      var timeview = moment(selectedDate).format('HH:mm')
       this.setState({ birthTime: selectedDate, btime: timeview, showTimepicker: false });
     }
   };
+
   render() {
     var { name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
-      education,educationdesc,lifestylechoice,expectation } = this.state
+      education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
+      isPustimarg, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
+      member1image, memberimage1, member2image, memberimage2, member3image, memberimage3, member4image, memberimage4, member5image, memberimage5 } = this.state
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar backgroundColor={Colors.Theme_color} barStyle='light-content' />
@@ -311,7 +411,7 @@ export default class LookinForMatrimony extends Component {
                       mode='dialog'
                       style={{ flex: 1, width: '100%', fontFamily: CustomeFonts.reguar, color: Colors.black }}
                     >
-                      <Picker.Item label='Select Marital Status' value='0' />
+                      <Picker.Item label='Select Package' value='0' />
                       {this.state.packageList.map((item, key) => (
                         <Picker.Item label={item.name} value={item.id + ''} key={key} />
                       ))}
@@ -415,8 +515,7 @@ export default class LookinForMatrimony extends Component {
                     <Label style={[Style.Textstyle, { paddingHorizontal: '5%', width: '90%', color: Colors.black, fontFamily: CustomeFonts.medium }]}> I Don`t Believe in Kundali/Janmakshar </Label>
                   </View>
                   <View style={{ paddingVertical: '5%' }}>
-                    <Label style={[Style.Textstyle, { paddingHorizontal: '5%', width: 'auto', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Kundali</Label>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <TouchableOpacity onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: img_url + kundliImage })}>
                         <Image
                           source={
@@ -452,7 +551,23 @@ export default class LookinForMatrimony extends Component {
                           Edit
                     </Text>
                       </TouchableOpacity>
-                    </View>
+                    </View> */}
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Kundli</Label>
+                    <TouchableOpacity style={{ paddingVertical: '2%' }} onPress={() => this.CapturePhoto(1)}>
+                      <Image
+                        resizeMode={'center'}
+                        source={
+                          !validationempty(kundliImage)
+                            ? AppImages.uploadimage
+                            : kundliImage.includes('http')
+                              ? { uri: kundliImage }
+                              : idSelect
+                                ? { uri: kundliImage }
+                                : { uri: img_url + kundliImage }
+                        }
+                        style={{ width: '100%', height: 150 }}
+                      />
+                    </TouchableOpacity>
                   </View>
                 </CollapseBody>
               </Collapse>
@@ -463,7 +578,7 @@ export default class LookinForMatrimony extends Component {
                   <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
                 </CollapseHeader>
                 <CollapseBody style={[Style.cardback]}>
-                <TextInputCustome title='Education' value={education} changetext={(education) => this.setState({ education })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Education' value={education} changetext={(education) => this.setState({ education })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                   <TextInputCustome title='Education Description' value={educationdesc} changetext={(educationdesc) => this.setState({ educationdesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
                 </CollapseBody>
               </Collapse>
@@ -474,8 +589,13 @@ export default class LookinForMatrimony extends Component {
                   <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
                 </CollapseHeader>
                 <CollapseBody style={[Style.cardback]}>
-                <TextInputCustome title='Education' value={education} changetext={(education) => this.setState({ education })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-                  <TextInputCustome title='Education Description' value={educationdesc} changetext={(educationdesc) => this.setState({ educationdesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Father Name' value={fathername} changetext={(fathername) => this.setState({ fathername })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Father Profession' value={fatherProfession} changetext={(fatherProfession) => this.setState({ fatherProfession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Mother Name ' value={mothername} changetext={(mothername) => this.setState({ mothername })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Mother Profession' value={motherprofession} changetext={(motherprofession) => this.setState({ motherprofession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Other Family Details (Brother& Sister)' value={otherfamilydetails} changetext={(otherfamilydetails) => this.setState({ otherfamilydetails })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Family Description' value={familydesc} changetext={(familydesc) => this.setState({ familydesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Native Place' value={nativeplace} changetext={(nativeplace) => this.setState({ nativeplace })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                 </CollapseBody>
               </Collapse>
               {/* Lifestyle */}
@@ -486,7 +606,303 @@ export default class LookinForMatrimony extends Component {
                 </CollapseHeader>
                 <CollapseBody style={[Style.cardback]}>
                   <TextInputCustome title='Lifestyle Choices' value={lifestylechoice} changetext={(lifestylechoice) => this.setState({ lifestylechoice })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
-                  <TextInputCustome title='Member Expectation from life partner' value={lifestylechoice} changetext={(lifestylechoice) => this.setState({ lifestylechoice })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Member Expectation from life partner' value={expectation} changetext={(expectation) => this.setState({ expectation })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                </CollapseBody>
+              </Collapse>
+              {/* Professional Details */}
+              <Collapse>
+                <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%' }]}>Professional Details</Text>
+                  <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
+                </CollapseHeader>
+                <CollapseBody style={[Style.cardback]}>
+                  <TextInputCustome title='Profession' value={profession} changetext={(profession) => this.setState({ profession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Yearly Income' value={income} changetext={(income) => this.setState({ income })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Profession Description' value={professiondesc} changetext={(professiondesc) => this.setState({ professiondesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                </CollapseBody>
+              </Collapse>
+              {/* Spiritual Details */}
+              <Collapse>
+                <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%' }]}>Spiritual Details</Text>
+                  <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
+                </CollapseHeader>
+                <CollapseBody style={[Style.cardback]}>
+                  <View style={{ paddingVertical: '4%', flexDirection: 'row', alignItems: 'center' }}>
+                    <Label style={[Style.Textstyle, { paddingHorizontal: '5%', width: 'auto', color: Colors.black, fontFamily: CustomeFonts.medium }]}> Do you follow Pustimarg ?</Label>
+                    <Switch
+                      style={{ position: 'absolute', right: 0 }}
+                      value={this.state.isPustimarg}
+                      onValueChange={isPustimarg =>
+                        this.setState({ isPustimarg })
+                      }
+                      thumbColor={
+                        this.state.isPustimarg
+                          ? Colors.Theme_color
+                          : Colors.light_pink
+                      }
+                      trackColor={Colors.lightThem}
+                    />
+                  </View>
+                  <TextInputCustome title='Which Religion / Spiritual path Do You Follow' value={religion} changetext={(religion) => this.setState({ religion })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Write Few Negative Points about self' value={negativePoint} changetext={(negativePoint) => this.setState({ negativePoint })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Write Few Positive Points about self' value={positivePoint} changetext={(positivePoint) => this.setState({ positivePoint })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                </CollapseBody>
+              </Collapse>
+              {/* Communication Details */}
+              <Collapse>
+                <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%' }]}>Communication Details</Text>
+                  <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
+                </CollapseHeader>
+                <CollapseBody style={[Style.cardback]}>
+                  <TextInputCustome title='Mobile No' value={mobile} changetext={(mobile) => this.setState({ mobile })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'number'} editable={false} />
+                  <TextInputCustome title='Email' value={email} changetext={(email) => this.setState({ email })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'email-address'} editable={true} />
+                  <View style={{ paddingVertical: 10, width: '100%' }}>
+                    <Label style={[Style.Textstyle, { paddingHorizontal: '5%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Country</Label>
+                    <View style={{ paddingHorizontal: '3%' }}>
+                      <Picker
+                        selectedValue={this.state.country}
+                        onValueChange={(itemValue, itemIndex) => {
+                          this.setState({ country: itemValue })
+                          this.stateApiCall(itemValue)
+                        }}
+                        mode={'dialog'}
+                      >
+                        <Picker.Item label='Select Country' value='0' />
+                        {this.state.countryArray.map((item, key) => (
+                          <Picker.Item label={item.country_name} value={item.code} key={key} />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: 'row' }}>
+                    <View style={{ paddingVertical: 10, width: '50%' }}>
+                      <Label style={[Style.Textstyle, { paddingHorizontal: '5%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>State</Label>
+                      <View style={{ paddingHorizontal: '3%' }}>
+                        <Picker
+                          selectedValue={this.state.state}
+                          onValueChange={(itemValue, itemIndex) => {
+                            this.setState({ state: itemValue })
+                            this.cityApiCall(itemValue)
+                          }}
+                          mode={'dialog'}
+                        >
+                          <Picker.Item label='Select State' value='0' />
+                          {this.state.stateArray.map((item, key) => (
+                            <Picker.Item label={item.state_name} value={item.id} key={key} />
+                          ))}
+                        </Picker>
+                      </View>
+                    </View>
+                    <View style={{ paddingVertical: 10, width: '50%' }}>
+                      <Label style={[Style.Textstyle, { paddingHorizontal: '5%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>City</Label>
+                      <View style={{ paddingHorizontal: '3%' }}>
+                        <Picker
+                          selectedValue={this.state.city}
+                          onValueChange={(itemValue, itemIndex) => {
+                            this.setState({ city: itemValue })
+                          }}
+                          mode={'dialog'}
+                        >
+                          <Picker.Item label='Select City' value='0' />
+                          {this.state.cityarray.map((item, key) => (
+                            <Picker.Item label={item.city_name} value={item.id} key={key} />
+                          ))}
+                        </Picker>
+                      </View>
+                    </View>
+                  </View>
+                  <TextInputCustome title='Address' value={address} changetext={(address) => this.setState({ address })} maxLength={50} multiline={true} numberOfLines={3} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Facebook Profile' value={fbuser} changetext={(fbuser) => this.setState({ fbuser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Instagram Profile' value={instauser} changetext={(instauser) => this.setState({ instauser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Linkedin Profile' value={linkedin} changetext={(linkedin) => this.setState({ linkedin })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                  <TextInputCustome title='Whatsapp Number Enter Whatsapp No With Country Code(Not +)' value={wappno} changetext={(wappno) => this.setState({ wappno })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'number-pad'} editable={true} />
+                </CollapseBody>
+              </Collapse>
+              {/* General Questioner */}
+              <Collapse>
+                <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%' }]}>General Questioner</Text>
+                  <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
+                </CollapseHeader>
+                <CollapseBody style={[Style.cardback]}>
+                  <View style={{ paddingVertical: '3%', paddingHorizontal: '5%' }}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Looking for NRI?</Label>
+                    <RadioButton.Group onValueChange={lookfornri => this.setState({ lookfornri })} value={lookfornri}>
+                      <View style={Style.flexView2}>
+                        <RadioButton value="1" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                        <RadioButton value="2" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View style={{ paddingVertical: '3%', paddingHorizontal: '5%' }}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Do you take HARD DRINK ?</Label>
+                    <RadioButton.Group onValueChange={takedrink => this.setState({ takedrink })} value={takedrink}>
+                      <View style={Style.flexView2}>
+                        <RadioButton value="1" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                        <RadioButton value="2" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                        <RadioButton value="3" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View style={{ paddingVertical: '3%', paddingHorizontal: '5%' }}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Do you do SMOKE ?</Label>
+                    <RadioButton.Group onValueChange={smoke => this.setState({ smoke })} value={smoke}>
+                      <View style={Style.flexView2}>
+                        <RadioButton value="1" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                        <RadioButton value="2" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                        <RadioButton value="3" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View style={{ paddingVertical: '3%', paddingHorizontal: '5%' }}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Do you take NON-VEG ?</Label>
+                    <RadioButton.Group onValueChange={nonveg => this.setState({ nonveg })} value={nonveg}>
+                      <View style={Style.flexView2}>
+                        <RadioButton value="1" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                        <RadioButton value="2" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                        <RadioButton value="3" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                  <View style={{ paddingVertical: '3%', paddingHorizontal: '5%' }}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Do you take Eggs ?</Label>
+                    <RadioButton.Group onValueChange={eggs => this.setState({ eggs })} value={eggs}>
+                      <View style={Style.flexView2}>
+                        <RadioButton value="1" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                        <RadioButton value="2" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                        <RadioButton value="3" color={Colors.Theme_color} />
+                        <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                      </View>
+                    </RadioButton.Group>
+                  </View>
+                </CollapseBody>
+              </Collapse>
+              {/* Additional photos */}
+              <Collapse>
+                <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%' }]}>Additional Photos</Text>
+                  <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
+                </CollapseHeader>
+                <CollapseBody style={[Style.cardback]}>
+                  <View style={Style.flexView2}>
+                    <View style={{ paddingVertical: '2%', width: '50%' }}>
+                      <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Member Photo 1</Label>
+                      <TouchableOpacity style={{ paddingVertical: '2%', alignItems: 'center' }} onPress={() => this.CapturePhoto(2)}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(member1image)
+                              ? AppImages.uploadimage
+                              : member1image.includes('http')
+                                ? { uri: member1image }
+                                : idSelect
+                                  ? { uri: member1image }
+                                  : { uri: img_url + member1image }
+                          }
+                          style={{ width: '90%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ paddingVertical: '2%', width: '50%' }}>
+                      <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Member Photo 2</Label>
+                      <TouchableOpacity style={{ paddingVertical: '2%', alignItems: 'center' }} onPress={() => this.CapturePhoto(3)}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(member2image)
+                              ? AppImages.uploadimage
+                              : member2image.includes('http')
+                                ? { uri: member2image }
+                                : idSelect
+                                  ? { uri: member2image }
+                                  : { uri: img_url + member2image }
+                          }
+                          style={{ width: '90%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={Style.flexView2}>
+                    <View style={{ paddingVertical: '2%', width: '50%' }}>
+                      <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Member Photo 3</Label>
+                      <TouchableOpacity style={{ paddingVertical: '2%', alignItems: 'center' }} onPress={() => this.CapturePhoto(4)}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(member3image)
+                              ? AppImages.uploadimage
+                              : member3image.includes('http')
+                                ? { uri: member3image }
+                                : idSelect
+                                  ? { uri: member3image }
+                                  : { uri: img_url + member3image }
+                          }
+                          style={{ width: '90%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ paddingVertical: '2%', width: '50%' }}>
+                      <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Member Photo 4</Label>
+                      <TouchableOpacity style={{ paddingVertical: '2%', alignItems: 'center' }} onPress={() => this.CapturePhoto(5)}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(member4image)
+                              ? AppImages.uploadimage
+                              : member4image.includes('http')
+                                ? { uri: member4image }
+                                : idSelect
+                                  ? { uri: member4image }
+                                  : { uri: img_url + member4image }
+                          }
+                          style={{ width: '90%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Member Photo 5</Label>
+                  <TouchableOpacity style={{ paddingVertical: '2%', alignItems: 'center' }} onPress={() => this.CapturePhoto(6)}>
+                    <Image
+                      resizeMode={'contain'}
+                      source={
+                        !validationempty(member5image)
+                          ? AppImages.uploadimage
+                          : member5image.includes('http')
+                            ? { uri: member5image }
+                            : idSelect
+                              ? { uri: member5image }
+                              : { uri: img_url + member5image }
+                      }
+                      style={{ width: '100%', height: 150 }}
+                    />
+                  </TouchableOpacity>
+                  <View>
+                    {this.state.isLoding ? (
+                      <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+                    ) : (
+                        <TouchableOpacity
+                          style={[Style.Buttonback, { marginTop: 10 }]}
+                          onPress={() => this.editData()}
+                        >
+                          <Text style={Style.buttonText}>Submit</Text>
+                        </TouchableOpacity>
+                      )}
+                  </View>
                 </CollapseBody>
               </Collapse>
               {/* <View>
@@ -497,7 +913,7 @@ export default class LookinForMatrimony extends Component {
                       style={[Style.Buttonback, (style = { marginTop: 10 })]}
                       onPress={() => this.editData()}
                     >
-                      <Text style={Style.buttonText}>Update Details</Text>
+                      <Text style={Style.buttonText}>Submit</Text>
                     </TouchableOpacity>
                   )}
               </View> */}

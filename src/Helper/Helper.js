@@ -16,7 +16,19 @@ var Helper = {
             url:base_url + url,
             method: 'GET'
         }).then(res => { return res.data }).catch((e) => console.log('GET Method Error => ', e))
+    },  
+    POSTFILE: async function (url, body) {
+        return Axios({
+            url:base_url + url,
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
+            },
+            data: body,
+        }).then(res => { return res.data }).catch((e) => {return e})
     },
+
     user_id: AsyncStorage.getItem('user_id'),
     showToast: function (msg) {
         if (msg) {

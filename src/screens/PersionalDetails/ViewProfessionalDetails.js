@@ -248,7 +248,7 @@ export default class ViewProfessionalDetails extends Component {
         formData.append('p_instagram', this.state.p_instagram)
         formData.append('p_facebook', this.state.p_facebook)
         formData.append('p_linkedin', this.state.p_linkedin)
-        formData.append('p_whatsapp', "+"+this.state.phonecode+this.state.p_whatsapp)
+        formData.append('p_whatsapp', this.state.p_whatsapp)
         formData.append('p_twitter', this.state.p_twitter)
         formData.append('website', this.state.website)
         formData.append('p_youtube', this.state.ytubelink)
@@ -630,7 +630,7 @@ export default class ViewProfessionalDetails extends Component {
                                         <Item stackedLabel>
                                             <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
                                                 Whatsapp</Label>
-                                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                                            {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                                               <View style={{width:'50%'}}>
                                                 <Picker
                                                     selectedValue={this.state.phonecode}
@@ -652,8 +652,8 @@ export default class ViewProfessionalDetails extends Component {
                                                         />
                                                     ))}
                                                 </Picker>
-                                                </View>
-                                                <Input style={[Style.Textstyle,{width:'80%'}]}
+                                                </View> */}
+                                                <Input style={[Style.Textstyle,{width:'100%'}]}
                                                     multiline={false}
                                                     onChangeText={(value) => this.setState({ p_whatsapp: value })}
                                                     value={this.state.p_whatsapp}
@@ -662,7 +662,7 @@ export default class ViewProfessionalDetails extends Component {
                                                     minLength={8}
                                                 >
                                                 </Input>
-                                            </View>
+                                            {/* </View> */}
                                         </Item>
                                     </Form>
 

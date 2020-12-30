@@ -39,6 +39,7 @@
     "react-native-masonry-list": "^2.16.1",
     "react-native-modal": "^11.5.4",
     "react-native-onesignal": "^3.9.1",
+    "react-native-paper": "^4.5.0",
     "react-native-qrcode-svg": "^6.0.6",
     "react-native-radio-buttons-group": "^1.0.7",
     "react-native-razorpay": "^2.2.1",
