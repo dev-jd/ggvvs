@@ -81,22 +81,24 @@ import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import Notification from './src/screens/Notification';
 import CompanyDetails from './src/screens/CompanyDetails';
 import EditProduct from './src/screens/PersionalDetails/EditProduct';
+import MatrimonyPackage from './src/screens/MatrimonyPackage';
 
 const matrimoneyNavi = createMaterialTopTabNavigator({
-    LookinForMatrimony: {
-        screen: LookinForMatrimony,
-        navigationOptions: {
-            title: 'Register'
-        }
-    },
     Matrimony: {
         screen: Matrimony,
         navigationOptions: {
             title: 'Search'
         }
+    },
+    LookinForMatrimony: {
+        screen: LookinForMatrimony,
+        navigationOptions: {
+            title: 'Register'
+        }
     }
 }, {
-    initialRouteName: 'LookinForMatrimony',
+    initialRouteName: 'Matrimony',
+    swipeEnabled:false,
     tabBarOptions: {
         upperCaseLabel: false,
         style: {
@@ -443,6 +445,9 @@ const Stack_Navi = createStackNavigator(
         },
         Notification: {
             screen: Notification
+        },
+        MatrimonyPackage: {
+            screen: MatrimonyPackage
         },
     },
 )

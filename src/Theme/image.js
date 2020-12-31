@@ -23,6 +23,10 @@ const AppImages =
     wishlist:require('../images/wishlist.png'),
     logo:require('../images/samaj.png'),
     uploadimage:require('../images/uploadimage.png'),
+    back1:require('../images/back1.jpg'),
+    back2:require('../images/back2.jpg'),
+    back3:require('../images/back3.jpg'),
+    back4:require('../images/back4.jpg'),
     
 
 }

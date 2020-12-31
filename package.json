@@ -50,6 +50,7 @@
     "react-native-screens": "^2.0.0-beta.4",
     "react-native-share": "^4.1.0",
     "react-native-simple-toast": "^1.0.0",
+    "react-native-snap-carousel": "^3.9.1",
     "react-native-sound": "^0.11.0",
     "react-native-svg": "^12.1.0",
     "react-native-swiper": "^1.6.0",
