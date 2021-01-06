@@ -27,6 +27,9 @@ const AppImages =
     back2:require('../images/back2.jpg'),
     back3:require('../images/back3.jpg'),
     back4:require('../images/back4.jpg'),
+    back5:require('../images/back5.jpg'),
+    back6:require('../images/back6.jpg'),
+    back7:require('../images/back7.jpg'),
     
 
 }

@@ -18,7 +18,8 @@ const URL = {
 }
 
 const STRINGNAME = {
-  appName:'GGVVS Samaaj'
+  appName:'GGVVS Samaaj',
+  razerpayKey:'rzp_test_lemdGJXOYmQDZZ'
 }
 
 const randomNumber = () => {

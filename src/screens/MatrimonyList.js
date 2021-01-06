@@ -5,25 +5,11 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-SafeAreaView,
-  ActivityIndicator
+  SafeAreaView,
+  ActivityIndicator, ImageBackground
 } from 'react-native'
 import {
-  Form,
-  Item,
-  Input,
-  Label,
-  Container,
-  Header,
-  Content,
-  Card,
-  CardItem,
-  Thumbnail,
   Text,
-  Button,
-  Left,
-  Body,
-  Right,
   View
 } from 'native-base'
 import Swiper from 'react-native-swiper'
@@ -38,11 +24,13 @@ import { pic_url } from '../Static'
 import { base_url } from '../Static'
 import axois from 'axios'
 import Moment from 'moment'
+import AppImages from '../Theme/image'
 
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Matrimony List',
+      backgroundColor: Colors.Theme_color,
       headerTitleStyle: {
         width: '100%',
         fontWeight: '200',
@@ -57,8 +45,8 @@ export default class App extends Component {
       data_list: [],
       data_list2: [],
       isLoding: false,
-      imageUrlMember:'',
-      imageUrlKundli:''
+      imageUrlMember: '',
+      imageUrlKundli: '',imageUrlMatrimony:''
     }
   }
 
@@ -69,27 +57,7 @@ export default class App extends Component {
       samaj_id: samaj_id
     })
 
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
-        this.apiCalling()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
-  }
-
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      this.apiCalling()
-    } else {
-      this.setState({ connection_Status: false })
-    }
+    this.apiCalling()
   }
 
   async apiCalling() {
@@ -97,13 +65,16 @@ export default class App extends Component {
     var list2 = this.props.navigation.getParam('mainmember')
     var imageUrlKundli = this.props.navigation.getParam('imageUrlKundli')
     var imageUrlMember = this.props.navigation.getParam('imageUrlMember')
+    var imageUrlMatrimony = this.props.navigation.getParam('imageUrlMatrimony')
     this.setState({
       data_list: list,
       data_list2: list2,
-      imageUrlKundli:imageUrlKundli,
-      imageUrlMember:imageUrlMember,
+      imageUrlKundli: imageUrlKundli,
+      imageUrlMember: imageUrlMember,
+      imageUrlMatrimony,
       isLoding: false
     })
+    // console.log("list2", list2)
     // this.setState({ isLoding: true })
     // console.log(
     //   'base url: --',
@@ -147,7 +118,7 @@ export default class App extends Component {
         }
       >
         <View
-          style={[Style.cardback, (style = { flex: 1, flexDirection: 'row' })]}
+          style={[Style.cardback, { flex: 1, flexDirection: 'row' }]}
         >
           <TouchableOpacity onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: this.state.imageUrlMember + item.md_photo })}>
             {item.md_photo === null ? (
@@ -198,11 +169,12 @@ export default class App extends Component {
     return (
       <TouchableOpacity
         onPress={() =>
-          this.props.navigation.navigate('MatrimonyDetails', { itemData: item, member: 'main',imageUrl:this.state.imageUrlKundli })
+          this.props.navigation.navigate('MatrimonyDetails', { itemData: item,matrimonyData:item.matrimony_masters, member: 'main', imageUrl: this.state.imageUrlKundli,
+          imageUrlMatrimony:this.state.imageUrlMatrimony })
         }
       >
         <View
-          style={[Style.cardback, (style = { flex: 1, flexDirection: 'row' })]}
+          style={[Style.cardback, { flex: 1, flexDirection: 'row' }]}
         >
           <TouchableOpacity onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: this.state.imageUrlMember + item.member_photo })}>
 
@@ -225,13 +197,13 @@ export default class App extends Component {
           </TouchableOpacity>
           <View style={{ flex: 5, justifyContent: 'center', marginLeft: 10 }}>
             <Text style={Style.Textmainstyle}>{item.member_name}</Text>
-
+{/* 
             <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Code</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
                 {item.member_code}
               </Text>
-            </View>
+            </View> */}
 
             <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Birth Date</Text>
@@ -241,9 +213,9 @@ export default class App extends Component {
             </View>
 
             <View style={{ flexDirection: 'row' }}>
-              <Text style={[Style.Textstyle, { flex: 3 }]}>Country</Text>
+              <Text style={[Style.Textstyle, { flex: 3 }]}>Profile</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
-                {item.country_name}
+                {item.matrimony_masters.profile_tag_line}
               </Text>
             </View>
           </View>
@@ -259,22 +231,29 @@ export default class App extends Component {
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
-        {this.state.isLoding ? (
-          <ActivityIndicator color={Colors.Theme_color} size={'large'} />
-        ) : (
-            <View>
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={this.state.data_list}
-                renderItem={item => this.categoryRendeItem(item)}
-              />
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={this.state.data_list2}
-                renderItem={item => this.categoryRendeItem2(item)}
-              />
-            </View>
-          )}
+        <ImageBackground source={AppImages.back5}
+          blurRadius={1}
+          style={{
+            flex: 1,
+            resizeMode: "cover",
+          }}>
+          {this.state.isLoding ? (
+            <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+          ) : (
+              <View style={{ padding: '3%' }}>
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  data={this.state.data_list}
+                  renderItem={item => this.categoryRendeItem(item)}
+                />
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  data={this.state.data_list2}
+                  renderItem={item => this.categoryRendeItem2(item)}
+                />
+              </View>
+            )}
+        </ImageBackground>
       </SafeAreaView>
     )
   }

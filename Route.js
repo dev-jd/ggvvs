@@ -98,7 +98,7 @@ const matrimoneyNavi = createMaterialTopTabNavigator({
     }
 }, {
     initialRouteName: 'Matrimony',
-    swipeEnabled:false,
+    swipeEnabled: false,
     tabBarOptions: {
         upperCaseLabel: false,
         style: {
@@ -264,7 +264,7 @@ const Stack_Navi = createStackNavigator(
             screen: PropertyBookingList,
         },
         Matrimony: {
-            screen: matrimoneyNavi,
+            screen: Matrimony,
             navigationOptions: {
                 header: null
             }
@@ -447,7 +447,10 @@ const Stack_Navi = createStackNavigator(
             screen: Notification
         },
         MatrimonyPackage: {
-            screen: MatrimonyPackage
+            screen: MatrimonyPackage,
+            navigationOptions: {
+                header: null
+            }
         },
     },
 )

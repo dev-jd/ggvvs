@@ -8,24 +8,12 @@ import {
   Picker,
   ToastAndroid,
   ActivityIndicator,
-  SafeAreaView
+  SafeAreaView, ImageBackground
 } from 'react-native'
 import {
-  Form,
   Item,
   Input,
-  Label,
-  Container,
-  Header,
-  Content,
-  Card,
-  CardItem,
-  Thumbnail,
   Text,
-  Button,
-  Left,
-  Body,
-  Right,
   View
 } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -47,10 +35,11 @@ export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Matrimony',
+      backgroundColor: Colors.lightwhite,
       headerTitleStyle: {
         width: '100%',
         fontWeight: '200',
-        fontFamily: CustomeFonts.regular
+        fontFamily: CustomeFonts.regular,
       }
     }
   }
@@ -58,34 +47,17 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      gender: '',
+      gender: '1',
       maritalstatus: '',
-      fromage: null,
-      toage: null,
+      fromage: '18',
+      toage: '60',
       banner_img: '',
       banner_url: '',
       image_url: '',
+      imageUrlMatrimony: '',
       main_member_data: [],
       family_data: [],
       dataSource: [],
-      dataSource1: [
-        {
-          id: 2,
-          title: 'Single'
-        },
-        {
-          id: 3,
-          title: 'Divorcee'
-        },
-        {
-          id: 4,
-          title: 'Widower (Female)'
-        },
-        {
-          id: 5,
-          title: 'Widower (Male)'
-        }
-      ]
     }
   }
 
@@ -127,7 +99,8 @@ export default class App extends Component {
   }
 
   searchMember() {
-    if (this.state.gender === '0') {
+    console.log('vheck gender',this.state.gender)
+    if (this.state.gender === '0' || this.state.gender == '') {
       Toast.show('Select Gender')
     } else if (!this.state.fromage) {
       Toast.show('Enter From Age ')
@@ -144,7 +117,7 @@ export default class App extends Component {
 
   async searchMemberApi() {
     var formdata = new FormData()
-    formdata.append('md_gender_id', this.state.gender)
+    formdata.append('gender_id', this.state.gender)
     // formdata.append('md_marital_status', this.state.maritalstatus)
     formdata.append('f_age', this.state.fromage)
     formdata.append('t_age', this.state.toage)
@@ -156,13 +129,14 @@ export default class App extends Component {
         if (res.data.status === true) {
           this.setState({
             main_member_data: res.data.main_member_data,
-            family_data: res.data.family_data
+            // family_data: res.data.family_data
           })
           this.props.navigation.navigate('MatrimonyList', {
-            itemData: res.data.family_data,
+            // itemData: res.data.family_data,
             mainmember: res.data.main_member_data,
             imageUrlKundli: res.data.kundli,
-            imageUrlMember: res.data.member
+            imageUrlMember: res.data.profile_photo,
+            imageUrlMatrimony: res.data.matrimony_photo_url
           })
         } else {
           Toast.show('No Data Available')
@@ -178,106 +152,67 @@ export default class App extends Component {
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
-           <StatusBar backgroundColor={Colors.Theme_color} barStyle='light-content'/>
-        <ScrollView style={Style.cointainer1}>
-          <View style={{ paddingHorizontal: '2%', paddingVertical: '2%' }}>
-            <View
-              style={[
-                Style.cardback,
-                (style = { flexDirection: 'column', padding: 10 })
-              ]}
-            >
-
-              <View style={{ justifyContent: 'center', padding: 10 }}>
-                <Text
+        <StatusBar backgroundColor={Colors.Theme_color} barStyle='light-content' />
+        <ImageBackground source={AppImages.back5}
+          blurRadius={1}
+          style={{
+            flex: 1,
+            resizeMode: "cover",
+            justifyContent: "center"
+          }}>
+          <View style={{ justifyContent: 'center' }}>
+            <ScrollView>
+              <View style={{ paddingHorizontal: '2%', paddingVertical: '2%' }}>
+                <View
                   style={[
-                    Style.Textmainstyle,
-                    (style = { alignSelf: 'center', color: Colors.Theme_color })
+                    Style.cardback,
+                    { flexDirection: 'column', padding: 10, backgroundColor: Colors.blackTp }
                   ]}
                 >
-                  Search for Candidates
+
+                  <View style={{ justifyContent: 'center', padding: 10 }}>
+                    <Text
+                      style={[
+                        Style.Textmainstyle,
+                        { alignSelf: 'center', color: Colors.Theme_color }
+                      ]}
+                    >
+                      Search for Candidates
                 </Text>
-              </View>
+                  </View>
 
-              <View style={{ flexDirection: 'row' }}>
-                <Text
-                  style={[
-                    Style.Textstyle,
-                    (style = { flex: 1, alignSelf: 'center' })
-                  ]}
-                >
-                  Search Gender
+                  <View style={{ flexDirection: 'row' }}>
+                    <Text
+                      style={[
+                        Style.Textstyle,
+                        { flex: 1, alignSelf: 'center', color: Colors.white }
+                      ]}
+                    >
+                      Search Gender
                 </Text>
-                <Picker
-                  selectedValue={this.state.gender}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ gender: itemValue })
-                  }
-                  mode={'dialog'}
-                  style={{
-                    flex: 1,
-                    width: '100%',
-                    fontFamily: CustomeFonts.reguar,
-                    color: Colors.black
-                  }}
-                >
-                  <Picker.Item label='Select Gender' value='0' />
-                  {this.state.dataSource.map((item, key) => (
-                    <Picker.Item
-                      label={item.gender_name}
-                      value={item.id}
-                      key={key}
-                    />
-                  ))}
-                </Picker>
-              </View>
-
-              {/* <View style={{ flexDirection: 'row' }}>
-              <Text
-                style={[
-                  Style.Textstyle,
-                  (style = { flex: 1, alignSelf: 'center' })
-                ]}
-              >
-                Marital status
-              </Text>
-              <Picker
-                selectedValue={this.state.maritalstatus}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({ maritalstatus: itemValue })
-                }
-                mode={'dialog'}
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  fontFamily: CustomeFonts.reguar,
-                  color: Colors.black
-                }}
-              >
-                <Picker.Item label='Select Marital Status' value='0' />
-                {this.state.dataSource1.map((item, key) => (
-                  <Picker.Item
-                    label={item.title}
-                    value={item.id}
-                    key={key}
-                  />
-                ))}
-              </Picker>
-            </View> */}
-
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  marginTop: 10
-                }}
-              >
-                <View style={{ width: '100%', flexDirection: 'column' }}>
-                  <Text
-                    style={[Style.Textstyle, (style = { alignSelf: 'center' })]}
-                  >
-                    Age between
-                  </Text>
+                    <Picker
+                      selectedValue={this.state.gender}
+                      onValueChange={(itemValue, itemIndex) =>
+                        this.setState({ gender: itemValue })
+                      }
+                      mode={'dialog'}
+                      style={{
+                        flex: 1,
+                        width: '100%',
+                        fontFamily: CustomeFonts.reguar,
+                        color: Colors.white
+                      }}
+                    >
+                      <Picker.Item label='Select Gender' value='0' />
+                      {this.state.dataSource.map((item, key) => (
+                        <Picker.Item
+                          label={item.gender_name}
+                          value={item.id}
+                          key={key}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
 
                   <View
                     style={{
@@ -286,69 +221,93 @@ export default class App extends Component {
                       marginTop: 10
                     }}
                   >
-                    <Item
-                      style={[
-                        Style.Textstyle,
-                        (style = { justifyContent: 'center', flex: 1 })
-                      ]}
-                    >
-                      <Input
-                        style={[
-                          Style.Textstyle,
-                          (style = { textAlign: 'center' })
-                        ]}
-                        placeholder={'0'}
-                        keyboardType='number-pad'
-                        maxLength={2}
-                        onChangeText={value =>
-                          this.setState({ fromage: value })
-                        }
-                        value={this.state.fromage}
-                      ></Input>
-                    </Item>
-
-                    <View style={{ justifyContent: 'center', flex: 1 }}>
+                    <View style={{ width: '100%', flexDirection: 'column' }}>
                       <Text
-                        style={[
-                          Style.Textstyle,
-                          (style = { textAlign: 'center' })
-                        ]}
+                        style={[Style.Textstyle, { alignSelf: 'center', color: Colors.white }]}
                       >
-                        AND
-                      </Text>
-                    </View>
+                        Age between
+                  </Text>
 
-                    <Item
-                      style={[
-                        Style.Textstyle,
-                        (style = { justifyContent: 'center', flex: 1 })
-                      ]}
-                    >
-                      <Input
-                        style={[
-                          Style.Textstyle,
-                          (style = { textAlign: 'center' })
-                        ]}
-                        placeholder={'0'}
-                        keyboardType='number-pad'
-                        maxLength={2}
-                        onChangeText={value => this.setState({ toage: value })}
-                        value={this.state.toage}
-                      ></Input>
-                    </Item>
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          flexDirection: 'row',
+                          marginTop: 10
+                        }}
+                      >
+                        <Item
+                          style={[
+                            Style.Textstyle,
+                            { justifyContent: 'center', flex: 1 }
+                          ]}
+                        >
+                          <Input
+                            style={[
+                              Style.Textstyle,
+                              { textAlign: 'center', color: Colors.white }
+                            ]}
+                            placeholder={'0'}
+                            placeholderTextColor={Colors.white}
+                            keyboardType='number-pad'
+                            maxLength={2}
+                            onChangeText={value =>
+                              this.setState({ fromage: value })
+                            }
+                            value={this.state.fromage}
+                          ></Input>
+                        </Item>
+
+                        <View style={{ justifyContent: 'center', flex: 1 }}>
+                          <Text
+                            style={[
+                              Style.Textstyle, { textAlign: 'center', color: Colors.white }
+                            ]}
+                          >
+                            AND
+                      </Text>
+                        </View>
+
+                        <Item
+                          style={[
+                            Style.Textstyle,
+                            { justifyContent: 'center', flex: 1 }
+                          ]}
+                        >
+                          <Input
+                            style={[
+                              Style.Textstyle,
+                              { textAlign: 'center', color: Colors.white }
+                            ]}
+                            placeholder={'0'}
+                            placeholderTextColor={Colors.white}
+                            keyboardType='number-pad'
+                            maxLength={2}
+                            onChangeText={value => this.setState({ toage: value })}
+                            value={this.state.toage}
+                          ></Input>
+                        </Item>
+                      </View>
+                    </View>
                   </View>
+                  <View style={{ height: 20 }} />
+                  <TouchableOpacity
+                    onPress={() => this.searchMember()}
+                    style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
+                  >
+                    <Text style={Style.buttonText}>Search</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('LookinForMatrimony')}
+                    style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
+                  >
+                    <Text style={Style.buttonText}>Register</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-
-              <TouchableOpacity
-                onPress={() => this.searchMember()}
-                style={[Style.Buttonback, (style = { margin: 10 })]}
-              >
-                <Text style={Style.buttonText}>Search</Text>
-              </TouchableOpacity>
-            </View>
+            </ScrollView>
           </View>
-        </ScrollView>
+        </ImageBackground>
       </SafeAreaView>
     )
   }

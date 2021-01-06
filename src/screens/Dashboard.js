@@ -205,6 +205,7 @@ export default class App extends Component {
     //   formdata.append('p_id', date_check)
 
     // } else {
+      
     formdata.append('samaj_id', this.state.samaj_id)
     formdata.append('member_id', this.state.member_id)
     formdata.append('type', this.state.member_type)

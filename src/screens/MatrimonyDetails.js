@@ -7,26 +7,10 @@ import {
   ScrollView,
   Switch,
   Image,
-  Picker,
-  ToastAndroid,
- SafeAreaView
+  SafeAreaView, ImageBackground
 } from 'react-native'
 import {
-  Form,
-  Item,
-  Input,
-  Label,
-  Container,
-  Header,
-  Content,
-  Card,
-  CardItem,
-  Thumbnail,
-  Text,
-  Button,
-  Left,
-  Body,
-  Right,
+  Label, Text, Item,
   View
 } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -36,7 +20,7 @@ import Icon from 'react-native-vector-icons/Feather'
 import CustomeFonts from '../Theme/CustomeFonts'
 import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
-import images from '../Theme/image'
+import AppImages from '../Theme/image'
 import ImageViewer from 'react-native-image-zoom-viewer'
 import HTML from 'react-native-render-html'
 import {
@@ -46,6 +30,9 @@ import {
 } from 'react-native-render-html-table-bridge'
 import { pic_url } from '../Static'
 import Moment from 'moment'
+import { Collapse, CollapseHeader, CollapseBody } from "accordion-collapse-react-native";
+import { validationempty } from '../Theme/Const';
+
 
 class MatrimonyDetails extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -64,7 +51,9 @@ class MatrimonyDetails extends Component {
       item_details: {},
       member_type: '',
       isLoding: false,
-      imageUrl:''
+      imageUrl: '',
+      matrimonyData: {},
+      imageUrlMatrimony: ''
     }
   }
 
@@ -75,753 +64,93 @@ class MatrimonyDetails extends Component {
       samaj_id: samaj_id
     })
 
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
-        this.apiCalling()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
-  }
-
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      this.apiCalling()
-    } else {
-      this.setState({ connection_Status: false })
-    }
+    this.apiCalling()
   }
 
   async apiCalling() {
     const details = this.props.navigation.getParam('itemData')
     const member = this.props.navigation.getParam('member')
+    const matrimonyData = this.props.navigation.getParam('matrimonyData')
     const imageUrl = this.props.navigation.getParam('imageUrl')
+    const imageUrlMatrimony = this.props.navigation.getParam('imageUrlMatrimony')
     console.log('item Data -->', details)
-    console.log('item Data -->', member)
+    console.log('item Data -->', matrimonyData)
     this.setState({
       item_details: details,
       member_type: member,
-      imageUrl:imageUrl
+      imageUrl: imageUrl,
+      matrimonyData, imageUrlMatrimony
     })
   }
 
   render() {
-    const { item_details, member_type,imageUrl } = this.state
-    // if (member_type === 'main') {
-      return (
-        <SafeAreaView style={Style.cointainer1}>
-          <ScrollView>
-            <Card style={{ padding: '2%' }}>
-              <View
-                style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Name</Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_name}</Text>
+    const { item_details, matrimonyData, imageUrl } = this.state
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <ImageBackground source={AppImages.back7}
+          blurRadius={1}
+          style={{
+            height: '100%', width: '100%',
+            resizeMode: "cover",
+            justifyContent: "center",
+          }}>
+          <ScrollView style={{ paddingVertical: '5%', paddingHorizontal: '2%' }}>
+            <View>
+              <View style={[Style.cardback, { backgroundColor: Colors.blackTp, borderRadius: 10, padding: '2%' }]}>
+                <Text style={[Style.Textmainstyle, { color: Colors.white, fontSize: 20, textAlign: 'center' }]}>Name - {item_details.member_name}</Text>
+                {matrimonyData.profile_tag_line ?
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>{matrimonyData.profile_tag_line}</Text> : null}
               </View>
-              <View
-                style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Member Code</Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_code}</Text>
-              </View>
-              <View
-                style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Mobile No</Text>
-                <Text style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}>
-                  {item_details.member_mobile}</Text>
-              </View>
-
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Date Of Birth </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {Moment(item_details.member_birth_date).format('DD-MM-YYYY')}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Date Of Time
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_birth_time}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Place Of Birth
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_birth_place}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Gender
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.gender_name}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Native
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_native_place}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Gotra
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_gotra}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[
-                    Style.Textmainstyle,
-                    {
-                      padding: '2%',
-                      width: '50%',
-                      borderWidth: 1,
-                      borderColor: Colors.white
-                    }
-                  ]}
-                >
-                  Height
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_height}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[
-                    Style.Textmainstyle,
-                    {
-                      padding: '2%',
-                      width: '50%',
-                      borderWidth: 1,
-                      borderColor: Colors.white
-                    }
-                  ]}
-                >
-                  Weight
-                </Text>
-                <Text
-                  style={[
-                    Style.Textmainstyle,
-                    {
-                      padding: '2%',
-                      width: '50%',
-                      borderWidth: 1,
-                      borderColor: Colors.white
-                    }
-                  ]}
-                >
-                  {item_details.member_weight} kg
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Skin Tone
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.skin_color}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[
-                    Style.Textmainstyle,
-                    {
-                      padding: '2%',
-                      width: '50%',
-                      borderWidth: 1,
-                      borderColor: Colors.white
-                    }
-                  ]}
-                >
-                  Manglik
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_manglik === 1 ? 'Yes' : 'No'}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Expectation From Partner
-                </Text>
-                <Text
-                  style={[
-                    Style.Textmainstyle,
-                    {
-                      padding: '2%',
-                      width: '50%',
-                      borderWidth: 1,
-                      borderColor: Colors.white
-                    }
-                  ]}
-                >
-                  {item_details.member_lifepartner_expectations}
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center'
-                }}
-              >
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  Annual Income
-                </Text>
-                <Text
-                  style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-                >
-                  {item_details.member_annual_income} ₹
-                </Text>
-              </View>
-              <Text
-                style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-              >
-                Kundli
-              </Text>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrl + item_details.member_kundli })}
-              >
-                {/* <Image
-                  resizeMode='stretch'
-                  source={{
-                    uri:
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ_e8keRJ6vMVtMAcbv0bC7LeiGVFdxhkZ1tuD4SKKgiuHXjFar'
-                  }}
-                  style={{
-                    backgroundColor: Colors.white,
-                    height: 275,
-                    width: '100%',
-                    marginTop: 10
-                  }}
-                /> */}
-                {item_details.md_kundli === null ? (
-                  <Image
-                    resizeMode='stretch'
-                    source={{
-                      uri:
-                        'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ_e8keRJ6vMVtMAcbv0bC7LeiGVFdxhkZ1tuD4SKKgiuHXjFar'
-                    }}
-                    style={{
-                      backgroundColor: Colors.white,
-                      height: 275,
-                      width: '100%',
-                      marginTop: 10
-                    }}
-                  />
-                ) : (
-                    <Image
-                      resizeMode='stretch'
-                      source={{ uri: imageUrl + item_details.member_kundli }}
-                      style={{
-                        backgroundColor: Colors.white,
-                        height: 275,
-                        width: '100%',
-                        marginTop: 10
-                      }}
-                    />
-                  )}
-                {/* <ImageViewer imageUrls={[{url:'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ_e8keRJ6vMVtMAcbv0bC7LeiGVFdxhkZ1tuD4SKKgiuHXjFar'}]}/> */}
-              </TouchableOpacity>
-            </Card>
+              <Collapse>
+                <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%' }]}>Personal Details</Text>
+                  <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
+                </CollapseHeader>
+                <CollapseBody style={[Style.cardback]}>
+                  <View style={[Style.flexView]}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '20%' }]}>BOD</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '30%' }]}>{Moment(item_details.member_birth_date).format('DD-MM-YYYY')}</Label>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '30%' }]}>Birth-Time</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '20%' }]}>{matrimonyData.mm_birth_time}</Label>
+                  </View>
+                  <View style={[Style.flexView]}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>Birth Place</Label>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>{matrimonyData.mm_birth_place}</Label>
+                  </View>
+                  <View style={[Style.flexView]}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '20%' }]}>Height</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '30%' }]}>{validationempty(matrimonyData.mm_height) ? matrimonyData.mm_height : '' + "'" + validationempty(matrimonyData.mm_height_inch) ? matrimonyData.mm_height_inch : ''}</Label>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '30%' }]}>Weight</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '20%' }]}>{matrimonyData.mm_weight}</Label>
+                  </View>
+                  <View style={[Style.flexView]}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>Skin Color</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>{validationempty(matrimonyData.mm_color) ? matrimonyData.mm_color : ''}</Label>
+                  </View>
+                  <View style={[Style.flexView]}>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '30%' }]}>Manglik</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '20%' }]}>{matrimonyData.mm_manglik == 1 ? 'Yes' : 'No'}</Label>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '40%' }]}>Belive in Kundli</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '10%' }]}>{matrimonyData.dont_believe_in_kundali == 1 ? 'No' : 'Yes'}</Label>
+                  </View>
+                  <View>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>Personal description</Label>
+                    <Label style={[Style.SubTextstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>{validationempty(matrimonyData.person_description) ? matrimonyData.person_description : '-'}</Label>
+                  </View>
+                </CollapseBody>
+              </Collapse>
+              <Collapse>
+                <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%' }]}>Personal Details</Text>
+                  <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
+                </CollapseHeader>
+                <CollapseBody style={[Style.cardback]}>
+                </CollapseBody>
+              </Collapse>
+            </View>
           </ScrollView>
-        </SafeAreaView>
-      )
-    // } else {
-    //   return (
-    //     <SafeAreaView style={Style.cointainer1}>
-    //       <StatusBar
-    //         backgroundColor={Colors.Theme_color}
-    //         barStyle='light-content'
-    //       />
-    //       <ScrollView>
-    //         <Card style={{ padding: '2%' }}>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Name
-    //             </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_name}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Mobile No
-    //             </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_mobile}
-    //             </Text>
-    //           </View>
-
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Date Of Birth
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {Moment(item_details.md_birth_date).format('DD-MM-YYYY')}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Date Of Time
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_birth_time}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Place Of Birth
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_birth_place}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Gender
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.gender_name}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Native
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.member_native_place}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Gotra
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_gotra}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[
-    //                 Style.Textmainstyle,
-    //                 {
-    //                   padding: '2%',
-    //                   width: '50%',
-    //                   borderWidth: 1,
-    //                   borderColor: Colors.white
-    //                 }
-    //               ]}
-    //             >
-    //               Height
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_height}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[
-    //                 Style.Textmainstyle,
-    //                 {
-    //                   padding: '2%',
-    //                   width: '50%',
-    //                   borderWidth: 1,
-    //                   borderColor: Colors.white
-    //                 }
-    //               ]}
-    //             >
-    //               Weight
-    //           </Text>
-    //             <Text
-    //               style={[
-    //                 Style.Textmainstyle,
-    //                 {
-    //                   padding: '2%',
-    //                   width: '50%',
-    //                   borderWidth: 1,
-    //                   borderColor: Colors.white
-    //                 }
-    //               ]}
-    //             >
-    //               {item_details.md_weight} kg
-    //           </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Skin Tone
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_skin_color}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[
-    //                 Style.Textmainstyle,
-    //                 {
-    //                   padding: '2%',
-    //                   width: '50%',
-    //                   borderWidth: 1,
-    //                   borderColor: Colors.white
-    //                 }
-    //               ]}
-    //             >
-    //               Manglik
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_manglik === 1 ? 'Yes' : 'No'}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Expectation From Partner
-    //           </Text>
-    //             <Text
-    //               style={[
-    //                 Style.Textmainstyle,
-    //                 {
-    //                   padding: '2%',
-    //                   width: '50%',
-    //                   borderWidth: 1,
-    //                   borderColor: Colors.white
-    //                 }
-    //               ]}
-    //             >
-    //               {item_details.md_lifepartner_expectations}
-    //             </Text>
-    //           </View>
-    //           <View
-    //             style={{
-    //               justifyContent: 'center',
-    //               flexDirection: 'row',
-    //               alignItems: 'center'
-    //             }}
-    //           >
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               Annual Income
-    //           </Text>
-    //             <Text
-    //               style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //             >
-    //               {item_details.md_annual_income} ₹
-    //           </Text>
-    //           </View>
-    //           {item_details.md_kundli === null ? null : (
-    //             <View>
-    //               <Text
-    //                 style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-    //               >
-    //                 Kundli
-    //         </Text>
-
-    //               <TouchableOpacity
-    //                 onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: pic_url + item_details.md_kundli })}
-    //               >
-    //                 {/* <Image
-    //             resizeMode='stretch'
-    //             source={{
-    //               uri:
-    //                 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ_e8keRJ6vMVtMAcbv0bC7LeiGVFdxhkZ1tuD4SKKgiuHXjFar'
-    //             }}
-    //             style={{
-    //               backgroundColor: Colors.white,
-    //               height: 275,
-    //               width: '100%',
-    //               marginTop: 10
-    //             }}
-    //           /> */}
-    //                 {item_details.md_kundli === null ? (
-    //                   <Image
-    //                     resizeMode='stretch'
-    //                     source={{
-    //                       uri:
-    //                         'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ_e8keRJ6vMVtMAcbv0bC7LeiGVFdxhkZ1tuD4SKKgiuHXjFar'
-    //                     }}
-    //                     style={{
-    //                       backgroundColor: Colors.white,
-    //                       height: 275,
-    //                       width: '100%',
-    //                       marginTop: 10
-    //                     }}
-    //                   />
-    //                 ) : (
-    //                     <Image
-    //                       resizeMode='stretch'
-    //                       source={{ uri: pic_url + item_details.md_kundli }}
-    //                       style={{
-    //                         backgroundColor: Colors.white,
-    //                         height: 275,
-    //                         width: '100%',
-    //                         marginTop: 10
-    //                       }}
-    //                     />
-    //                   )}
-    //                 {/* <ImageViewer imageUrls={[{url:'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ_e8keRJ6vMVtMAcbv0bC7LeiGVFdxhkZ1tuD4SKKgiuHXjFar'}]}/> */}
-    //               </TouchableOpacity>
-    //             </View>
-    //           )}
-      //       </Card>
-      //     </ScrollView>
-      //   </SafeAreaView>
-      // )
-    // }
+        </ImageBackground>
+      </SafeAreaView>
+    )
   }
-}
-export default MatrimonyDetails
+} export default MatrimonyDetails

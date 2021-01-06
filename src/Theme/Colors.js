@@ -14,7 +14,8 @@ const Colors={
     inactiveTabColor:'#726f6f',
 
     // Persional details usage
-    lightThem:'#FDD8BF'
+    lightThem:'#FDD8BF',
+    blue:'blue'
 } 
 
 export default Colors
