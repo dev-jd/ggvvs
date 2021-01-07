@@ -100,6 +100,9 @@ export default class MatrimonyPackage extends Component {
 
         var response= await Helper.POST('matrimonyPayment',formData)
         console.log('tranjection response ',response)
+        if(response.status){
+            this.props.navigation.goBack()
+        }
     }
     categoryRendeItem = ({ item, index }) => {
         return (

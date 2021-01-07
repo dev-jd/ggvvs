@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
     Textmainstyle: {
         fontSize: 16, fontFamily: CustomeFonts.medium,
     },
+    Tital18: {
+        fontSize: 18, fontFamily: CustomeFonts.medium,
+    },
     Textstyle: {
         fontSize: 14, fontFamily: CustomeFonts.regular, width: '100%',
     },

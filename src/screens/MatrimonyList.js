@@ -25,6 +25,7 @@ import { base_url } from '../Static'
 import axois from 'axios'
 import Moment from 'moment'
 import AppImages from '../Theme/image'
+import { validationempty } from '../Theme/Const'
 
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -46,7 +47,7 @@ export default class App extends Component {
       data_list2: [],
       isLoding: false,
       imageUrlMember: '',
-      imageUrlKundli: '',imageUrlMatrimony:''
+      imageUrlKundli: '', imageUrlMatrimony: ''
     }
   }
 
@@ -168,9 +169,14 @@ export default class App extends Component {
   categoryRendeItem2 = ({ item, index }) => {
     return (
       <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate('MatrimonyDetails', { itemData: item,matrimonyData:item.matrimony_masters, member: 'main', imageUrl: this.state.imageUrlKundli,
-          imageUrlMatrimony:this.state.imageUrlMatrimony })
+        onPress={() => {
+          if (validationempty(item.matrimony_masters.package_id)) {
+            this.props.navigation.navigate('MatrimonyDetails', {
+              itemData: item, matrimonyData: item.matrimony_masters, member: 'main', imageUrl: this.state.imageUrlKundli,
+              imageUrlMatrimony: this.state.imageUrlMatrimony
+            })
+          }
+        }
         }
       >
         <View
@@ -197,7 +203,7 @@ export default class App extends Component {
           </TouchableOpacity>
           <View style={{ flex: 5, justifyContent: 'center', marginLeft: 10 }}>
             <Text style={Style.Textmainstyle}>{item.member_name}</Text>
-{/* 
+            {/* 
             <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Code</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>

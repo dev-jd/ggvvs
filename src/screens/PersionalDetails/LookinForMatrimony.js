@@ -49,7 +49,7 @@ export default class LookinForMatrimony extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      // birthPlace: 'Billimora',matrimonyId: '',
+      // birthPlace: 'Billimora', matrimonyId: '',
       // birthTime: new Date(),
       // btime: '14:10',
       // gotra: '',
@@ -98,7 +98,8 @@ export default class LookinForMatrimony extends Component {
       takedrink: '', smoke: '', nonveg: '', eggs: '', lookfornri: '',
       member1image: '', memberimage1: {}, member2image: '', memberimage2: {}, member3image: '', memberimage3: {}, member4image: '', memberimage4: {}, member5image: '', memberimage5: {},
       isActive: false, approvedMatrimony: false,
-      idSelectM1: false, idSelectM2: false, idSelectM3: false, idSelectM4: false, idSelectM5: false, twitter: ''
+      idSelectM1: false, idSelectM2: false, idSelectM3: false, idSelectM4: false, idSelectM5: false, twitter: '',
+      packageDetails: {}
     }
   }
   async componentDidMount() {
@@ -183,13 +184,18 @@ export default class LookinForMatrimony extends Component {
     // var response = { matrimony: null }
     var response = await Helper.POST('profile_data', formdata)
     // console.log('check the response -- > ', response)
+    if (validationempty(response.package_details)) {
+      this.setState({
+        packageId: response.package_details.package_id,
+        packageDetails: response.package_details
+      })
+    }
 
-    if (validationempty(response.matrimony)) {
+    if (validationempty(response.matrimony.id)) {
       this.setState({
         // using matrimoney personal
         isActive: true,
         matrimonyId: response.matrimony.id + '',
-        packageId: response.matrimony.package_id,
         profiletagline: response.matrimony.profile_tag_line,
         personaldesc: response.matrimony.person_description,
         birthPlace: response.matrimony.mm_birth_place,
@@ -236,7 +242,7 @@ export default class LookinForMatrimony extends Component {
         member4image: response.matrimony.member_photo_4,
         member5image: response.matrimony.member_photo_5,
       })
-      var isManglik, kundliBelive, isPustimarg
+      var isManglik, kundliBelive, isPustimarg, approvedMatrimony
       if (response.matrimony.mm_manglik === '1') {
         isManglik = true
       } else {
@@ -251,9 +257,17 @@ export default class LookinForMatrimony extends Component {
         isPustimarg = true
       } else {
         isPustimarg = false
+
       }
+
+      if (response.matrimony.me_approved === 1) {
+        approvedMatrimony = false
+      } else {
+        approvedMatrimony = true
+      }
+
       this.setState({
-        isManglik, kundliBelive, isPustimarg
+        isManglik, kundliBelive, isPustimarg, approvedMatrimony
       })
     } else {
       this.setState({ isActive: false })
@@ -337,12 +351,12 @@ export default class LookinForMatrimony extends Component {
   }
 
   async editData() {
-    var { name, twitter, kundliBelive, matrimonyId, birthPlace, idSelect, birthTime, kundliImage, img_url, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
+    var { name, twitter, approvedMatrimony,kundliBelive, matrimonyId, birthPlace, idSelect, birthTime, kundliImage, img_url, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
       education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
       isPustimarg, religion, packageId, negativePoint, positivePoint, mobile, email, country, state, city, address, fbuser, instauser, linkedin, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
       member1image, memberimage1, member2image, memberimage2, member3image, memberimage3, member4image, memberimage4, member5image, memberimage5, member_id, samaj_id, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5 } = this.state
 
-    var isManglik, isPustimarg, believe
+    var isManglik, isPustimarg, believe,approved
     if (this.state.isManglik) {
       isManglik = 1
     } else {
@@ -357,6 +371,11 @@ export default class LookinForMatrimony extends Component {
       believe = 1
     } else {
       believe = 0
+    }
+    if (this.state.approvedMatrimony) {
+      approved = 2
+    } else {
+      approved = 1
     }
 
 
@@ -413,6 +432,7 @@ export default class LookinForMatrimony extends Component {
     formdata.append('profession_details', professiondesc)
     formdata.append('father_profession', fatherProfession)
     formdata.append('mother_profession', motherprofession)
+    formdata.append('me_approved', approved)
     formdata.append('family_other_details', otherfamilydetails)
     if (validationempty(this.state.kundliPath)) {
       formdata.append('mm_kundali', {
@@ -473,7 +493,7 @@ export default class LookinForMatrimony extends Component {
   };
 
   render() {
-    var { isActive, packageId, approvedMatrimony, name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, img_url_profile, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
+    var { isActive, packageDetails, packageId, approvedMatrimony, name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, img_url_profile, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
       education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
       membedId, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, twitter, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
       member1image, matrimonyId, member2image, memberimage2, member3image, memberimage3, member4image, memberimage4, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5 } = this.state
@@ -505,20 +525,26 @@ export default class LookinForMatrimony extends Component {
           <View style={{ height: '100%' }}>
             <ScrollView>
               <View style={{ padding: '3%' }}>
-                <View style={[Style.cardback,]}>
-                  <View>
-                    <Text style={[Style.Textmainstyle, { textAlign: 'center' }]}>Package Name</Text>
-                    {/* <Text style={[Style.SubTextstyle, { textAlign: 'center', paddingVertical: '3%' }]} numberOfLines={3}>{"Access to matrimony profile \r\nview 30 profile per week\r\nsend 5 like\r\nsend message to 5 users"}</Text> */}
-                  </View>
-                  <View>
-                    <Text style={[Style.Textstyle, { textAlign: 'center' }]}>₹ 99</Text>
-                    <Text style={[Style.Textstyle, { textAlign: 'center' }]}>Tranjection Id - #pay_GKkagE0OKMrbBQ</Text>
-                  </View>
-                  {/* <View style={Style.flexView2}> */}
-                  <Text style={[Style.Textstyle, { textAlign: 'center' }]}>3/1/2021 To 4/1/2021</Text>
-
-                  {/* </View> */}
-                </View>
+                {validationempty(packageId) ?
+                  <View style={[Style.cardback,]}>
+                    <View>
+                      <Text style={[Style.Textmainstyle, { textAlign: 'center' }]}>Package Name</Text>
+                      <Text style={[Style.SubTextstyle, { textAlign: 'center', paddingVertical: '3%' }]} numberOfLines={3}>{"Access to matrimony profile \r\nview 30 profile per week\r\nsend 5 like\r\nsend message to 5 users"}</Text>
+                    </View>
+                    <View>
+                      <Text style={[Style.Textstyle, { textAlign: 'center' }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text>
+                      <Text style={[Style.Textstyle, { textAlign: 'center' }]}>Tranjection Id - {validationempty(packageDetails.transaction_id) ? packageDetails.transaction_id : 'Free Package'}</Text>
+                    </View>
+                    <Text style={[Style.Textstyle, { textAlign: 'center' }]}>{moment(packageDetails.start_date).format('DD-MM-YYYY')}  To  {moment(packageDetails.end_date).format('DD-MM-YYYY')}</Text>
+                  </View> : <View style={[Style.cardback,]}>
+                    <Text style={[Style.Textmainstyle, { textAlign: 'center' }]}>No Any Package Select Yet</Text>
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginVertical: 10, width: '50%', alignSelf: 'center' }]}
+                      onPress={() => this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })}
+                    >
+                      <Text style={Style.buttonText}>Select Package</Text>
+                    </TouchableOpacity>
+                  </View>}
                 {/* Personal Details */}
                 <View style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10, padding: '1%' }]}>
                   <TextInputCustome title='Profile Tag' value={profiletagline} changetext={(profiletagline) => this.setState({ profiletagline })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
@@ -682,7 +708,7 @@ export default class LookinForMatrimony extends Component {
                     <Form style={{ width: '100%' }}>
                       <Item>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: membedId })}>
-                          <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium,paddingVertical:'4%' }]}>Father Name</Text>
+                          <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '4%' }]}>Father Name</Text>
                           <Text style={[Style.Textstyle, { paddingVertical: '4%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{fathername}</Text>
                         </TouchableOpacity>
                       </Item>
@@ -691,7 +717,7 @@ export default class LookinForMatrimony extends Component {
                     <Form style={{ width: '100%' }}>
                       <Item>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: membedId })}>
-                          <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium,paddingVertical:'4%' }]}>Mother Name</Text>
+                          <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '4%' }]}>Mother Name</Text>
                           <Text style={[Style.Textstyle, { paddingVertical: '4%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{mothername}</Text>
                         </TouchableOpacity>
                       </Item>
