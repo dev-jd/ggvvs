@@ -19,7 +19,7 @@ import { Icon, CheckBox } from 'react-native-elements'
 import TextInputCustome from '../../Compoment/TextInputCustome'
 import { Helper } from '../../Helper/Helper'
 import { Dimensions } from 'react-native'
-import { showToast, validationempty } from '../../Theme/Const'
+import { Indicator, showToast, validationempty } from '../../Theme/Const'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker'
@@ -99,7 +99,8 @@ export default class LookinForMatrimony extends Component {
       member1image: '', memberimage1: {}, member2image: '', memberimage2: {}, member3image: '', memberimage3: {}, member4image: '', memberimage4: {}, member5image: '', memberimage5: {},
       isActive: false, approvedMatrimony: false,
       idSelectM1: false, idSelectM2: false, idSelectM3: false, idSelectM4: false, idSelectM5: false, twitter: '',
-      packageDetails: {}
+      packageDetails: {},
+      heightDroupDown: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
     }
   }
   async componentDidMount() {
@@ -139,6 +140,10 @@ export default class LookinForMatrimony extends Component {
     var response = await Helper.GET('package_list?samaj_id=' + this.state.samaj_id)
     // console.log('check the response packages', response)
     this.setState({ packageList: response.data })
+
+    
+    // formdata.append('mm_expectations', expectation)
+    // formdata.append('lifestyle_choice', lifestylechoice)
   }
   castApi = async () => {
     var response = await Helper.GET('cast_list?samaj_id=' + this.state.samaj_id)
@@ -261,9 +266,9 @@ export default class LookinForMatrimony extends Component {
       }
 
       if (response.matrimony.me_approved === 1) {
-        approvedMatrimony = false
-      } else {
         approvedMatrimony = true
+      } else {
+        approvedMatrimony = false
       }
 
       this.setState({
@@ -351,42 +356,24 @@ export default class LookinForMatrimony extends Component {
   }
 
   async editData() {
-    var { name, twitter, approvedMatrimony,kundliBelive, matrimonyId, birthPlace, idSelect, birthTime, kundliImage, img_url, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
-      education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
-      isPustimarg, religion, packageId, negativePoint, positivePoint, mobile, email, country, state, city, address, fbuser, instauser, linkedin, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
-      member1image, memberimage1, member2image, memberimage2, member3image, memberimage3, member4image, memberimage4, member5image, memberimage5, member_id, samaj_id, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5 } = this.state
+    var { matrimonyId, birthPlace, skinColor, btime, profiletagline, isManglik, personaldesc, heightfFeet, heightInch, weight, member_id, samaj_id, idSelect } = this.state
 
-    var isManglik, isPustimarg, believe,approved
+    var isManglik, isPustimarg, believe, approved
     if (this.state.isManglik) {
       isManglik = 1
     } else {
       isManglik = 2
-    }
-    if (this.state.isPustimarg) {
-      isPustimarg = 1
-    } else {
-      isPustimarg = 2
     }
     if (this.state.kundliBelive) {
       believe = 1
     } else {
       believe = 0
     }
-    if (this.state.approvedMatrimony) {
-      approved = 2
-    } else {
-      approved = 1
-    }
-
-
 
     this.setState({ isLoding: true })
     const formdata = new FormData()
     formdata.append('mm_samaj_id', samaj_id)
     formdata.append('mm_member_id', member_id)
-    if (validationempty(matrimonyId)) {
-      formdata.append('package_id', packageId)
-    }
     formdata.append('profile_tag_line', profiletagline)
     formdata.append('person_description', personaldesc)
     formdata.append('mm_birth_place', birthPlace)
@@ -396,25 +383,122 @@ export default class LookinForMatrimony extends Component {
     formdata.append('mm_weight', weight)
     formdata.append('mm_color', skinColor)
     formdata.append('mm_manglik', isManglik)
-    formdata.append('mm_education', educationdesc)
-    formdata.append('family_details', familydesc)
-    formdata.append('mm_expectations', expectation)
-    formdata.append('sp_path', religion)
-    formdata.append('mm_income', validationempty(income) ? income : '')
-    formdata.append('mm_drink', takedrink)
-    formdata.append('pustimarg', isPustimarg)
-    formdata.append('looking_for_nri', lookfornri)
-    formdata.append('lifestyle_choice', lifestylechoice)
-    formdata.append('mm_smoke', smoke)
-    formdata.append('mm_nonveg', nonveg)
-    formdata.append('mm_egg', eggs)
-    formdata.append('negative_point', negativePoint)
     formdata.append('dont_believe_in_kundali', believe)
-    formdata.append('positive_point', positivePoint)
+    if (validationempty(this.state.kundliPath)) {
+      formdata.append('mm_kundali', {
+        uri: 'file://' + this.state.kundliPath,
+        name: this.state.kundliFileName,
+        type: this.state.kundliType,
+      })
+    } else {
+      formdata.append('mm_kundali', '')
+    }
+
+    if (validationempty(matrimonyId)) {
+      formdata.append('matrimony_id', matrimonyId)
+    }
+
+
+    console.log('formdata-->', formdata)
+
+    var response = await Helper.POSTFILE('matrimonyAdd', formdata)
+    console.log('check the response', response)
+    if (response.status) {
+      this.setState({ isLoding: false })
+      showToast(response.message)
+    }
+  }
+  async submitEducatuionalData() {
+    var { education, educationdesc, matrimonyId, isLoding } = this.state
+    var formdata = new FormData()
+    formdata.append('mm_education', educationdesc)
     formdata.append('member_eq_id', education)// chec
+    if (validationempty(matrimonyId)) {
+      formdata.append('matrimony_id', matrimonyId)
+    }
+    console.log('educational formdata-->', formdata)
+
+    var response = await Helper.POSTFILE('matrimonyEducation', formdata)
+    console.log('check the response', response)
+    if (response.status) {
+      this.setState({ isLoding: false })
+      showToast(response.message)
+    }
+  }
+  async submitFamilyDetails() {
+    var { familydesc, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, matrimonyId, nativeplace, isLoding } = this.state
+
+    var formdata = new FormData()
+
     formdata.append('member_father', fathername)
     formdata.append('member_native_place', nativeplace)
     formdata.append('member_mother', mothername)
+    formdata.append('father_profession', fatherProfession)
+    formdata.append('mother_profession', motherprofession)
+    formdata.append('family_other_details', otherfamilydetails)
+    formdata.append('family_details', familydesc)
+
+    if (validationempty(matrimonyId)) {
+      formdata.append('matrimony_id', matrimonyId)
+    }
+    var response = await Helper.POSTFILE('matrimonyFamily', formdata)
+    console.log('check the response', response)
+    if (response.status) {
+      this.setState({ isLoding: false })
+      showToast(response.message)
+    }
+  }
+  async submitProffessionalData() {
+    var { professiondesc, income, profession, matrimonyId } = this.state
+
+    var formdata = new FormData()
+    formdata.append('profession', profession)
+    formdata.append('profession_details', professiondesc)
+    formdata.append('mm_income', validationempty(income) ? income : '')
+
+    if (validationempty(matrimonyId)) {
+      formdata.append('matrimony_id', matrimonyId)
+    }
+    console.log('profession formdata-->', formdata)
+
+    var response = await Helper.POSTFILE('matrimonyProfession', formdata)
+    console.log('check the response', response)
+    if (response.status) {
+      this.setState({ isLoding: false })
+      showToast(response.message)
+    }
+
+  }
+  async submitSpiritualData() {
+    var { matrimonyId, isPustimarg, religion, negativePoint, positivePoint } = this.state
+
+    if (isPustimarg) {
+      isPustimarg = 1
+    } else {
+      isPustimarg = 2
+    }
+
+
+    var formdata = new FormData()
+    formdata.append('sp_path', religion)
+    formdata.append('pustimarg', isPustimarg)
+    formdata.append('negative_point', negativePoint)
+    formdata.append('positive_point', positivePoint)
+
+    if (validationempty(matrimonyId)) {
+      formdata.append('matrimony_id', matrimonyId)
+    }
+    var response = await Helper.POSTFILE('matrimonySpiritual', formdata)
+    console.log('check the response', response)
+    if (response.status) {
+      this.setState({ isLoding: false })
+      showToast(response.message)
+    }
+  }
+  async submitCommunicationData() {
+    var { matrimonyId, email, country, state, city, address, fbuser, instauser, twitter, linkedin, wappno } = this.state
+    var formdata = new FormData()
+
     formdata.append('member_email', email)
     formdata.append('countryid', country)
     formdata.append('stateid', state)
@@ -425,24 +509,40 @@ export default class LookinForMatrimony extends Component {
     formdata.append('member_linkedin', linkedin)
     formdata.append('member_whatsapp', wappno)
     formdata.append('member_twitter', twitter)
+
     if (validationempty(matrimonyId)) {
       formdata.append('matrimony_id', matrimonyId)
     }
-    formdata.append('profession', profession)
-    formdata.append('profession_details', professiondesc)
-    formdata.append('father_profession', fatherProfession)
-    formdata.append('mother_profession', motherprofession)
-    formdata.append('me_approved', approved)
-    formdata.append('family_other_details', otherfamilydetails)
-    if (validationempty(this.state.kundliPath)) {
-      formdata.append('mm_kundali', {
-        uri: 'file://' + this.state.kundliPath,
-        name: this.state.kundliFileName,
-        type: this.state.kundliType,
-      })
-    } else {
-      formdata.append('mm_kundali', '')
+    var response = await Helper.POSTFILE('matrimonyCommunication', formdata)
+    console.log('check the response communication ', response)
+    if (response.status) {
+      this.setState({ isLoding: false })
+      showToast(response.message)
     }
+  }
+  async submitQuestionerData() {
+    var { smoke, nonveg, eggs, takedrink, lookfornri, matrimonyId } = this.state
+    var formdata = new FormData()
+    formdata.append('mm_smoke', smoke)
+    formdata.append('mm_nonveg', nonveg)
+    formdata.append('mm_egg', eggs)
+    formdata.append('mm_drink', takedrink)
+    formdata.append('looking_for_nri', lookfornri)
+
+    if (validationempty(matrimonyId)) {
+      formdata.append('matrimony_id', matrimonyId)
+    }
+    var response = await Helper.POSTFILE('matrimonyGeneral', formdata)
+    console.log('check the response questionery ', response)
+    if (response.status) {
+      this.setState({ isLoding: false })
+      showToast(response.message)
+    }
+
+  }
+  async submitPhotoData() {
+    var { matrimonyId, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5, memberimage1, memberimage2, memberimage3, memberimage4, memberimage5 } = this.state
+    var formdata = new FormData()
     if (idSelectM1) {
       formdata.append('member_photo_1', memberimage1)
     } else {
@@ -468,16 +568,24 @@ export default class LookinForMatrimony extends Component {
     } else {
       formdata.append('member_photo_5', '')
     }
+    if (validationempty(matrimonyId)) {
+      formdata.append('matrimony_id', matrimonyId)
+    }
+    var approved
+    if (this.state.approvedMatrimony) {
+      approved = 1
+    } else {
+      approved = 0
+    }
+
+    formdata.append('me_approved', approved)
 
 
-    console.log('formdata-->', formdata)
-
-    var response = await Helper.POSTFILE('matrimonyAdd', formdata)
-    console.log('check the response', response)
+    var response = await Helper.POSTFILE('matrimonyPhoto', formdata)
+    console.log('check the response questionery ', response)
     if (response.status) {
       this.setState({ isLoding: false })
       showToast(response.message)
-      this.props.navigation.goBack()
     }
 
   }
@@ -491,12 +599,11 @@ export default class LookinForMatrimony extends Component {
       this.setState({ birthTime: selectedDate, btime: timeview, showTimepicker: false });
     }
   };
-
   render() {
-    var { isActive, packageDetails, packageId, approvedMatrimony, name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, img_url_profile, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
+    var { isActive, isLoding, packageDetails, packageId, approvedMatrimony, name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, img_url_profile, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
       education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
       membedId, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, twitter, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
-      member1image, matrimonyId, member2image, memberimage2, member3image, memberimage3, member4image, memberimage4, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5 } = this.state
+      member1image, matrimonyId, member2image, member3image, heightDroupDown, member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5 } = this.state
 
     // <View>
 
@@ -555,22 +662,7 @@ export default class LookinForMatrimony extends Component {
                     <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
                   </CollapseHeader>
                   <CollapseBody style={[Style.cardback]}>
-                    {/* <Label style={[Style.Textstyle, { paddingHorizontal: '5%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Select Package</Label> */}
-                    {/* <View style={{ paddingHorizontal: '3%' }}>
-                      <Picker
-                        selectedValue={this.state.packageId}
-                        onValueChange={(itemValue, itemIndex) =>
-                          this.setState({ packageId: itemValue })
-                        }
-                        mode='dialog'
-                        style={{ flex: 1, width: '100%', fontFamily: CustomeFonts.reguar, color: Colors.black }}
-                      >
-                        <Picker.Item label='Select Package' value='0' />
-                        {this.state.packageList.map((item, key) => (
-                          <Picker.Item label={item.name} value={item.id + ''} key={key} />
-                        ))}
-                      </Picker>
-                    </View> */}
+
                     <TextInputCustome title='Name' value={name} changetext={(name) => this.setState({ name })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} />
                     <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                       <View style={{ marginHorizontal: 5 }}>
@@ -624,28 +716,49 @@ export default class LookinForMatrimony extends Component {
                     </View>
                     <TextInputCustome title='Birth-Place' value={birthPlace} changetext={(birthPlace) => this.setState({ birthPlace })} maxLength={30} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <View style={{ flexDirection: 'row' }}>
-                      <TextInputCustome style={{ width: '33.33%' }} title='Height Feet' value={heightfFeet} changetext={(heightfFeet) => this.setState({ heightfFeet })} maxLength={2} multiline={false} numberOfLines={1} keyboardType={'numeric'} editable={true} />
-                      <TextInputCustome style={{ width: '33.33%' }} title='Height Inch' value={heightInch} changetext={(heightInch) => this.setState({ heightInch })} maxLength={2} multiline={false} numberOfLines={1} keyboardType={'numeric'} editable={true} />
+
+                      <View style={{ width: '33.33%' }}>
+                        <Label style={[Style.Textstyle, { paddingHorizontal: '5%', paddingTop: '7%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Height Feet</Label>
+                        <View style={{ paddingHorizontal: '3%' }}>
+                          <Picker
+                            selectedValue={heightfFeet}
+                            onValueChange={(itemValue, itemIndex) =>
+                              this.setState({ heightfFeet: itemValue })
+                            }
+                            mode='dialog'
+                            style={{ flex: 1, width: '100%', fontFamily: CustomeFonts.reguar, color: Colors.black }}
+                          >
+                            <Picker.Item label='Height Feet' value='0' />
+                            {heightDroupDown.map((item, key) => (
+                              <Picker.Item label={item} value={item} key={key} />
+                            ))}
+                          </Picker>
+                        </View>
+                        <Item></Item>
+                      </View>
+                      <View style={{ width: '33.33%' }}>
+                        <Label style={[Style.Textstyle, { paddingHorizontal: '5%', paddingTop: '7%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Height Inch</Label>
+                        <View style={{ paddingHorizontal: '3%' }}>
+                          <Picker
+                            selectedValue={heightInch}
+                            onValueChange={(itemValue, itemIndex) =>
+                              this.setState({ heightInch: itemValue })
+                            }
+                            mode='dialog'
+                            style={{ flex: 1, width: '100%', fontFamily: CustomeFonts.reguar, color: Colors.black }}
+                          >
+                            <Picker.Item label='Height Feet' value='0' />
+                            {heightDroupDown.map((item, key) => (
+                              <Picker.Item label={item} value={item} key={key} />
+                            ))}
+                          </Picker>
+                        </View>
+                        <Item></Item>
+                      </View>
                       <TextInputCustome style={{ width: '33.33%' }} title='Weight' value={weight} changetext={(weight) => this.setState({ weight })} maxLength={3} multiline={false} numberOfLines={1} keyboardType={'numeric'} editable={true} />
                     </View>
                     <TextInputCustome title='Skin Complexion' value={skinColor} changetext={(skinColor) => this.setState({ skinColor })} maxLength={10} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-                    {/* <View>
-                    <Label style={[Style.Textstyle, { paddingHorizontal: '5%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Cast</Label>
-                    <View style={{ paddingHorizontal: '3%' }}>
-                      <Picker
-                        selectedValue={this.state.casttatus}
-                        onValueChange={(itemValue, itemIndex) =>
-                          this.setState({ casttatus: itemValue })
-                        }
-                        mode={'dialog'}
-                      >
-                        <Picker.Item label='Select Cast' value='0' />
-                        {this.state.cast.map((item, key) => (
-                          <Picker.Item label={item.cast_name} value={item.id} key={key}/>
-                        ))}
-                      </Picker>
-                    </View>
-                  </View> */}
+
                     <TextInputCustome title='Personal Description' value={personaldesc} changetext={(personaldesc) => this.setState({ personaldesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
                     <View style={{ paddingVertical: '4%', flexDirection: 'row', alignItems: 'center' }}>
                       <Label style={[Style.Textstyle, { paddingHorizontal: '5%', width: 'auto', color: Colors.black, fontFamily: CustomeFonts.medium }]}> Sani/Manglik</Label>
@@ -685,6 +798,15 @@ export default class LookinForMatrimony extends Component {
                         />
                       </TouchableOpacity>
                     </View>
+                    {isLoding ?
+                      <Indicator />
+                      :
+                      <TouchableOpacity
+                        style={[Style.Buttonback, { marginTop: 10 }]}
+                        onPress={() => this.editData()}
+                      >
+                        <Text style={Style.buttonText}>Save</Text>
+                      </TouchableOpacity>}
                   </CollapseBody>
                 </Collapse>
                 {/* Education details */}
@@ -696,6 +818,12 @@ export default class LookinForMatrimony extends Component {
                   <CollapseBody style={[Style.cardback]}>
                     <TextInputCustome title='Education' value={education} changetext={(education) => this.setState({ education })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Education Description' value={educationdesc} changetext={(educationdesc) => this.setState({ educationdesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitEducatuionalData()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
+                    </TouchableOpacity>
                   </CollapseBody>
                 </Collapse>
                 {/*   Family Details */}
@@ -727,6 +855,12 @@ export default class LookinForMatrimony extends Component {
                     <TextInputCustome title='Other Family Details (Brother& Sister)' value={otherfamilydetails} changetext={(otherfamilydetails) => this.setState({ otherfamilydetails })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Family Description' value={familydesc} changetext={(familydesc) => this.setState({ familydesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Native Place' value={nativeplace} changetext={(nativeplace) => this.setState({ nativeplace })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitFamilyDetails()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
+                    </TouchableOpacity>
                   </CollapseBody>
                 </Collapse>
                 {/* Lifestyle */}
@@ -750,6 +884,12 @@ export default class LookinForMatrimony extends Component {
                     <TextInputCustome title='Profession' value={profession} changetext={(profession) => this.setState({ profession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Yearly Income' value={income} changetext={(income) => this.setState({ income })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Profession Description' value={professiondesc} changetext={(professiondesc) => this.setState({ professiondesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitProffessionalData()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
+                    </TouchableOpacity>
                   </CollapseBody>
                 </Collapse>
                 {/* Spiritual Details */}
@@ -778,6 +918,12 @@ export default class LookinForMatrimony extends Component {
                     <TextInputCustome title='Which Religion / Spiritual path Do You Follow' value={religion} changetext={(religion) => this.setState({ religion })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Write Few Negative Points about self' value={negativePoint} changetext={(negativePoint) => this.setState({ negativePoint })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Write Few Positive Points about self' value={positivePoint} changetext={(positivePoint) => this.setState({ positivePoint })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitSpiritualData()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
+                    </TouchableOpacity>
                   </CollapseBody>
                 </Collapse>
                 {/* Communication Details */}
@@ -850,6 +996,12 @@ export default class LookinForMatrimony extends Component {
                     <TextInputCustome title='Linkedin Profile' value={linkedin} changetext={(linkedin) => this.setState({ linkedin })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Twitter Profile' value={twitter} changetext={(twitter) => this.setState({ twitter })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Whatsapp Number Enter Whatsapp No With Country Code(Not +)' value={wappno} changetext={(wappno) => this.setState({ wappno })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'number-pad'} editable={true} />
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitCommunicationData()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
+                    </TouchableOpacity>
                   </CollapseBody>
                 </Collapse>
                 {/* General Questioner */}
@@ -922,6 +1074,12 @@ export default class LookinForMatrimony extends Component {
                         </View>
                       </RadioButton.Group>
                     </View>
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitQuestionerData()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
+                    </TouchableOpacity>
                   </CollapseBody>
                 </Collapse>
                 {/* Additional photos */}
@@ -1024,37 +1182,37 @@ export default class LookinForMatrimony extends Component {
                       />
                     </TouchableOpacity>
                     <View>
-                      <View style={[Style.flexView, { paddingVertical: '2%' }]}>
-                        <CheckBox checked={approvedMatrimony} onPress={() => {
-                          if (validationempty(packageId)) {
-                            this.setState({ approvedMatrimony: !this.state.approvedMatrimony })
-                          } else {
-                            if (validationempty(matrimonyId)) {
-                              this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })
-                            } else {
-                              showToast("Submit your data first other wise you lost that ")
-                            }
-                          }
-                        }} checkedColor={Colors.Theme_color} containerStyle={{ width: '8%' }} />
-                        <Label style={[Style.Textstyle, { paddingHorizontal: '2%', width: '90%', color: Colors.black, fontFamily: CustomeFonts.medium }]}> I'm approved to view my profile on matrimony</Label>
-                      </View>
-                      <View>
-                        {this.state.isLoding ? (
-                          <ActivityIndicator color={Colors.Theme_color} size={'large'} />
-                        ) : (
-                            <TouchableOpacity
-                              style={[Style.Buttonback, { marginTop: 10 }]}
-                              onPress={() => this.editData()}
-                            >
-                              <Text style={Style.buttonText}>Submit</Text>
-                            </TouchableOpacity>
-                          )}
-                      </View>
-                    </View>
-
+                    {this.state.isLoding ? (
+                      <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+                    ) : (
+                        <TouchableOpacity
+                          style={[Style.Buttonback, { marginTop: 10 }]}
+                          onPress={() => this.submitPhotoData()}
+                        >
+                          <Text style={Style.buttonText}>Save</Text>
+                        </TouchableOpacity>
+                      )}
+                  </View>
                   </CollapseBody>
                 </Collapse>
 
+                <View>
+                  <View style={[Style.flexView, { paddingVertical: '2%' }]}>
+                    <CheckBox checked={approvedMatrimony} onPress={() => {
+                      if (validationempty(packageId)) {
+                        this.setState({ approvedMatrimony: !this.state.approvedMatrimony })
+                      } else {
+                        if (validationempty(matrimonyId)) {
+                          this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })
+                        } else {
+                          showToast("Submit your data first other wise you lost that ")
+                        }
+                      }
+                    }} checkedColor={Colors.Theme_color} containerStyle={{ width: '8%' }} />
+                    <Label style={[Style.Textstyle, { paddingHorizontal: '2%', width: '90%', color: Colors.black, fontFamily: CustomeFonts.medium }]}> I'm approved to view my profile on matrimony</Label>
+                  </View>
+                
+                </View>
 
               </View>
               <Modal

@@ -154,12 +154,12 @@ export default class App extends Component {
               </Text>
             </View>
 
-            <View style={{ flexDirection: 'row' }}>
+            {/* <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Country</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
                 {item.country_name}
               </Text>
-            </View>
+            </View> */}
           </View>
         </View>
       </TouchableOpacity>
@@ -170,14 +170,14 @@ export default class App extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          if (validationempty(item.matrimony_masters.package_id)) {
-            this.props.navigation.navigate('MatrimonyDetails', {
-              itemData: item, matrimonyData: item.matrimony_masters, member: 'main', imageUrl: this.state.imageUrlKundli,
-              imageUrlMatrimony: this.state.imageUrlMatrimony
-            })
-          }
+          // if (validationempty(item.matrimony_masters.package_id)) {
+          this.props.navigation.navigate('MatrimonyDetails', {
+            itemData: item, member: 'main', imageUrl: this.state.imageUrlKundli,
+            imageUrlMatrimony: this.state.imageUrlMatrimony
+          })
         }
         }
+      // }
       >
         <View
           style={[Style.cardback, { flex: 1, flexDirection: 'row' }]}
@@ -202,28 +202,28 @@ export default class App extends Component {
               )}
           </TouchableOpacity>
           <View style={{ flex: 5, justifyContent: 'center', marginLeft: 10 }}>
-            <Text style={Style.Textmainstyle}>{item.member_name}</Text>
-            {/* 
+            <Text style={Style.Textmainstyle}>{item.name}</Text>
+
             <View style={{ flexDirection: 'row' }}>
-              <Text style={[Style.Textstyle, { flex: 3 }]}>Code</Text>
+              <Text style={[Style.Textstyle, { flex: 3 }]}>Cast</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
-                {item.member_code}
+                {item.cast}
               </Text>
-            </View> */}
+            </View>
 
             <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Birth Date</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
-                {Moment(item.member_birth_date).format('DD-MM-YYYY')}
+                {Moment(item.birth_date).format('DD-MM-YYYY')}
               </Text>
             </View>
 
-            <View style={{ flexDirection: 'row' }}>
+            {/* <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Profile</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
                 {item.matrimony_masters.profile_tag_line}
               </Text>
-            </View>
+            </View> */}
           </View>
         </View>
       </TouchableOpacity>

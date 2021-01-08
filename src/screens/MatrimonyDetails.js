@@ -35,6 +35,7 @@ import { onShare, validationempty } from '../Theme/Const';
 import IconEntypo from 'react-native-vector-icons/Entypo'
 import IconFeather from 'react-native-vector-icons/Feather'
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
+import { Helper } from '../Helper/Helper';
 
 
 class MatrimonyDetails extends Component {
@@ -72,17 +73,20 @@ class MatrimonyDetails extends Component {
 
   async apiCalling() {
     const details = this.props.navigation.getParam('itemData')
-    const member = this.props.navigation.getParam('member')
-    const matrimonyData = this.props.navigation.getParam('matrimonyData')
+    // const member = this.props.navigation.getParam('member')
+    // const matrimonyData = this.props.navigation.getParam('matrimonyData')
     const imageUrl = this.props.navigation.getParam('imageUrl')
     const imageUrlMatrimony = this.props.navigation.getParam('imageUrlMatrimony')
-    console.log('item Data -->', details)
-    console.log('item Data 11 -->', matrimonyData)
+
+    var response = await Helper.GET('matrimonyDetails?member_id='+details.id)
+
+    console.log('item Data -->', response)
+    // console.log('item Data 11 -->', matrimonyData)
     this.setState({
-      item_details: details,
-      member_type: member,
+      item_details: response.data.member_master,
+      matrimonyData:response.data,
       imageUrl: imageUrl,
-      matrimonyData, imageUrlMatrimony
+      imageUrlMatrimony, imageUrlMatrimony
     })
   }
 
@@ -430,7 +434,7 @@ class MatrimonyDetails extends Component {
                         source={
                           !validationempty(matrimonyData.member_photo_1)
                             ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_1 }}
+                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_2 }}
                         style={{ width: '100%', height: 150 }}
                       />
                     </TouchableOpacity>
@@ -440,7 +444,7 @@ class MatrimonyDetails extends Component {
                         source={
                           !validationempty(matrimonyData.member_photo_1)
                             ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_1 }}
+                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_3 }}
                         style={{ width: '100%', height: 150 }}
                       />
                     </TouchableOpacity>
@@ -450,7 +454,7 @@ class MatrimonyDetails extends Component {
                         source={
                           !validationempty(matrimonyData.member_photo_1)
                             ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_1 }}
+                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_4 }}
                         style={{ width: '100%', height: 150 }}
                       />
                     </TouchableOpacity>
@@ -460,7 +464,7 @@ class MatrimonyDetails extends Component {
                         source={
                           !validationempty(matrimonyData.member_photo_1)
                             ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_1 }}
+                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_5 }}
                         style={{ width: '100%', height: 150 }}
                       />
                     </TouchableOpacity>
