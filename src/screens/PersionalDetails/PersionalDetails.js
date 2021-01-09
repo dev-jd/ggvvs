@@ -458,7 +458,7 @@ class PersionalDetails extends Component {
                   ]}
                 >
                   {/* Doctor Switch */}
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[Style.Textmainstyle, { color: Colors.black }]}>
                       Are You Doctor?
                 </Text>
@@ -501,7 +501,7 @@ class PersionalDetails extends Component {
                       }
                       trackColor={Colors.lightThem}
                     />
-                  </View>
+                  </View> */}
                   {/* Matrimony Swithch */}
                   {/* <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                     <Text style={[Style.Textmainstyle, { color: Colors.black }]}> Looking for Matrimony?</Text>

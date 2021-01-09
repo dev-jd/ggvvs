@@ -75,7 +75,7 @@ export default class App extends Component {
       imageUrlMatrimony,
       isLoding: false
     })
-    // console.log("list2", list2)
+    console.log("list2", list2)
     // this.setState({ isLoding: true })
     // console.log(
     //   'base url: --',
@@ -170,14 +170,14 @@ export default class App extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          // if (validationempty(item.matrimony_masters.package_id)) {
-          this.props.navigation.navigate('MatrimonyDetails', {
-            itemData: item, member: 'main', imageUrl: this.state.imageUrlKundli,
-            imageUrlMatrimony: this.state.imageUrlMatrimony
-          })
+          if (validationempty(item.package_id)) {
+            this.props.navigation.navigate('MatrimonyDetails', {
+              itemData: item, member: 'main', imageUrl: this.state.imageUrlKundli,
+              imageUrlMatrimony: this.state.imageUrlMatrimony
+            })
+          }
         }
         }
-      // }
       >
         <View
           style={[Style.cardback, { flex: 1, flexDirection: 'row' }]}
@@ -218,12 +218,12 @@ export default class App extends Component {
               </Text>
             </View>
 
-            {/* <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Profile</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
-                {item.matrimony_masters.profile_tag_line}
+                {item.profile_tag_line}
               </Text>
-            </View> */}
+            </View>
           </View>
         </View>
       </TouchableOpacity>

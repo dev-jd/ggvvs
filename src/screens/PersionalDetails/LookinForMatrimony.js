@@ -140,10 +140,6 @@ export default class LookinForMatrimony extends Component {
     var response = await Helper.GET('package_list?samaj_id=' + this.state.samaj_id)
     // console.log('check the response packages', response)
     this.setState({ packageList: response.data })
-
-    
-    // formdata.append('mm_expectations', expectation)
-    // formdata.append('lifestyle_choice', lifestylechoice)
   }
   castApi = async () => {
     var response = await Helper.GET('cast_list?samaj_id=' + this.state.samaj_id)
@@ -408,181 +404,240 @@ export default class LookinForMatrimony extends Component {
       showToast(response.message)
     }
   }
+  async submitLifestyleData() {
+    var { expectation, lifestylechoice, matrimonyId, isLoding } = this.state
+
+    if (validationempty(matrimonyId)) {
+
+      var formdata = new FormData()
+      formdata.append('mm_expectations', expectation)
+      formdata.append('lifestyle_choice', lifestylechoice)
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+      console.log('educational formdata-->', formdata)
+
+      var response = await Helper.POSTFILE('matrimonyLifeStyle', formdata)
+      console.log('check the response', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
+    }
+  }
   async submitEducatuionalData() {
     var { education, educationdesc, matrimonyId, isLoding } = this.state
-    var formdata = new FormData()
-    formdata.append('mm_education', educationdesc)
-    formdata.append('member_eq_id', education)// chec
     if (validationempty(matrimonyId)) {
-      formdata.append('matrimony_id', matrimonyId)
-    }
-    console.log('educational formdata-->', formdata)
+      var formdata = new FormData()
+      formdata.append('mm_education', educationdesc)
+      formdata.append('member_eq_id', education)// chec
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+      console.log('educational formdata-->', formdata)
 
-    var response = await Helper.POSTFILE('matrimonyEducation', formdata)
-    console.log('check the response', response)
-    if (response.status) {
-      this.setState({ isLoding: false })
-      showToast(response.message)
+      var response = await Helper.POSTFILE('matrimonyEducation', formdata)
+      console.log('check the response', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
     }
   }
   async submitFamilyDetails() {
     var { familydesc, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, matrimonyId, nativeplace, isLoding } = this.state
-
-    var formdata = new FormData()
-
-    formdata.append('member_father', fathername)
-    formdata.append('member_native_place', nativeplace)
-    formdata.append('member_mother', mothername)
-    formdata.append('father_profession', fatherProfession)
-    formdata.append('mother_profession', motherprofession)
-    formdata.append('family_other_details', otherfamilydetails)
-    formdata.append('family_details', familydesc)
-
     if (validationempty(matrimonyId)) {
-      formdata.append('matrimony_id', matrimonyId)
-    }
-    var response = await Helper.POSTFILE('matrimonyFamily', formdata)
-    console.log('check the response', response)
-    if (response.status) {
-      this.setState({ isLoding: false })
-      showToast(response.message)
+      var formdata = new FormData()
+
+      formdata.append('member_father', fathername)
+      formdata.append('member_native_place', nativeplace)
+      formdata.append('member_mother', mothername)
+      formdata.append('father_profession', fatherProfession)
+      formdata.append('mother_profession', motherprofession)
+      formdata.append('family_other_details', otherfamilydetails)
+      formdata.append('family_details', familydesc)
+
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+      var response = await Helper.POSTFILE('matrimonyFamily', formdata)
+      console.log('check the response', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
     }
   }
   async submitProffessionalData() {
     var { professiondesc, income, profession, matrimonyId } = this.state
 
-    var formdata = new FormData()
-    formdata.append('profession', profession)
-    formdata.append('profession_details', professiondesc)
-    formdata.append('mm_income', validationempty(income) ? income : '')
-
     if (validationempty(matrimonyId)) {
-      formdata.append('matrimony_id', matrimonyId)
-    }
-    console.log('profession formdata-->', formdata)
+      var formdata = new FormData()
+      formdata.append('profession', profession)
+      formdata.append('profession_details', professiondesc)
+      formdata.append('mm_income', validationempty(income) ? income : '')
 
-    var response = await Helper.POSTFILE('matrimonyProfession', formdata)
-    console.log('check the response', response)
-    if (response.status) {
-      this.setState({ isLoding: false })
-      showToast(response.message)
-    }
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+      console.log('profession formdata-->', formdata)
 
+      var response = await Helper.POSTFILE('matrimonyProfession', formdata)
+      console.log('check the response', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
+    }
   }
   async submitSpiritualData() {
+
     var { matrimonyId, isPustimarg, religion, negativePoint, positivePoint } = this.state
 
-    if (isPustimarg) {
-      isPustimarg = 1
-    } else {
-      isPustimarg = 2
-    }
-
-
-    var formdata = new FormData()
-    formdata.append('sp_path', religion)
-    formdata.append('pustimarg', isPustimarg)
-    formdata.append('negative_point', negativePoint)
-    formdata.append('positive_point', positivePoint)
-
     if (validationempty(matrimonyId)) {
-      formdata.append('matrimony_id', matrimonyId)
-    }
-    var response = await Helper.POSTFILE('matrimonySpiritual', formdata)
-    console.log('check the response', response)
-    if (response.status) {
-      this.setState({ isLoding: false })
-      showToast(response.message)
+      if (isPustimarg) {
+        isPustimarg = 1
+      } else {
+        isPustimarg = 2
+      }
+      var formdata = new FormData()
+      formdata.append('sp_path', religion)
+      formdata.append('pustimarg', isPustimarg)
+      formdata.append('negative_point', negativePoint)
+      formdata.append('positive_point', positivePoint)
+
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+      var response = await Helper.POSTFILE('matrimonySpiritual', formdata)
+      console.log('check the response', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
     }
   }
   async submitCommunicationData() {
     var { matrimonyId, email, country, state, city, address, fbuser, instauser, twitter, linkedin, wappno } = this.state
-    var formdata = new FormData()
-
-    formdata.append('member_email', email)
-    formdata.append('countryid', country)
-    formdata.append('stateid', state)
-    formdata.append('cityid', city)
-    formdata.append('member_address', address)
-    formdata.append('member_fb', fbuser)
-    formdata.append('member_insta', instauser)
-    formdata.append('member_linkedin', linkedin)
-    formdata.append('member_whatsapp', wappno)
-    formdata.append('member_twitter', twitter)
-
     if (validationempty(matrimonyId)) {
-      formdata.append('matrimony_id', matrimonyId)
-    }
-    var response = await Helper.POSTFILE('matrimonyCommunication', formdata)
-    console.log('check the response communication ', response)
-    if (response.status) {
-      this.setState({ isLoding: false })
-      showToast(response.message)
+      var formdata = new FormData()
+      formdata.append('member_email', email)
+      formdata.append('countryid', country)
+      formdata.append('stateid', state)
+      formdata.append('cityid', city)
+      formdata.append('member_address', address)
+      formdata.append('member_fb', fbuser)
+      formdata.append('member_insta', instauser)
+      formdata.append('member_linkedin', linkedin)
+      formdata.append('member_whatsapp', wappno)
+      formdata.append('member_twitter', twitter)
+
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+      var response = await Helper.POSTFILE('matrimonyCommunication', formdata)
+      console.log('check the response communication ', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
     }
   }
   async submitQuestionerData() {
     var { smoke, nonveg, eggs, takedrink, lookfornri, matrimonyId } = this.state
-    var formdata = new FormData()
-    formdata.append('mm_smoke', smoke)
-    formdata.append('mm_nonveg', nonveg)
-    formdata.append('mm_egg', eggs)
-    formdata.append('mm_drink', takedrink)
-    formdata.append('looking_for_nri', lookfornri)
-
     if (validationempty(matrimonyId)) {
-      formdata.append('matrimony_id', matrimonyId)
-    }
-    var response = await Helper.POSTFILE('matrimonyGeneral', formdata)
-    console.log('check the response questionery ', response)
-    if (response.status) {
-      this.setState({ isLoding: false })
-      showToast(response.message)
-    }
 
+      var formdata = new FormData()
+      formdata.append('mm_smoke', smoke)
+      formdata.append('mm_nonveg', nonveg)
+      formdata.append('mm_egg', eggs)
+      formdata.append('mm_drink', takedrink)
+      formdata.append('looking_for_nri', lookfornri)
+
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+      var response = await Helper.POSTFILE('matrimonyGeneral', formdata)
+      console.log('check the response questionery ', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
+    }
   }
   async submitPhotoData() {
     var { matrimonyId, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5, memberimage1, memberimage2, memberimage3, memberimage4, memberimage5 } = this.state
-    var formdata = new FormData()
-    if (idSelectM1) {
-      formdata.append('member_photo_1', memberimage1)
-    } else {
-      formdata.append('member_photo_1', '')
-    }
-    if (idSelectM2) {
-      formdata.append('member_photo_2', memberimage2)
-    } else {
-      formdata.append('member_photo_2', '')
-    }
-    if (idSelectM3) {
-      formdata.append('member_photo_3', memberimage3)
-    } else {
-      formdata.append('member_photo_3', '')
-    }
-    if (idSelectM4) {
-      formdata.append('member_photo_4', memberimage4)
-    } else {
-      formdata.append('member_photo_4', '')
-    }
-    if (idSelectM5) {
-      formdata.append('member_photo_5', memberimage5)
-    } else {
-      formdata.append('member_photo_5', '')
-    }
     if (validationempty(matrimonyId)) {
-      formdata.append('matrimony_id', matrimonyId)
+      var formdata = new FormData()
+      if (idSelectM1) {
+        formdata.append('member_photo_1', memberimage1)
+      } else {
+        formdata.append('member_photo_1', '')
+      }
+      if (idSelectM2) {
+        formdata.append('member_photo_2', memberimage2)
+      } else {
+        formdata.append('member_photo_2', '')
+      }
+      if (idSelectM3) {
+        formdata.append('member_photo_3', memberimage3)
+      } else {
+        formdata.append('member_photo_3', '')
+      }
+      if (idSelectM4) {
+        formdata.append('member_photo_4', memberimage4)
+      } else {
+        formdata.append('member_photo_4', '')
+      }
+      if (idSelectM5) {
+        formdata.append('member_photo_5', memberimage5)
+      } else {
+        formdata.append('member_photo_5', '')
+      }
+      if (validationempty(matrimonyId)) {
+        formdata.append('matrimony_id', matrimonyId)
+      }
+
+
+      var response = await Helper.POSTFILE('matrimonyPhoto', formdata)
+      console.log('check the response photos ', response)
+      if (response.status) {
+        this.setState({ isLoding: false })
+        showToast(response.message)
+      }
+    } else {
+      showToast('Add Personal Details First')
     }
+  }
+  async ApproveDataSubmit() {
+    this.setState({ isLoding: true })
+    var { matrimonyId, approvedMatrimony } = this.state
     var approved
     if (this.state.approvedMatrimony) {
-      approved = 1
-    } else {
       approved = 0
+    } else {
+      approved = 1
     }
-
+    var formdata = new FormData()
+    formdata.append('matrimony_id', matrimonyId)
     formdata.append('me_approved', approved)
-
-
-    var response = await Helper.POSTFILE('matrimonyPhoto', formdata)
-    console.log('check the response questionery ', response)
+    console.log('check the formdata me approve',formdata)
+    var response = await Helper.POSTFILE('matrimonyApprove', formdata)
+    console.log('check the response active  ', response)
     if (response.status) {
       this.setState({ isLoding: false })
       showToast(response.message)
@@ -635,13 +690,16 @@ export default class LookinForMatrimony extends Component {
                 {validationempty(packageId) ?
                   <View style={[Style.cardback,]}>
                     <View>
-                      <Text style={[Style.Textmainstyle, { textAlign: 'center' }]}>Package Name</Text>
-                      <Text style={[Style.SubTextstyle, { textAlign: 'center', paddingVertical: '3%' }]} numberOfLines={3}>{"Access to matrimony profile \r\nview 30 profile per week\r\nsend 5 like\r\nsend message to 5 users"}</Text>
+                      <Text style={[Style.Textmainstyle, { textAlign: 'center' }]}>Package {packageDetails.package_name}</Text>
+                      {validationempty(packageDetails.description) ?
+                        <Text style={[Style.SubTextstyle, { textAlign: 'center', paddingVertical: '3%' }]} numberOfLines={3}>{packageDetails.description}</Text> :
+                        null}
                     </View>
                     <View>
                       <Text style={[Style.Textstyle, { textAlign: 'center' }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text>
                       <Text style={[Style.Textstyle, { textAlign: 'center' }]}>Tranjection Id - {validationempty(packageDetails.transaction_id) ? packageDetails.transaction_id : 'Free Package'}</Text>
                     </View>
+                    <Text style={[Style.Textstyle, { textAlign: 'center' }]}>Package Limit {packageDetails.days} days</Text>
                     <Text style={[Style.Textstyle, { textAlign: 'center' }]}>{moment(packageDetails.start_date).format('DD-MM-YYYY')}  To  {moment(packageDetails.end_date).format('DD-MM-YYYY')}</Text>
                   </View> : <View style={[Style.cardback,]}>
                     <Text style={[Style.Textmainstyle, { textAlign: 'center' }]}>No Any Package Select Yet</Text>
@@ -872,6 +930,12 @@ export default class LookinForMatrimony extends Component {
                   <CollapseBody style={[Style.cardback]}>
                     <TextInputCustome title='Lifestyle Choices' value={lifestylechoice} changetext={(lifestylechoice) => this.setState({ lifestylechoice })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Member Expectation from life partner' value={expectation} changetext={(expectation) => this.setState({ expectation })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitLifestyleData()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
+                    </TouchableOpacity>
                   </CollapseBody>
                 </Collapse>
                 {/* Professional Details */}
@@ -1182,36 +1246,37 @@ export default class LookinForMatrimony extends Component {
                       />
                     </TouchableOpacity>
                     <View>
-                    {this.state.isLoding ? (
-                      <ActivityIndicator color={Colors.Theme_color} size={'large'} />
-                    ) : (
-                        <TouchableOpacity
-                          style={[Style.Buttonback, { marginTop: 10 }]}
-                          onPress={() => this.submitPhotoData()}
-                        >
-                          <Text style={Style.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                      )}
-                  </View>
+                      {this.state.isLoding ? (
+                        <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+                      ) : (
+                          <TouchableOpacity
+                            style={[Style.Buttonback, { marginTop: 10 }]}
+                            onPress={() => this.submitPhotoData()}
+                          >
+                            <Text style={Style.buttonText}>Save</Text>
+                          </TouchableOpacity>
+                        )}
+                    </View>
                   </CollapseBody>
                 </Collapse>
 
-                <View>
+                <View style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
                   <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                     <CheckBox checked={approvedMatrimony} onPress={() => {
                       if (validationempty(packageId)) {
                         this.setState({ approvedMatrimony: !this.state.approvedMatrimony })
+                        this.ApproveDataSubmit()
                       } else {
                         if (validationempty(matrimonyId)) {
                           this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })
                         } else {
-                          showToast("Submit your data first other wise you lost that ")
+                          showToast("Submit your Personal details first")
                         }
                       }
                     }} checkedColor={Colors.Theme_color} containerStyle={{ width: '8%' }} />
                     <Label style={[Style.Textstyle, { paddingHorizontal: '2%', width: '90%', color: Colors.black, fontFamily: CustomeFonts.medium }]}> I'm approved to view my profile on matrimony</Label>
                   </View>
-                
+
                 </View>
 
               </View>

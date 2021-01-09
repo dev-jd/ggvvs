@@ -12,7 +12,7 @@ import ImagePicker from 'react-native-image-picker'
 import { pic_url } from '../../Static'
 import axois from 'axios'
 import { base_url } from '../../Static'
-import Moment, { invalid } from 'moment'
+import Moment from 'moment'
 import DatePicker from 'react-native-datepicker'
 import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -174,7 +174,7 @@ class ViewOtherPersionalDetails extends Component {
       })
     }
 
-    if (details.member_marriage_anniversary === invalid || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined' || details.member_marriage_anniversary === 'null') {
+    if (details.member_marriage_anniversary === 'invalid' || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined' || details.member_marriage_anniversary === 'null') {
       this.setState({ anniversary: '' })
     } else {
       this.setState({ anniversary: details.member_marriage_anniversary, })
@@ -183,15 +183,14 @@ class ViewOtherPersionalDetails extends Component {
     this.setState({
       memberDetails: details,
       other_details: otherDetails,
-
       maritalstatus: details.member_marital_status,
       // anniversary: details.member_marriage_anniversary,
-      dob: details.member_birth_date,
-      // anniversary: Moment(details.member_marriage_anniversary).format(
-      //   'DD-MM-YYYY'
-      // ),
+      // dob: details.member_birth_date,
+      anniversary: Moment(details.member_marriage_anniversary).format(
+        'DD-MM-YYYY'
+      ),
       // // dob: details.member_birth_date,
-      // dob: Moment(details.member_birth_date).format('DD-MM-YYYY'),
+      dob: Moment(details.member_birth_date).format('DD-MM-YYYY'),
       fatherName: otherDetails.member_father,
       motherName: otherDetails.member_mother,
       address: otherDetails.member_address,
@@ -361,8 +360,10 @@ class ViewOtherPersionalDetails extends Component {
     } else {
       isalive = 1
     }
-    // console.log('dob moment', Moment(this.state.dob).format('YYYY-MM-DD'))
-    // var dob = Moment(this.state.dob).format('YYYY-MM-DD')
+
+    
+    console.log('dob moment', Moment(this.state.dob).format('YYYY-MM-DD'))
+    var dob = Moment(this.state.dob).format('YYYY-MM-DD')
     if (
       this.state.anniversary === null ||
       this.state.anniversary === '' ||
@@ -379,7 +380,7 @@ class ViewOtherPersionalDetails extends Component {
 
       aniversary = final_date2
 
-      // aniversary = Moment(this.state.anniversary).format('YYYY-MM-DD')
+      aniversary = Moment(this.state.anniversary).format('YYYY-MM-DD')
     }
     if (this.state.connection_Status) {
 
@@ -404,7 +405,7 @@ class ViewOtherPersionalDetails extends Component {
           console.log('final date', final_date)
           formdata.append('member_birth_date', final_date)
         } else {
-          formdata.append('member_birth_date', this.state.dob)
+          formdata.append('member_birth_date', dob)
         }
 
         if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
@@ -556,22 +557,22 @@ class ViewOtherPersionalDetails extends Component {
 
         console.log('edit details form data', formdata)
 
-        axois
-          .post(base_url + 'member_details_edit', formdata)
-          .then(response => {
-            console.log('member_details_edit Response---->', response.data)
-            this.setState({ _isLoading: false })
-            if (response.data.success === true) {
-              Toast.show(response.data.message)
-              this.props.navigation.navigate('Dashboard')
-            } else {
-              Toast.show(response.data.message)
-            }
-          })
-          .catch(err => {
-            this.setState({ _isLoading: false })
-            console.log('member_details_edit err', err)
-          })
+        // axois
+        //   .post(base_url + 'member_details_edit', formdata)
+        //   .then(response => {
+        //     console.log('member_details_edit Response---->', response.data)
+        //     this.setState({ _isLoading: false })
+        //     if (response.data.success === true) {
+        //       Toast.show(response.data.message)
+        //       this.props.navigation.navigate('Dashboard')
+        //     } else {
+        //       Toast.show(response.data.message)
+        //     }
+        //   })
+        //   .catch(err => {
+        //     this.setState({ _isLoading: false })
+        //     console.log('member_details_edit err', err)
+        //   })
       }
     } else {
       Toast.show('no internet connection')
@@ -770,6 +771,7 @@ class ViewOtherPersionalDetails extends Component {
                         dateInput: { marginLeft: 36 }
                       }}
                       onDateChange={setDate => {
+                        // var date = moment(setDate).format('YYYY-MM-DD')
                         this.setState({
                           anniversary: setDate,
                           isanySelect: true
@@ -827,6 +829,7 @@ class ViewOtherPersionalDetails extends Component {
                     dateInput: { marginLeft: 36 }
                   }}
                   onDateChange={setDate => {
+                    // var date = moment(setDate).format('YYYY-MM-DD')
                     this.setState({
                       dob: setDate,
                       isdobSelect: true

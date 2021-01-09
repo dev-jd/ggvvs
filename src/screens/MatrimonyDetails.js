@@ -57,7 +57,8 @@ class MatrimonyDetails extends Component {
       isLoding: false,
       imageUrl: '',
       matrimonyData: {},
-      imageUrlMatrimony: ''
+      imageUrlMatrimony: '',
+      country: '', state: '', city: ''
     }
   }
 
@@ -78,20 +79,25 @@ class MatrimonyDetails extends Component {
     const imageUrl = this.props.navigation.getParam('imageUrl')
     const imageUrlMatrimony = this.props.navigation.getParam('imageUrlMatrimony')
 
-    var response = await Helper.GET('matrimonyDetails?member_id='+details.id)
+    var response = await Helper.GET('matrimonyDetails?member_id=' + details.id)
 
     console.log('item Data -->', response)
-    // console.log('item Data 11 -->', matrimonyData)
+    console.log('item Data 11 -->', response.data.member_master.country_masters.country_name)
+    console.log('item Data 11 -->', response.data.member_master.state_masters.state_name)
+    console.log('item Data 11 -->', response.data.member_master.city_masters.city_name)
     this.setState({
       item_details: response.data.member_master,
-      matrimonyData:response.data,
+      matrimonyData: response.data,
       imageUrl: imageUrl,
-      imageUrlMatrimony, imageUrlMatrimony
+      imageUrlMatrimony, imageUrlMatrimony,
+      country: response.data.member_master.country_masters.country_name,
+      state: response.data.member_master.state_masters.state_name,
+      city: response.data.member_master.city_masters.city_name
     })
   }
 
   render() {
-    const { item_details, matrimonyData, imageUrl, imageUrlMatrimony } = this.state
+    const { item_details, matrimonyData, imageUrl, imageUrlMatrimony, country, state, city } = this.state
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ImageBackground source={AppImages.back7}
@@ -106,7 +112,11 @@ class MatrimonyDetails extends Component {
               <View style={[Style.cardback, { backgroundColor: Colors.blackTp, borderRadius: 10, padding: '2%' }]}>
                 <Text style={[Style.Textmainstyle, { color: Colors.white, fontSize: 20, textAlign: 'center' }]}>Name - {item_details.member_name}</Text>
                 {matrimonyData.profile_tag_line ?
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>{matrimonyData.profile_tag_line}</Text> : null}
+                  <View>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>Profile Tag</Text>
+                    <Text style={[Style.Textstyle, { color: Colors.white, textAlign: 'center' }]}>{matrimonyData.profile_tag_line}</Text>
+                  </View>
+                  : null}
               </View>
               <Collapse>
                 <CollapseHeader style={[Style.cardback, Style.flexView, { backgroundColor: Colors.Theme_color, borderRadius: 10 }]}>
@@ -296,8 +306,18 @@ class MatrimonyDetails extends Component {
                     <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '100%' }]}>{validationempty(item_details.member_address) ? item_details.member_address : '-'}</Label>
                   </View>
                   <View style={[Style.flexView, { paddingVertical: '2%' }]}>
-                    <Label style={[Style.Textmainstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>City – State – Country</Label>
-                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '50%' }]}>{validationempty(matrimonyData.negative_point) ? matrimonyData.negative_point : '-'}</Label>
+                    <View style={{ width: '33.33%' }}>
+                      <Label style={[Style.Textmainstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '100%' }]}>Country</Label>
+                      <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '100%' }]}>{country}</Label>
+                    </View>
+                    <View style={{ width: '33.33%' }}>
+                      <Label style={[Style.Textmainstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '100%' }]}>State</Label>
+                      <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '100%' }]}>{state}</Label>
+                    </View>
+                    <View style={{ width: '33.33%' }}>
+                      <Label style={[Style.Textmainstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '100%' }]}>City</Label>
+                      <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '100%' }]}>{city}</Label>
+                    </View>
                   </View>
                   <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                     {validationempty(item_details.member_whatsapp) ?
@@ -418,56 +438,55 @@ class MatrimonyDetails extends Component {
                 <CollapseBody style={[Style.cardback]}>
                   <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <TouchableOpacity style={{height:180,width:180}} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_1 })}>
-                      <Image
-                        resizeMode={'contain'}
-                        source={
-                          !validationempty(matrimonyData.member_photo_1)
-                            ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_1 }}
-                        style={{ width: '100%', height: 150 }}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{height:180,width:180}} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_2 })}>
-                      <Image
-                        resizeMode={'contain'}
-                        source={
-                          !validationempty(matrimonyData.member_photo_1)
+                      <TouchableOpacity style={{ height: 180, width: 180 }} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_1 })}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(matrimonyData.member_photo_1)
+                              ? AppImages.placeHolder
+                              : { uri: imageUrlMatrimony + matrimonyData.member_photo_1 }}
+                          style={{ width: '100%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={{ height: 180, width: 180 }} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_2 })}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={!validationempty(matrimonyData.member_photo_1)
                             ? AppImages.placeHolder
                             : { uri: imageUrlMatrimony + matrimonyData.member_photo_2 }}
-                        style={{ width: '100%', height: 150 }}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{height:180,width:180}} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_3 })}>
-                      <Image
-                        resizeMode={'contain'}
-                        source={
-                          !validationempty(matrimonyData.member_photo_1)
-                            ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_3 }}
-                        style={{ width: '100%', height: 150 }}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{height:180,width:180}} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_4 })}>
-                      <Image
-                        resizeMode={'contain'}
-                        source={
-                          !validationempty(matrimonyData.member_photo_1)
-                            ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_4 }}
-                        style={{ width: '100%', height: 150 }}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{height:180,width:180}} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_5 })}>
-                      <Image
-                        resizeMode={'contain'}
-                        source={
-                          !validationempty(matrimonyData.member_photo_1)
-                            ? AppImages.placeHolder
-                            : { uri: imageUrlMatrimony + matrimonyData.member_photo_5 }}
-                        style={{ width: '100%', height: 150 }}
-                      />
-                    </TouchableOpacity>
+                          style={{ width: '100%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={{ height: 180, width: 180 }} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_3 })}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(matrimonyData.member_photo_1)
+                              ? AppImages.placeHolder
+                              : { uri: imageUrlMatrimony + matrimonyData.member_photo_3 }}
+                          style={{ width: '100%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={{ height: 180, width: 180 }} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_4 })}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(matrimonyData.member_photo_1)
+                              ? AppImages.placeHolder
+                              : { uri: imageUrlMatrimony + matrimonyData.member_photo_4 }}
+                          style={{ width: '100%', height: 150 }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={{ height: 180, width: 180 }} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_5 })}>
+                        <Image
+                          resizeMode={'contain'}
+                          source={
+                            !validationempty(matrimonyData.member_photo_1)
+                              ? AppImages.placeHolder
+                              : { uri: imageUrlMatrimony + matrimonyData.member_photo_5 }}
+                          style={{ width: '100%', height: 150 }}
+                        />
+                      </TouchableOpacity>
                     </ScrollView>
                   </View>
                 </CollapseBody>

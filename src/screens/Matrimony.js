@@ -47,10 +47,10 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      gender: '1',
+      gender: '',
       maritalstatus: '',
-      fromage: '18',
-      toage: '60',
+      fromage: '',
+      toage: '',
       banner_img: '',
       banner_url: '',
       image_url: '',
