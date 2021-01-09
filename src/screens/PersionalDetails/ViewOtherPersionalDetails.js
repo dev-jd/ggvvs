@@ -152,6 +152,8 @@ class ViewOtherPersionalDetails extends Component {
 
     if (this.state.connection_Status === true) {
       this.apiCalling()
+
+      
     }
   }
 
@@ -161,8 +163,8 @@ class ViewOtherPersionalDetails extends Component {
     })
     const details = this.props.navigation.getParam('itemData')
     const otherDetails = this.props.navigation.getParam('otherDetails')
-    console.log('item Data -->', details)
-    console.log('other item Data -->', otherDetails)
+    console.log('item Data ==>', details)
+    //console.log('other item Data -->', otherDetails)
 
     if (this.state.member_type === '1') {
       this.setState({
@@ -174,10 +176,10 @@ class ViewOtherPersionalDetails extends Component {
       })
     }
 
-    if (details.member_marriage_anniversary === 'invalid' || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined' || details.member_marriage_anniversary === 'null') {
+    if (details.member_marriage_anniversary === 'invalid' || details.member_marriage_anniversary === '' || details.member_marriage_anniversary === null || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined' ) {
       this.setState({ anniversary: '' })
     } else {
-      this.setState({ anniversary: details.member_marriage_anniversary, })
+      this.setState({ anniversary: Moment(details.member_marriage_anniversary, "YYYY-MM-DD", true).format("DD-MM-YYYY"), })
     }
 
     this.setState({
@@ -186,11 +188,11 @@ class ViewOtherPersionalDetails extends Component {
       maritalstatus: details.member_marital_status,
       // anniversary: details.member_marriage_anniversary,
       // dob: details.member_birth_date,
-      anniversary: Moment(details.member_marriage_anniversary).format(
-        'DD-MM-YYYY'
-      ),
+      // anniversary: Moment(details.member_marriage_anniversary).format(
+      //   'DD-MM-YYYY'
+      // ),
       // // dob: details.member_birth_date,
-      dob: Moment(details.member_birth_date).format('DD-MM-YYYY'),
+      dob: Moment(details.member_birth_date, "YYYY-MM-DD", true).format("DD-MM-YYYY"),
       fatherName: otherDetails.member_father,
       motherName: otherDetails.member_mother,
       address: otherDetails.member_address,
@@ -225,6 +227,7 @@ class ViewOtherPersionalDetails extends Component {
     console.log('id id ', this.state.member_proof + this.state.idImage)
     console.log('family id ', this.state.family_pic_url + this.state.familyPhoto)
 
+    console.log('birth date ===>',details.member_birth_date)
 
     //country
     axois
@@ -347,11 +350,12 @@ class ViewOtherPersionalDetails extends Component {
     }
   }
   apiCallPost() {
-    var aniversary, dob
+    
     console.log('dob siddhi', this.state.dob)
     console.log('aniversary', this.state.anniversary)
     console.log('dob select ', this.state.isdobSelect)
     console.log('aniversary select', this.state.isanySelect)
+    console.log('alive select', this.state.alive)
 
     var isalive
 
@@ -360,28 +364,7 @@ class ViewOtherPersionalDetails extends Component {
     } else {
       isalive = 1
     }
-
-    
-    console.log('dob moment', Moment(this.state.dob).format('YYYY-MM-DD'))
-    var dob = Moment(this.state.dob).format('YYYY-MM-DD')
-    if (
-      this.state.anniversary === null ||
-      this.state.anniversary === '' ||
-      this.state.anniversary === undefined
-    ) {
-      aniversary = ''
-    } else {
-      var temp2 = this.state.anniversary
-      var trim_date2 = temp2.split('-')
-
-      var final_date2 =
-        trim_date2[2] + '/' + trim_date2[1] + '/' + trim_date2[0]
-      console.log('final date2', final_date2)
-
-      aniversary = final_date2
-
-      aniversary = Moment(this.state.anniversary).format('YYYY-MM-DD')
-    }
+    console.log('isalive', isalive)
     if (this.state.connection_Status) {
 
       if (this.state.maritalstatus === null || this.state.maritalstatus === undefined || this.state.maritalstatus === '' || this.state.maritalstatus === 'null') {
@@ -398,20 +381,16 @@ class ViewOtherPersionalDetails extends Component {
         formdata.append('member_marital_status', this.state.maritalstatus)
 
         if (this.state.isdobSelect) {
-          var temp = this.state.dob
-          var trim_date = temp.split('-')
-          var final_date = trim_date[0] + '/' + trim_date[1] + '/' + trim_date[2]
-
-          console.log('final date', final_date)
-          formdata.append('member_birth_date', final_date)
+          
+          formdata.append('member_birth_date', Moment(this.state.dob, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
         } else {
-          formdata.append('member_birth_date', dob)
+          formdata.append('member_birth_date', Moment(this.state.dob, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
         }
-
+        
         if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
           formdata.append('member_marriage_anniversary', '')
         } else {
-          formdata.append('member_marriage_anniversary', this.state.anniversary)
+          formdata.append('member_marriage_anniversary', Moment(this.state.anniversary, 'DD-MM-YYYY', true ).format('YYYY-MM-DD'))
         }
 
         if (this.state.member_type === '1') {
@@ -475,6 +454,7 @@ class ViewOtherPersionalDetails extends Component {
           formdata.append('member_address', this.state.address)
         }
         formdata.append('member_country_id', this.state.countrytatus)
+        
         if (
           this.state.statetatus === null || this.state.statetatus === 'null' ||
           this.state.statetatus === undefined
@@ -550,29 +530,36 @@ class ViewOtherPersionalDetails extends Component {
             type: this.state.photoType
           })
         }
+        if(isalive === 1){
+          formdata.append('member_death_date', Moment(this.state.dod, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
+        }else{
+          formdata.append('member_death_date', this.state.dod)  
+        }
+
         formdata.append('member_is_alive', isalive)
         formdata.append('place_birth', this.state.placeofbirth)
         formdata.append('place_death', this.state.placeofdeath)
-        formdata.append('member_death_date', this.state.dod)
+        
 
         console.log('edit details form data', formdata)
+        
 
-        // axois
-        //   .post(base_url + 'member_details_edit', formdata)
-        //   .then(response => {
-        //     console.log('member_details_edit Response---->', response.data)
-        //     this.setState({ _isLoading: false })
-        //     if (response.data.success === true) {
-        //       Toast.show(response.data.message)
-        //       this.props.navigation.navigate('Dashboard')
-        //     } else {
-        //       Toast.show(response.data.message)
-        //     }
-        //   })
-        //   .catch(err => {
-        //     this.setState({ _isLoading: false })
-        //     console.log('member_details_edit err', err)
-        //   })
+        axois
+          .post(base_url + 'member_details_edit', formdata)
+          .then(response => {
+            console.log('member_details_edit Response---->', response.data)
+            this.setState({ _isLoading: false })
+            if (response.data.success === true) {
+              Toast.show(response.data.message)
+              this.props.navigation.navigate('Dashboard')
+            } else {
+              Toast.show(response.data.message)
+            }
+          })
+          .catch(err => {
+            this.setState({ _isLoading: false })
+            console.log('member_details_edit err', err)
+          })
       }
     } else {
       Toast.show('no internet connection')

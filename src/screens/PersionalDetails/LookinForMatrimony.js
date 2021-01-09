@@ -891,24 +891,25 @@ export default class LookinForMatrimony extends Component {
                     <Icon name='chevron-down' type='feather' size={25} color={Colors.white} />
                   </CollapseHeader>
                   <CollapseBody style={[Style.cardback]}>
-                    <Form style={{ width: '100%' }}>
+                    {/* <Form style={{ width: '100%' }}>
                       <Item>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: membedId })}>
                           <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '4%' }]}>Father Name</Text>
                           <Text style={[Style.Textstyle, { paddingVertical: '4%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{fathername}</Text>
                         </TouchableOpacity>
                       </Item>
-                    </Form>
+                    </Form> */}
+                    <TextInputCustome title='Father Name' value={fathername} changetext={(fathername) => this.setState({ fathername })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Father Profession' value={fatherProfession} changetext={(fatherProfession) => this.setState({ fatherProfession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-                    <Form style={{ width: '100%' }}>
+                    {/* <Form style={{ width: '100%' }}>
                       <Item>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: membedId })}>
                           <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '4%' }]}>Mother Name</Text>
                           <Text style={[Style.Textstyle, { paddingVertical: '4%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{mothername}</Text>
                         </TouchableOpacity>
                       </Item>
-                    </Form>
-                    {/* <TextInputCustome title='Mother Name ' value={mothername} changetext={(mothername) => this.setState({ mothername })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} /> */}
+                    </Form> */}
+                    <TextInputCustome title='Mother Name ' value={mothername} changetext={(mothername) => this.setState({ mothername })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Mother Profession' value={motherprofession} changetext={(motherprofession) => this.setState({ motherprofession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Other Family Details (Brother& Sister)' value={otherfamilydetails} changetext={(otherfamilydetails) => this.setState({ otherfamilydetails })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
                     <TextInputCustome title='Family Description' value={familydesc} changetext={(familydesc) => this.setState({ familydesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
@@ -1273,7 +1274,7 @@ export default class LookinForMatrimony extends Component {
                           showToast("Submit your Personal details first")
                         }
                       }
-                    }} checkedColor={Colors.Theme_color} containerStyle={{ width: '8%' }} />
+                    }} checkedColor={Colors.white} containerStyle={{ width: '8%' }} />
                     <Label style={[Style.Textstyle, { paddingHorizontal: '2%', width: '90%', color: Colors.black, fontFamily: CustomeFonts.medium }]}> I'm approved to view my profile on matrimony</Label>
                   </View>
 
