@@ -211,12 +211,12 @@ export default class App extends Component {
               </Text>
             </View>
 
-            <View style={{ flexDirection: 'row' }}>
+            {/* <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Birth Date</Text>
               <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
                 {Moment(item.birth_date).format('DD-MM-YYYY')}
               </Text>
-            </View>
+            </View> */}
 
             <View style={{ flexDirection: 'row' }}>
               <Text style={[Style.Textstyle, { flex: 3 }]}>Profile</Text>

@@ -18,6 +18,7 @@ import Toast from 'react-native-simple-toast'
 import { base_url } from '../Static'
 import axois from 'axios'
 import HTML from 'react-native-render-html'
+import { STRINGNAME } from '../Theme/Const'
 import {
   IGNORED_TAGS,
   alterNode,
@@ -113,11 +114,11 @@ class BecomeDoner extends Component {
   async Applydoner(){
     var options = {
       description: 'Credits towards consultation',
-      image: 'https://pitaro.in/storage/media/cGRi54PiwQ0YjdtGosuFnrSgrUFq7zwTkr0p66Kk.png',
+      image: 'https://play-lh.googleusercontent.com/GFPG9J-U_kgN_P5LzWLyiEbnxwusUoqTBAYVcwNnw15s9RCCgEsWZDfJ7eA3TKuwZvau=s360',
       currency: 'INR',
-      key: 'rzp_test_1DP5mmOlF5G5ag',
+      key: STRINGNAME.razerpayKey,
       amount: '2000',
-      name: 'foo',
+      name: STRINGNAME.appName,
       prefill: {
         email: 'shivani@aelius.in',
         contact: '7801801313',

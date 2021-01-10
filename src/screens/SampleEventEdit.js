@@ -25,6 +25,7 @@ import moment from 'moment'
 import Toast from 'react-native-simple-toast'
 import QRCode from 'react-native-qrcode-svg'
 import RazorpayCheckout from 'react-native-razorpay';
+import { STRINGNAME } from '../Theme/Const'
 
 
 class SampleEventEdit extends Component {
@@ -139,11 +140,11 @@ class SampleEventEdit extends Component {
     var ttl  =parseFloat(ttl_cost) * 100
     var options = {
       description: 'Credits towards consultation',
-      image: 'https://pitaro.in/storage/media/cGRi54PiwQ0YjdtGosuFnrSgrUFq7zwTkr0p66Kk.png',
+      image: 'https://play-lh.googleusercontent.com/GFPG9J-U_kgN_P5LzWLyiEbnxwusUoqTBAYVcwNnw15s9RCCgEsWZDfJ7eA3TKuwZvau=s360',
       currency: 'INR',
-      key: 'rzp_test_1DP5mmOlF5G5ag',
+      key: STRINGNAME.razerpayKey,
       amount: ttl,
-      name: 'foo',
+      name: STRINGNAME.appName,
       prefill: {
         email: 'shivani@aelius.in',
         contact: '7801801313',

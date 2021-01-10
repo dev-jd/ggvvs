@@ -54,6 +54,7 @@ export default class App extends Component {
       banner_img: '',
       banner_url: '',
       image_url: '',
+      isLoding: false,
       imageUrlMatrimony: '',
       main_member_data: [],
       family_data: [],
@@ -116,6 +117,7 @@ export default class App extends Component {
   }
 
   async searchMemberApi() {
+    this.setState({isLoding: true,})
     var formdata = new FormData()
     formdata.append('gender_id', this.state.gender)
     // formdata.append('md_marital_status', this.state.maritalstatus)
@@ -141,6 +143,7 @@ export default class App extends Component {
         } else {
           Toast.show('No Data Available')
         }
+        this.setState({isLoding: false})
       })
       .catch(err => {
         console.log(err)
@@ -160,7 +163,10 @@ export default class App extends Component {
             resizeMode: "cover",
             justifyContent: "center"
           }}>
-          <View style={{ justifyContent: 'center' }}>
+          {this.state.isLoding ? (
+            <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+          ) : (
+            <View style={{ justifyContent: 'center' }}>
             <ScrollView>
               <View style={{ paddingHorizontal: '2%', paddingVertical: '2%' }}>
                 <View
@@ -307,6 +313,8 @@ export default class App extends Component {
               </View>
             </ScrollView>
           </View>
+          ) }
+          
         </ImageBackground>
       </SafeAreaView>
     )

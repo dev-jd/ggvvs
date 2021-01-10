@@ -1084,6 +1084,8 @@ export default class LookinForMatrimony extends Component {
                           <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
                           <RadioButton value="2" color={Colors.Theme_color} />
                           <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                          <RadioButton value="3" color={Colors.Theme_color} />
+                          <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '30%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Both</Text>
                         </View>
                       </RadioButton.Group>
                     </View>
