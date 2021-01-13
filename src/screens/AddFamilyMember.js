@@ -31,7 +31,7 @@ import {
   View
 } from 'native-base'
 import DatePicker from 'react-native-datepicker'
-
+import Moment from 'moment'
 import Icon from 'react-native-vector-icons/Feather'
 import CustomeFonts from '../Theme/CustomeFonts'
 import Style from '../Theme/Style'
@@ -210,8 +210,8 @@ class AddFamilyMember extends Component {
     formData.append('member_is_alive', isalive)
     formData.append('place_birth', this.state.placeofbirth)
     formData.append('place_death', this.state.placeofdeath)
-    formData.append('member_birth_date', this.state.dob)
-    formData.append('member_death_date', this.state.dod)
+    formData.append('member_birth_date', Moment(this.state.dob, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
+    formData.append('member_death_date',  Moment(this.state.dod, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
     formData.append('member_type', '2')
 
     console.log("formdata-->", formData)

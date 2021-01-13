@@ -136,7 +136,7 @@ class MatrimonyDetails extends Component {
                   </View>
                   <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                     <Label style={[Style.Textmainstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '20%' }]}>Height</Label>
-                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '30%' }]}>{validationempty(matrimonyData.mm_height) ? matrimonyData.mm_height : '' + "'" + validationempty(matrimonyData.mm_height_inch) ? matrimonyData.mm_height_inch : ''}</Label>
+                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '30%' }]}>{validationempty(matrimonyData.mm_height) ? matrimonyData.mm_height + "' " + matrimonyData.mm_height_inch+" ''" : ''}</Label>
                     <Label style={[Style.Textmainstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, width: '30%' }]}>Weight</Label>
                     <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '20%' }]}>{matrimonyData.mm_weight}</Label>
                   </View>
@@ -497,4 +497,5 @@ class MatrimonyDetails extends Component {
       </SafeAreaView >
     )
   }
-} export default MatrimonyDetails
+}
+ export default MatrimonyDetails

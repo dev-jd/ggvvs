@@ -100,7 +100,7 @@ export default class App extends Component {
   }
 
   searchMember() {
-    console.log('vheck gender',this.state.gender)
+    console.log('vheck gender', this.state.gender)
     if (this.state.gender === '0' || this.state.gender == '') {
       Toast.show('Select Gender')
     } else if (!this.state.fromage) {
@@ -117,37 +117,42 @@ export default class App extends Component {
   }
 
   async searchMemberApi() {
-    this.setState({isLoding: true,})
+
+    this.props.navigation.navigate('MatrimonyList', {
+      gender_id: this.state.gender, f_age: this.state.fromage, t_age: this.state.toage
+    })
+
+    // this.setState({ isLoding: true, })
     var formdata = new FormData()
     formdata.append('gender_id', this.state.gender)
-    // formdata.append('md_marital_status', this.state.maritalstatus)
+    formdata.append('member_id', this.state.member_id)
     formdata.append('f_age', this.state.fromage)
     formdata.append('t_age', this.state.toage)
     console.log('form data ', formdata)
-    axois
-      .post(base_url + 'matrimony_search', formdata)
-      .then(res => {
-        console.log('matrimony_search res---->', res.data.data)
-        if (res.data.status === true) {
-          this.setState({
-            main_member_data: res.data.main_member_data,
-            // family_data: res.data.family_data
-          })
-          this.props.navigation.navigate('MatrimonyList', {
-            // itemData: res.data.family_data,
-            mainmember: res.data.main_member_data,
-            imageUrlKundli: res.data.kundli,
-            imageUrlMember: res.data.profile_photo,
-            imageUrlMatrimony: res.data.matrimony_photo_url
-          })
-        } else {
-          Toast.show('No Data Available')
-        }
-        this.setState({isLoding: false})
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    // axois
+    //   .post(base_url + 'matrimony_search', formdata)
+    //   .then(res => {
+    //     console.log('matrimony_search res---->', res.data.data)
+    //     if (res.data.status === true) {
+    //       this.setState({
+    //         main_member_data: res.data.main_member_data,
+    //         // family_data: res.data.family_data
+    //       })
+    //       this.props.navigation.navigate('MatrimonyList', {
+    //         // itemData: res.data.family_data,
+    //         mainmember: res.data.main_member_data,
+    //         imageUrlKundli: res.data.kundli,
+    //         imageUrlMember: res.data.profile_photo,
+    //         imageUrlMatrimony: res.data.matrimony_photo_url
+    //       })
+    //     } else {
+    //       Toast.show('No Data Available')
+    //     }
+    //     this.setState({ isLoding: false })
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
   }
 
   render() {
@@ -163,10 +168,8 @@ export default class App extends Component {
             resizeMode: "cover",
             justifyContent: "center"
           }}>
-          {this.state.isLoding ? (
-            <ActivityIndicator color={Colors.Theme_color} size={'large'} />
-          ) : (
-            <View style={{ justifyContent: 'center' }}>
+
+          <View style={{ justifyContent: 'center' }}>
             <ScrollView>
               <View style={{ paddingHorizontal: '2%', paddingVertical: '2%' }}>
                 <View
@@ -300,21 +303,25 @@ export default class App extends Component {
                     onPress={() => this.searchMember()}
                     style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
                   >
-                    <Text style={Style.buttonText}>Search</Text>
+                    {this.state.isLoding ? (
+                      <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+                    ) : (
+                        <Text style={Style.buttonText}>Search</Text>
+                      )}
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     onPress={() => this.props.navigation.navigate('LookinForMatrimony')}
                     style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
                   >
-                    <Text style={Style.buttonText}>Register</Text>
+                    <Text style={Style.buttonText}>Your Matrimony Profile</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </ScrollView>
           </View>
-          ) }
-          
+
+
         </ImageBackground>
       </SafeAreaView>
     )

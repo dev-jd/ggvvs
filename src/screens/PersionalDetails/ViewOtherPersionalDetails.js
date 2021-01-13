@@ -207,6 +207,7 @@ class ViewOtherPersionalDetails extends Component {
       profession: otherDetails.member_pm_id,
       gotra: details.member_gotra,
       idImage: details.member_id_proof,
+      placeofbirth: details.place_birth,
       // idImage: pic_url + details.member_id_proof,
       defaultIdImage: details.member_id_proof,
       photoImage: details.member_photo,

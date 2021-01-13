@@ -82,22 +82,23 @@ import Notification from './src/screens/Notification';
 import CompanyDetails from './src/screens/CompanyDetails';
 import EditProduct from './src/screens/PersionalDetails/EditProduct';
 import MatrimonyPackage from './src/screens/MatrimonyPackage';
+import BlockUser from './src/screens/BlockUser';
 
 const matrimoneyNavi = createMaterialTopTabNavigator({
-    Matrimony: {
-        screen: Matrimony,
+    MatrimonyList: {
+        screen: MatrimonyList,
         navigationOptions: {
-            title: 'Search'
+            title: 'Matrimony List'
         }
     },
-    LookinForMatrimony: {
-        screen: LookinForMatrimony,
+    BlockUser: {
+        screen: BlockUser,
         navigationOptions: {
-            title: 'Register'
+            title: 'Block Users'
         }
     }
 }, {
-    initialRouteName: 'Matrimony',
+    initialRouteName: 'MatrimonyList',
     swipeEnabled: false,
     tabBarOptions: {
         upperCaseLabel: false,
@@ -297,7 +298,10 @@ const Stack_Navi = createStackNavigator(
             screen: Suggestion,
         },
         MatrimonyList: {
-            screen: MatrimonyList,
+            screen: matrimoneyNavi,
+            navigationOptions: {
+                header: null
+            }
         },
         FamilyTree: {
             screen: topTabNaviTree,
