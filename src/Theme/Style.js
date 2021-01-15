@@ -290,6 +290,9 @@ const styles = StyleSheet.create({
     flexView2:{
         flexDirection:'row',
         alignItems:'center'
+    },
+    matrimonyCard:{
+        backgroundColor: Colors.Theme_color, borderRadius: 10
     }
 })
 

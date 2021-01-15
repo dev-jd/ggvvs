@@ -16,13 +16,14 @@ export default class TextInputCustome extends Component {
     render() {
         var {title,value,maxLength,multiline,keyboardType,editable,style,numberOfLines} =this.props
         return (
-            <Form style={style?style:{width:'100%'}}>
+            <View style={style?style:{width:'100%',paddingVertical:'2%'}}>
                 <Item stackedLabel>
-                    <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
+                    
+                    <Label style={[Style.Textstyle, title === 'Profile Tag'?{ color: Colors.white, fontFamily: CustomeFonts.medium}:{ color: Colors.black, fontFamily: CustomeFonts.medium}]}>
                     {title}
                     </Label>
                     <Input
-                        style={Style.Textstyle}
+                        style={[Style.Textstyle,title === 'Profile Tag'?{ color: Colors.white}:{ color: Colors.black}]}
                         maxLength={maxLength}
                         keyboardType={keyboardType}
                         onChangeText={this.props.changetext}
@@ -32,8 +33,9 @@ export default class TextInputCustome extends Component {
                         numberOfLines={numberOfLines}
                     ></Input>
                 </Item>
-            </Form>
+            </View>
 
         );
     }
 }
+paddingVertical:'2%'
