@@ -24,6 +24,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker'
 import MatrimonyPackage from '../MatrimonyPackage'
+import HTML from 'react-native-render-html'
 
 const options = {
   title: 'Select Image',
@@ -102,7 +103,8 @@ export default class LookinForMatrimony extends Component {
       packageDetails: {},
       heightDroupDown: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
       visibleModalPersonal: null, visibleModalFamily: null, visibleModalEducation: null, visibleModalSpritual: null, visibleModalGeneral: null, visibleModalComm: null,
-      visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null
+      visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null,
+      signal: '', termsConditionsData: ''
     }
   }
   async componentDidMount() {
@@ -130,13 +132,19 @@ export default class LookinForMatrimony extends Component {
     if (this.state.connection_Status === true) {
       if (isTermsAccept === 'true') {
       } else {
-        this.setState({ visibleModal: 'bottom' })
+      this.setState({ visibleModal: 'bottom' })
       }
+      this.termsConditionApi()
       this.apiCalling()
       this.packageApi()
       this.countryApi()
       this.castApi()
     }
+  }
+  termsConditionApi = async () => {
+    var response = await Helper.POST('terms')
+    console.log('check the terms condition ', response)
+    this.setState({ termsConditionsData: response.data.description })
   }
   packageApi = async () => {
     var response = await Helper.GET('package_list?samaj_id=' + this.state.samaj_id)
@@ -178,6 +186,7 @@ export default class LookinForMatrimony extends Component {
       linkedin: socialresponse.data[0].member_linkedin,
       wappno: socialresponse.data[0].member_whatsapp,
       twitter: socialresponse.data[0].member_twitter,
+      signal: socialresponse.data[0].member_signal,
     })
     var formdata = new FormData()
     formdata.append('samaj_id', this.state.samaj_id)
@@ -402,7 +411,7 @@ export default class LookinForMatrimony extends Component {
     var response = await Helper.POSTFILE('matrimonyAdd', formdata)
     console.log('check the response', response)
     if (response.status) {
-      this.setState({ isLoding: false })
+      this.setState({ isLoding: false, visibleModalPersonal: null })
       showToast(response.message)
     }
   }
@@ -410,7 +419,7 @@ export default class LookinForMatrimony extends Component {
     var { expectation, lifestylechoice, matrimonyId, isLoding } = this.state
 
     if (validationempty(matrimonyId)) {
-
+      this.setState({ isLoding: true })
       var formdata = new FormData()
       formdata.append('mm_expectations', expectation)
       formdata.append('lifestyle_choice', lifestylechoice)
@@ -422,7 +431,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyLifeStyle', formdata)
       console.log('check the response', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalLifestyle: null })
         showToast(response.message)
       }
     } else {
@@ -431,6 +440,7 @@ export default class LookinForMatrimony extends Component {
   }
   async submitEducatuionalData() {
     var { education, educationdesc, matrimonyId, isLoding } = this.state
+    this.setState({ isLoding: true })
     if (validationempty(matrimonyId)) {
       var formdata = new FormData()
       formdata.append('mm_education', educationdesc)
@@ -443,7 +453,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyEducation', formdata)
       console.log('check the response', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalEducation: null })
         showToast(response.message)
       }
     } else {
@@ -452,6 +462,7 @@ export default class LookinForMatrimony extends Component {
   }
   async submitFamilyDetails() {
     var { familydesc, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, matrimonyId, nativeplace, isLoding } = this.state
+    this.setState({ isLoding: true })
     if (validationempty(matrimonyId)) {
       var formdata = new FormData()
 
@@ -469,7 +480,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyFamily', formdata)
       console.log('check the response', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalFamily: null })
         showToast(response.message)
       }
     } else {
@@ -478,7 +489,7 @@ export default class LookinForMatrimony extends Component {
   }
   async submitProffessionalData() {
     var { professiondesc, income, profession, matrimonyId } = this.state
-
+    this.setState({ isLoding: true })
     if (validationempty(matrimonyId)) {
       var formdata = new FormData()
       formdata.append('profession', profession)
@@ -493,7 +504,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyProfession', formdata)
       console.log('check the response', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalProffessional: null })
         showToast(response.message)
       }
     } else {
@@ -503,7 +514,7 @@ export default class LookinForMatrimony extends Component {
   async submitSpiritualData() {
 
     var { matrimonyId, isPustimarg, religion, negativePoint, positivePoint } = this.state
-
+    this.setState({ isLoding: true })
     if (validationempty(matrimonyId)) {
       if (isPustimarg) {
         isPustimarg = 1
@@ -522,7 +533,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonySpiritual', formdata)
       console.log('check the response', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalSpritual: null })
         showToast(response.message)
       }
     } else {
@@ -530,7 +541,8 @@ export default class LookinForMatrimony extends Component {
     }
   }
   async submitCommunicationData() {
-    var { matrimonyId, email, country, state, city, address, fbuser, instauser, twitter, linkedin, wappno } = this.state
+    var { matrimonyId, email, country, state, city, address, fbuser, instauser, twitter, linkedin, wappno, signal } = this.state
+    this.setState({ isLoding: true })
     if (validationempty(matrimonyId)) {
       var formdata = new FormData()
       formdata.append('member_email', email)
@@ -543,6 +555,7 @@ export default class LookinForMatrimony extends Component {
       formdata.append('member_linkedin', linkedin)
       formdata.append('member_whatsapp', wappno)
       formdata.append('member_twitter', twitter)
+      formdata.append('member_signal', signal)
 
       if (validationempty(matrimonyId)) {
         formdata.append('matrimony_id', matrimonyId)
@@ -550,7 +563,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyCommunication', formdata)
       console.log('check the response communication ', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalComm: null })
         showToast(response.message)
       }
     } else {
@@ -560,7 +573,7 @@ export default class LookinForMatrimony extends Component {
   async submitQuestionerData() {
     var { smoke, nonveg, eggs, takedrink, lookfornri, matrimonyId } = this.state
     if (validationempty(matrimonyId)) {
-
+      this.setState({ isLoding: true })
       var formdata = new FormData()
       formdata.append('mm_smoke', smoke)
       formdata.append('mm_nonveg', nonveg)
@@ -574,7 +587,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyGeneral', formdata)
       console.log('check the response questionery ', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalGeneral: null })
         showToast(response.message)
       }
     } else {
@@ -583,6 +596,7 @@ export default class LookinForMatrimony extends Component {
   }
   async submitPhotoData() {
     var { matrimonyId, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5, memberimage1, memberimage2, memberimage3, memberimage4, memberimage5 } = this.state
+    this.setState({ isLoding: true })
     if (validationempty(matrimonyId)) {
       var formdata = new FormData()
       if (idSelectM1) {
@@ -618,7 +632,7 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyPhoto', formdata)
       console.log('check the response photos ', response)
       if (response.status) {
-        this.setState({ isLoding: false })
+        this.setState({ isLoding: false, visibleModalPhotos: null })
         showToast(response.message)
       }
     } else {
@@ -657,7 +671,7 @@ export default class LookinForMatrimony extends Component {
     }
   };
   render() {
-    var { isActive, isLoding, packageDetails, packageId, approvedMatrimony, name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, img_url_profile, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
+    var { isActive, isLoding, packageDetails, signal, packageId, approvedMatrimony, name, kundliBelive, birthPlace, idSelect, birthTime, kundliImage, img_url, img_url_profile, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
       education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
       membedId, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, twitter, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
       member1image, matrimonyId, member2image, member3image, heightDroupDown, member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5 } = this.state
@@ -691,20 +705,20 @@ export default class LookinForMatrimony extends Component {
               {validationempty(packageId) ?
                 <View style={[Style.cardback, Style.matrimonyCard]}>
                   <View>
-                    <Text style={[Style.Textmainstyle, { textAlign: 'center',color: Colors.white }]}>Package {packageDetails.package_name}</Text>
+                    <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white }]}>Package {packageDetails.package_name}</Text>
                     {validationempty(packageDetails.description) ?
-                      <Text style={[Style.SubTextstyle, { textAlign: 'center',color: Colors.white, paddingVertical: '3%' }]} numberOfLines={3}>{packageDetails.description}</Text> :
+                      <Text style={[Style.SubTextstyle, { textAlign: 'center', color: Colors.white, paddingVertical: '3%' }]} numberOfLines={3}>{packageDetails.description}</Text> :
                       null}
                   </View>
                   <View>
-                    <Text style={[Style.Textstyle, { textAlign: 'center',color: Colors.white }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text>
-                    <Text style={[Style.Textstyle, { textAlign: 'center',color: Colors.white }]}>Tranjection Id - {validationempty(packageDetails.transaction_id) ? packageDetails.transaction_id : 'Free Package'}</Text>
+                    <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text>
+                    <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Tranjection Id - {validationempty(packageDetails.transaction_id) ? packageDetails.transaction_id : 'Free Package'}</Text>
                   </View>
-                  <Text style={[Style.Textstyle, { textAlign: 'center',color: Colors.white }]}>Package Limit {packageDetails.days} days</Text>
-                  <Text style={[Style.Textstyle, { textAlign: 'center',color: Colors.white }]}>{moment(packageDetails.start_date).format('DD-MM-YYYY')}  To  {moment(packageDetails.end_date).format('DD-MM-YYYY')}</Text>
+                  <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Package Limit {packageDetails.days} days</Text>
+                  <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>{moment(packageDetails.start_date).format('DD-MM-YYYY')}  To  {moment(packageDetails.end_date).format('DD-MM-YYYY')}</Text>
                 </View>
                 : <View style={[Style.cardback, Style.matrimonyCard]}>
-                  <Text style={[Style.Textmainstyle, { textAlign: 'center',color: Colors.white, }]}>No Any Package Select Yet</Text>
+                  <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white, }]}>No Any Package Select Yet</Text>
                   <TouchableOpacity
                     style={[Style.Buttonback, { marginVertical: 10, width: '50%', alignSelf: 'center', backgroundColor: Colors.white }]}
                     onPress={() => this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })}
@@ -715,7 +729,7 @@ export default class LookinForMatrimony extends Component {
 
               {/* profile tag */}
               <View style={[Style.cardback, Style.matrimonyCard]}>
-                <Text style={[Style.buttonText]}>{name}</Text>
+                <Text style={[Style.Textmainstyle, { color: Colors.white, }]}>Name - {name}</Text>
                 {/* <TextInputCustome title='Name' value={name} changetext={(name) => this.setState({ name })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} /> */}
                 <TextInputCustome title='Profile Tag' value={profiletagline} changetext={(profiletagline) => this.setState({ profiletagline })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               </View>
@@ -762,7 +776,7 @@ export default class LookinForMatrimony extends Component {
                 </TouchableOpacity>
                 <View style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]}>
                   <View style={[Style.flexView, { paddingVertical: '2%', }]}>
-                    <CheckBox checked={approvedMatrimony} size={30} color={ Colors.white} style={{ justifyContent: 'flex-start' }}
+                    <CheckBox checked={approvedMatrimony} size={30} color={Colors.white} style={{ justifyContent: 'flex-start' }}
                       onPress={() => {
                         if (validationempty(packageId)) {
                           this.setState({ approvedMatrimony: !this.state.approvedMatrimony })
@@ -1262,6 +1276,7 @@ export default class LookinForMatrimony extends Component {
               <TextInputCustome title='Instagram Profile' value={instauser} changetext={(instauser) => this.setState({ instauser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Linkedin Profile' value={linkedin} changetext={(linkedin) => this.setState({ linkedin })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Twitter Profile' value={twitter} changetext={(twitter) => this.setState({ twitter })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Signal Profile' value={signal} changetext={(signal) => this.setState({ signal })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Whatsapp Number Enter Whatsapp No With Country Code(Not +)' value={wappno} changetext={(wappno) => this.setState({ wappno })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'number-pad'} editable={true} />
               {isLoding ?
                 <Indicator /> :
@@ -1362,37 +1377,81 @@ export default class LookinForMatrimony extends Component {
                 </View>
               </View>
               <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Member Photo 5</Label>
-                    <TouchableOpacity style={{ paddingVertical: '2%', alignItems: 'center' }} onPress={() => this.CapturePhoto(6)}>
-                      <Image
-                        resizeMode={'contain'}
-                        source={
-                          !validationempty(member5image)
-                            ? AppImages.uploadimage
-                            : member5image.includes('http')
-                              ? { uri: member5image }
-                              : idSelectM5
-                                ? { uri: member5image }
-                                : { uri: img_url_profile + member5image }
-                        }
-                        style={{ width: '100%', height: 150 }}
-                      />
+              <TouchableOpacity style={{ paddingVertical: '2%', alignItems: 'center' }} onPress={() => this.CapturePhoto(6)}>
+                <Image
+                  resizeMode={'contain'}
+                  source={
+                    !validationempty(member5image)
+                      ? AppImages.uploadimage
+                      : member5image.includes('http')
+                        ? { uri: member5image }
+                        : idSelectM5
+                          ? { uri: member5image }
+                          : { uri: img_url_profile + member5image }
+                  }
+                  style={{ width: '100%', height: 150 }}
+                />
+              </TouchableOpacity>
+              <View>
+                {this.state.isLoding ? (
+                  <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+                ) : (
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginTop: 10 }]}
+                      onPress={() => this.submitPhotoData()}
+                    >
+                      <Text style={Style.buttonText}>Save</Text>
                     </TouchableOpacity>
-                    <View>
-                      {this.state.isLoding ? (
-                        <ActivityIndicator color={Colors.Theme_color} size={'large'} />
-                      ) : (
-                          <TouchableOpacity
-                            style={[Style.Buttonback, { marginTop: 10 }]}
-                            onPress={() => this.submitPhotoData()}
-                          >
-                            <Text style={Style.buttonText}>Save</Text>
-                          </TouchableOpacity>
-                        )}
-                    </View>
+                  )}
+              </View>
             </ScrollView>
           </View>
         </Modal>
 
+        {/* Terms And Conditions */}
+        <Modal
+          isVisible={this.state.visibleModal === 'bottom'}
+          style={{ justifyContent: 'flex-end', margin: 10 }}
+        >
+          <View style={{ backgroundColor: 'white', padding: '3%', height: '100%' }}>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={[
+                Style.Textmainstyle,
+                { color: Colors.Theme_color, textAlign: 'center' }
+              ]}>
+                TERMS AND CONDITIONS
+                </Text>
+              <HTML
+                html={this.state.termsConditionsData}
+                imagesMaxWidth={Dimensions.get('window').width}
+                baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium, color: Colors.black }}
+              />
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity
+                  style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                  onPress={() => {
+                    AsyncStorage.setItem('isTermsAccept', 'true')
+                    this.setState({ visibleModal: null })
+                  }}>
+                  <Text style={[
+                    Style.Textmainstyle,
+                    { color: Colors.white }
+                  ]}>Accept</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                  onPress={() => this.props.navigation.goBack()}
+                >
+                  <Text style={[
+                    Style.Textmainstyle,
+                    { color: Colors.white }
+                  ]}>Decline</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </Modal>
       </SafeAreaView >
     )
   }

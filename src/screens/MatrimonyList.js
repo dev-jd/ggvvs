@@ -28,7 +28,8 @@ import { Helper } from '../Helper/Helper'
 import { NavigationEvents } from 'react-navigation'
 import { Alert } from 'react-native'
 import { Icon } from 'react-native-elements'
-import { RadioButton } from 'react-native-paper';
+import { Chip, RadioButton, ToggleButton } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler'
 
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -48,7 +49,7 @@ export default class App extends Component {
     this.state = {
       data_list: [],
       data_list2: [],
-      isLoding: false,
+      isLoding: true,
       imageUrlMember: '',
       imageUrlKundli: '', imageUrlMatrimony: '',
       visibleModal: null, filterModalvisible: null,
@@ -81,7 +82,7 @@ export default class App extends Component {
     var fromage = this.props.navigation.getParam('f_age')
     var toage = this.props.navigation.getParam('t_age')
 
-    var { heightfFeet,lookfornri,isPustimarg,smoke,eggs,kundliBelive,takedrink,nonveg } = this.state
+    var { heightfFeet, lookfornri, isPustimarg, smoke, eggs, kundliBelive, takedrink, nonveg } = this.state
 
     var formdata = new FormData()
     formdata.append('gender_id', gender_id)
@@ -112,7 +113,7 @@ export default class App extends Component {
       imageUrlMember: response.profile_photo,
       imageUrlMatrimony: response.matrimony_photo_url,
       isLoding: false,
-      filterModalvisible:null
+      filterModalvisible: null
     })
     // console.log("list2", list2)
 
@@ -166,60 +167,7 @@ export default class App extends Component {
     }
   }
 
-  categoryRendeItem = ({ item, index }) => {
-    return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate('MatrimonyDetails', { itemData: item, member: 'sub' })
-        }
-      >
-        <View
-          style={[Style.cardback, { flex: 1, flexDirection: 'row' }]}
-        >
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: this.state.imageUrlMember + item.md_photo })}>
-            {item.md_photo === null ? (
-              <Image
-                resizeMode='stretch'
-                source={{
-                  uri:
-                    'https://pngimage.net/wp-content/uploads/2018/05/default-user-profile-image-png-2.png'
-                }}
-                style={{ height: 80, width: 80, alignSelf: 'center' }}
-              />
-            ) : (
-                <Image
-                  resizeMode='stretch'
-                  source={{ uri: this.state.imageUrlMember + item.md_photo }}
-                  style={{ height: 80, width: 80, alignSelf: 'center' }}
-                />
-              )}
-          </TouchableOpacity>
-          <View style={{ flex: 5, justifyContent: 'center', marginLeft: 10 }}>
-            <Text style={Style.Textmainstyle}>{item.md_name}</Text>
 
-            {/* <View style={{ flexDirection: 'row' }} >
-                            <Text style={[Style.Textstyle,{ flex: 3 }]}>Code</Text>
-                            <Text style={[Style.Textstyle,{ marginLeft: 5, flex: 7 }]}>{item.member_code}</Text>
-                        </View> */}
-
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={[Style.Textstyle, { flex: 3 }]}>Birth Date</Text>
-              <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
-                {Moment(item.md_birth_date).format('DD-MMMM-YYYY')}
-              </Text>
-            </View>
-
-            {/* <View style={{ flexDirection: 'row' }}>
-              <Text style={[Style.Textstyle, { flex: 3 }]}>Country</Text>
-              <Text style={[Style.Textstyle, { marginLeft: 5, flex: 7 }]}>
-                {item.country_name}
-              </Text>
-            </View> */}
-          </View>
-        </View>
-      </TouchableOpacity>
-    )
-  }
 
   categoryRendeItem2 = ({ item, index }) => {
     return (
@@ -298,7 +246,7 @@ export default class App extends Component {
   }
 
   render() {
-    var { heightfFeet, heightInch, heightDroupDown, lookfornri, eggs, smoke, nonveg, takedrink, kundliBelive, isPustimarg } = this.state
+    var { heightfFeet, heightInch, heightDroupDown, lookfornri, eggs, smoke, nonveg, takedrink, kundliBelive, isPustimarg, isLoding } = this.state
 
     return (
       <SafeAreaView style={Style.cointainer1}>
@@ -313,15 +261,13 @@ export default class App extends Component {
             flex: 1,
             resizeMode: "cover",
           }}>
-          {this.state.isLoding ? (
-            <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+          {isLoding ? (
+            <View style={{ height: '100%', weight: '100%', justifyContent: 'center' }}>
+              <ActivityIndicator color={Colors.white} size={'large'} />
+            </View>
           ) : (
               <View style={{ padding: '3%' }}>
-                <FlatList
-                  showsVerticalScrollIndicator={false}
-                  data={this.state.data_list}
-                  renderItem={item => this.categoryRendeItem(item)}
-                />
+
                 <FlatList
                   showsVerticalScrollIndicator={false}
                   data={this.state.data_list2}
@@ -329,9 +275,9 @@ export default class App extends Component {
                 />
               </View>
             )}
-          <View style={{ position: 'absolute', bottom: 5, right: 5 }}>
+          {/* <View style={{ position: 'absolute', bottom: 5, right: 5 }}>
             <Icon raised name='filter' type='font-awesome' size={20} color={Colors.Theme_color} onPress={() => this.setState({ filterModalvisible: 'SlowModal' })} />
-          </View>
+          </View> */}
         </ImageBackground>
         <Modal
           isVisible={this.state.visibleModal === 'bottom'}
@@ -416,115 +362,116 @@ export default class App extends Component {
           onBackButtonPress={() => this.setState({ filterModalvisible: null })}>
           <View style={{ backgroundColor: 'white', padding: '3%', height: '90%' }}>
             <Text style={Style.Textmainstyle}>Fliter Based On Your Criteria </Text>
-            <View>
-              <View style={{ paddingVertical: '3%', }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Looking for NRI?</Label>
-                <RadioButton.Group onValueChange={lookfornri => this.setState({ lookfornri })} value={lookfornri}>
-                  <View style={Style.flexView2}>
-                    <RadioButton value="1" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
-                    <RadioButton value="2" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
-                    <RadioButton value="3" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '30%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Both</Text>
-                  </View>
-                </RadioButton.Group>
-              </View>
-              <View style={{ paddingVertical: '3%', }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>take HARD DRINK ?</Label>
-                <RadioButton.Group onValueChange={takedrink => this.setState({ takedrink })} value={takedrink}>
-                  <View style={Style.flexView2}>
-                    <RadioButton value="1" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
-                    <RadioButton value="2" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
-                    <RadioButton value="3" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
-                  </View>
-                </RadioButton.Group>
-              </View>
-              <View style={{ paddingVertical: '3%' }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>SMOKE ?</Label>
-                <RadioButton.Group onValueChange={smoke => this.setState({ smoke })} value={smoke}>
-                  <View style={Style.flexView2}>
-                    <RadioButton value="1" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
-                    <RadioButton value="2" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
-                    <RadioButton value="3" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
-                  </View>
-                </RadioButton.Group>
-              </View>
-              <View style={{ paddingVertical: '3%' }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>NON-VEG ?</Label>
-                <RadioButton.Group onValueChange={nonveg => this.setState({ nonveg })} value={nonveg}>
-                  <View style={Style.flexView2}>
-                    <RadioButton value="1" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
-                    <RadioButton value="2" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
-                    <RadioButton value="3" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
-                  </View>
-                </RadioButton.Group>
-              </View>
-              <View style={{ paddingVertical: '3%' }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Eggs ?</Label>
-                <RadioButton.Group onValueChange={eggs => this.setState({ eggs })} value={eggs}>
-                  <View style={Style.flexView2}>
-                    <RadioButton value="1" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
-                    <RadioButton value="2" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
-                    <RadioButton value="3" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
-                  </View>
-                </RadioButton.Group>
-              </View>
-              <View style={{ paddingVertical: '3%' }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Looking who Follow Pustimarg ?</Label>
-                <RadioButton.Group onValueChange={isPustimarg => this.setState({ isPustimarg })} value={isPustimarg}>
-                  <View style={Style.flexView2}>
-                    <RadioButton value="1" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
-                    <RadioButton value="2" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+            <ScrollView>
+              <View>
+                <View style={{ paddingVertical: '3%', }}>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Looking for NRI?</Label>
 
-                  </View>
-                </RadioButton.Group>
-              </View>
-              <View style={{ paddingVertical: '3%' }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Belive in kundli ?</Label>
-                <RadioButton.Group onValueChange={kundliBelive => this.setState({ kundliBelive })} value={kundliBelive}>
-                  <View style={Style.flexView2}>
-                    <RadioButton value="1" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
-                    <RadioButton value="0" color={Colors.Theme_color} />
-                    <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                  <RadioButton.Group onValueChange={lookfornri => this.setState({ lookfornri })} value={lookfornri}>
+                    <View style={Style.flexView2}>
+                      <RadioButton value="1" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                      <RadioButton value="2" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                    </View>
+                  </RadioButton.Group>
+                </View>
+                <View style={{ paddingVertical: '3%', }}>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>take HARD DRINK ?</Label>
+                  <RadioButton.Group onValueChange={takedrink => this.setState({ takedrink })} value={takedrink}>
+                    <View style={Style.flexView2}>
+                      <RadioButton value="1" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                      <RadioButton value="2" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                      <RadioButton value="3" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                    </View>
+                  </RadioButton.Group>
+                </View>
+                <View style={{ paddingVertical: '3%' }}>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>SMOKE ?</Label>
+                  <RadioButton.Group onValueChange={smoke => this.setState({ smoke })} value={smoke}>
+                    <View style={Style.flexView2}>
+                      <RadioButton value="1" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                      <RadioButton value="2" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                      <RadioButton value="3" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                    </View>
+                  </RadioButton.Group>
+                </View>
+                <View style={{ paddingVertical: '3%' }}>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>NON-VEG ?</Label>
+                  <RadioButton.Group onValueChange={nonveg => this.setState({ nonveg })} value={nonveg}>
+                    <View style={Style.flexView2}>
+                      <RadioButton value="1" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                      <RadioButton value="2" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                      <RadioButton value="3" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                    </View>
+                  </RadioButton.Group>
+                </View>
+                <View style={{ paddingVertical: '3%' }}>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Eggs ?</Label>
+                  <RadioButton.Group onValueChange={eggs => this.setState({ eggs })} value={eggs}>
+                    <View style={Style.flexView2}>
+                      <RadioButton value="1" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                      <RadioButton value="2" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+                      <RadioButton value="3" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '50%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Sometime</Text>
+                    </View>
+                  </RadioButton.Group>
+                </View>
+                <View style={{ paddingVertical: '3%' }}>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Looking who Follow Pustimarg ?</Label>
+                  <RadioButton.Group onValueChange={isPustimarg => this.setState({ isPustimarg })} value={isPustimarg}>
+                    <View style={Style.flexView2}>
+                      <RadioButton value="1" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                      <RadioButton value="2" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
 
-                  </View>
-                </RadioButton.Group>
+                    </View>
+                  </RadioButton.Group>
+                </View>
+                <View style={{ paddingVertical: '3%' }}>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Belive in kundli ?</Label>
+                  <RadioButton.Group onValueChange={kundliBelive => this.setState({ kundliBelive })} value={kundliBelive}>
+                    <View style={Style.flexView2}>
+                      <RadioButton value="1" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Yes</Text>
+                      <RadioButton value="0" color={Colors.Theme_color} />
+                      <Text style={[Style.Textstyle, { paddingHorizontal: '5%', width: '20%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>No</Text>
+
+                    </View>
+                  </RadioButton.Group>
+                </View>
               </View>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                width: '100%',
-                paddingHorizontal: '2%',
-                paddingVertical: '4%',
-              }}>
-              <TouchableOpacity
-                style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
-                onPress={() => this.apiCalling()}>
-                <Text style={Style.buttonText}>Apply</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
-                onPress={() => this.setState({ filterModalvisible: null })}>
-                <Text style={Style.buttonText}>Cancle</Text>
-              </TouchableOpacity>
-            </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  paddingHorizontal: '2%',
+                  paddingVertical: '4%',
+                }}>
+                <TouchableOpacity
+                  style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                  onPress={() => this.apiCalling()}>
+                  <Text style={Style.buttonText}>Apply</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                  onPress={() => this.setState({ filterModalvisible: null })}>
+                  <Text style={Style.buttonText}>Cancle</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
           </View>
         </Modal>
       </SafeAreaView>

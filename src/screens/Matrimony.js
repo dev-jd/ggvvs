@@ -320,7 +320,16 @@ export default class App extends Component {
               </View>
             </ScrollView>
           </View>
-
+          <TouchableOpacity style={{position:'absolute',bottom:0,alignItems:'center',left:0,right:0}}
+          onPress={()=> this.props.navigation.navigate('TermsConditions')}>
+            <Text
+              style={[
+                Style.Textmainstyle,
+                { alignSelf: 'center', color: Colors.white }
+              ]}
+            >Terms And Conditions
+            </Text>
+          </TouchableOpacity>
 
         </ImageBackground>
       </SafeAreaView>
