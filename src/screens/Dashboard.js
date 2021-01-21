@@ -41,6 +41,7 @@ import {
 import AppImages from '../Theme/image'
 import { Helper } from '../Helper/Helper'
 import SimpleToast from 'react-native-simple-toast'
+import { validationempty } from '../Theme/Const'
 
 const config = {
   WebViewComponent: WebView
@@ -130,8 +131,9 @@ export default class App extends Component {
     console.log('check formdata profile -->11 ', formdata)
     axois
       .post(base_url + 'profile_data', formdata)
-      .then(res => {
+      .then(async (res) => {
         console.log('profile_data res---->', res.data.member_details)
+        console.log('profile_data res---->', res.data.package_details.status)
         this.setState({ isLoding: false })
         if (res.data.status === true) {
           this.setState({
@@ -139,6 +141,13 @@ export default class App extends Component {
             samaajlogo: res.data.member_details.samajlogo,
             logourl: res.data.samaj_logo,
           })
+
+          if (validationempty(res.data.package_details.package_id) && res.data.package_details.status !== 'Expired') {
+            console.log('package id ---->', res.data.package_details.package_id)
+
+            await AsyncStorage.setItem('packageId', res.data.package_details.package_id + '')
+            await AsyncStorage.setItem('packageActive', res.data.package_details.status + '')
+          }
         }
       })
       .catch(err => {
@@ -205,7 +214,7 @@ export default class App extends Component {
     //   formdata.append('p_id', date_check)
 
     // } else {
-      
+
     formdata.append('samaj_id', this.state.samaj_id)
     formdata.append('member_id', this.state.member_id)
     formdata.append('type', this.state.member_type)
@@ -844,7 +853,7 @@ export default class App extends Component {
                       <Text
                         numberOfLines={2}
                         ellipsizeMode='tail'
-                        style={[Style.dashtext,{textAlign:'center'}]}
+                        style={[Style.dashtext, { textAlign: 'center' }]}
                       >
                         Matrimony
                         </Text>

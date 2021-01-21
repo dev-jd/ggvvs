@@ -38,9 +38,20 @@ export default class MatrimonyPackage extends Component {
         const email = await this.props.navigation.getParam('email')
         const mobile = await this.props.navigation.getParam('mobile')
         const isTermsAccept = await AsyncStorage.getItem('isTermsAccept')
+
         var response = await Helper.GET('package_list?samaj_id=' + samaj_id)
         console.log('check the response packages', response)
-        this.setState({ packageList: response.data, membedId, membedId, member_type, matrimonyId, name, email, mobile })
+        var packlageArray = []
+        for (let index = 0; index < response.data.length; index++) {
+            const element = response.data[index];
+            if (element.status === "active") {
+                const element = response.data[index];
+                packlageArray.push({ element })
+            }
+            // packlageArray.push(response.data)
+        }
+        console.log('check the array ',packlageArray)
+        this.setState({ packageList: packlageArray, membedId, membedId, member_type, matrimonyId, name, email, mobile })
     }
     async buyPackage(item) {
         console.log('check the amount', item.price)
@@ -93,18 +104,21 @@ export default class MatrimonyPackage extends Component {
         formData.append("package_id", package_id)
         if (validationempty(transaction_id)) {
             formData.append("transaction_id", transaction_id)
-        }else{
+        } else {
             formData.append("transaction_id", '')
         }
         console.log('formdata', formData)
 
-        var response= await Helper.POST('matrimonyPayment',formData)
-        console.log('tranjection response ',response)
-        if(response.status){
+        var response = await Helper.POST('matrimonyPayment', formData)
+        console.log('tranjection response ', response)
+        if (response.status) {
             this.props.navigation.goBack()
+        } else {
+            showToast('Sorry package is not buy yet')
         }
     }
     categoryRendeItem = ({ item, index }) => {
+        var data=item.element
         return (
             <TouchableOpacity style={{ height: Dimensions.get('window').height * 0.8 }}>
 
@@ -114,16 +128,16 @@ export default class MatrimonyPackage extends Component {
                     <View style={{ height: 30 }} />
                     <Text style={[Style.headerTesxt, { textAlign: 'center' }]}>Select the Package and Start by creatting your profile</Text>
                     <View style={{ height: 30 }} />
-                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 28 }]}>{item.name}</Text>
-                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 22 }]}>₹ {validationempty(item.price) ? item.price : "0.00"}</Text>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 28 }]}>{data.name}</Text>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 22 }]}>₹ {validationempty(data.price) ? data.price : "0.00"}</Text>
                     <View style={{ height: 30 }} />
-                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 14 }]}>{item.description}</Text>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 14 }]}>{data.description}</Text>
                     <View style={{ height: 30 }} />
-                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 18 }]}>Validity {item.days} days </Text>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', textAlign: 'center', fontSize: 18 }]}>Validity {data.days} days </Text>
                     <View style={{ height: 50 }} />
                     <TouchableOpacity
                         style={[Style.Buttonback, { marginTop: 10, width: 'auto' }]}
-                        onPress={() => this.buyPackage(item)}
+                        onPress={() => this.buyPackage(data)}
                     >
                         <Text style={Style.buttonText}>Buy Now</Text>
                     </TouchableOpacity>

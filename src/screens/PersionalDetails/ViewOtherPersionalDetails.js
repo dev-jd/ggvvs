@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import { showToast } from '../../Theme/Const'
+import { Helper } from '../../Helper/Helper'
 
 const options = {
   title: 'Select Image',
@@ -52,7 +53,7 @@ class ViewOtherPersionalDetails extends Component {
       statetatus: '',
       citytatus: '',
       gendertatus: '',
-      casttatus: '',
+      casttatus: '', subcasttatus: '',
       bloodGroupStatus: '',
       anniversary: '',
       dob: '',
@@ -93,7 +94,7 @@ class ViewOtherPersionalDetails extends Component {
       Country: [],
       state: [],
       city: [],
-      cast: [],
+      cast: [], subCast: [],
       Gender: [],
       Blood: [],
       status: [
@@ -153,7 +154,7 @@ class ViewOtherPersionalDetails extends Component {
     if (this.state.connection_Status === true) {
       this.apiCalling()
 
-      
+
     }
   }
 
@@ -176,7 +177,7 @@ class ViewOtherPersionalDetails extends Component {
       })
     }
 
-    if (details.member_marriage_anniversary === 'invalid' || details.member_marriage_anniversary === '' || details.member_marriage_anniversary === null || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined' ) {
+    if (details.member_marriage_anniversary === 'invalid' || details.member_marriage_anniversary === '' || details.member_marriage_anniversary === null || details.member_marriage_anniversary === undefined || details.member_marriage_anniversary === 'invalid date' || details.member_marriage_anniversary === 'undefined') {
       this.setState({ anniversary: '' })
     } else {
       this.setState({ anniversary: Moment(details.member_marriage_anniversary, "YYYY-MM-DD", true).format("DD-MM-YYYY"), })
@@ -221,15 +222,16 @@ class ViewOtherPersionalDetails extends Component {
       citytatus: otherDetails.member_city_id,
       gendertatus: otherDetails.member_gender_id,
       bloodGroupStatus: otherDetails.member_bgm_id,
-      casttatus: parseInt(details.member_cast),
+      casttatus: parseInt(details.member_cast_id),
+      subcasttatus: parseInt(details.member_sub_cast_id),
       _isLoading: false
     })
     console.log('profilw id ', this.state.profile_pic_url + this.state.photoImage)
     console.log('id id ', this.state.member_proof + this.state.idImage)
     console.log('family id ', this.state.family_pic_url + this.state.familyPhoto)
 
-    console.log('birth date ===>',details.member_birth_date)
-
+    console.log('birth date ===>', details.member_birth_date)
+    this.subCast(details.member_cast_id)
     //country
     axois
       .get(base_url + 'countryList')
@@ -333,7 +335,13 @@ class ViewOtherPersionalDetails extends Component {
         this.setState({ isLoding: false })
       })
   }
-
+  async subCast(value) {
+    var response = await Helper.GET('sub_cast_list?cast_id=' + value)
+    console.log('response subcast -- > ', response)
+    if (response.success) {
+      this.setState({ subCast: response.data })
+    }
+  }
   async postApiCall() {
     var aniversary
     if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
@@ -351,7 +359,7 @@ class ViewOtherPersionalDetails extends Component {
     }
   }
   apiCallPost() {
-    
+
     console.log('dob siddhi', this.state.dob)
     console.log('aniversary', this.state.anniversary)
     console.log('dob select ', this.state.isdobSelect)
@@ -382,16 +390,16 @@ class ViewOtherPersionalDetails extends Component {
         formdata.append('member_marital_status', this.state.maritalstatus)
 
         if (this.state.isdobSelect) {
-          
+
           formdata.append('member_birth_date', Moment(this.state.dob, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
         } else {
           formdata.append('member_birth_date', Moment(this.state.dob, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
         }
-        
+
         if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
           formdata.append('member_marriage_anniversary', '')
         } else {
-          formdata.append('member_marriage_anniversary', Moment(this.state.anniversary, 'DD-MM-YYYY', true ).format('YYYY-MM-DD'))
+          formdata.append('member_marriage_anniversary', Moment(this.state.anniversary, 'DD-MM-YYYY', true).format('YYYY-MM-DD'))
         }
 
         if (this.state.member_type === '1') {
@@ -405,6 +413,11 @@ class ViewOtherPersionalDetails extends Component {
           } else {
             formdata.append('member_cast', this.state.casttatus)
           }
+          if (this.state.subcasttatus === null || this.state.subcasttatus === 'null' || this.state.subcasttatus === undefined) {
+            formdata.append('sub_cast_id', '')
+          } else {
+            formdata.append('sub_cast_id', this.state.subcasttatus)
+          } 
           if (
             this.state.nativePlace === null || this.state.nativePlace === 'null' ||
             this.state.nativePlace === undefined
@@ -455,7 +468,7 @@ class ViewOtherPersionalDetails extends Component {
           formdata.append('member_address', this.state.address)
         }
         formdata.append('member_country_id', this.state.countrytatus)
-        
+
         if (
           this.state.statetatus === null || this.state.statetatus === 'null' ||
           this.state.statetatus === undefined
@@ -531,19 +544,19 @@ class ViewOtherPersionalDetails extends Component {
             type: this.state.photoType
           })
         }
-        if(isalive === 1){
+        if (isalive === 1) {
           formdata.append('member_death_date', Moment(this.state.dod, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
-        }else{
-          formdata.append('member_death_date', this.state.dod)  
+        } else {
+          formdata.append('member_death_date', this.state.dod)
         }
 
         formdata.append('member_is_alive', isalive)
         formdata.append('place_birth', this.state.placeofbirth)
         formdata.append('place_death', this.state.placeofdeath)
-        
+
 
         console.log('edit details form data', formdata)
-        
+
 
         axois
           .post(base_url + 'member_details_edit', formdata)
@@ -948,6 +961,88 @@ class ViewOtherPersionalDetails extends Component {
                     )}
                 </Item>
               </Form>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: 15
+                }}
+              >
+                <Text
+                  style={[
+                    Style.Textmainstyle,
+                    { width: '45%', color: Colors.black }
+                  ]}
+                >
+                  Cast
+              </Text>
+                <Picker
+                  selectedValue={this.state.casttatus}
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ casttatus: itemValue })
+                    this.subCast(itemValue)
+                  }}
+                  mode={'dialog'}
+                  style={{
+                    flex: 1,
+                    width: '100%',
+                    fontFamily: CustomeFonts.reguar,
+                    color: Colors.black
+                  }}
+                >
+                  <Picker.Item label='Select Cast' value='0' />
+                  {this.state.cast.map((item, key) => (
+                    <Picker.Item
+                      label={item.cast_name}
+                      value={item.id}
+                      key={key}
+                    />
+                  ))}
+                </Picker>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: 15
+                }}
+              >
+                <Text
+                  style={[
+                    Style.Textmainstyle,
+                    { width: '45%', color: Colors.black }
+                  ]}
+                >
+                  Sub Cast
+              </Text>
+                <Picker
+                  selectedValue={this.state.subcasttatus}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({ subcasttatus: itemValue })
+                  }
+                  mode={'dialog'}
+                  style={{
+                    flex: 1,
+                    width: '100%',
+                    fontFamily: CustomeFonts.reguar,
+                    color: Colors.black
+                  }}
+                >
+                  <Picker.Item label='Select Sub Cast' value='0' />
+                  {this.state.subCast.map((item, key) => (
+                    <Picker.Item
+                      label={item.name}
+                      value={item.id}
+                      key={key}
+                    />
+                  ))}
+                </Picker>
+              </View>
+
+
               <View
                 style={{
                   flexDirection: 'row',
@@ -1174,46 +1269,6 @@ class ViewOtherPersionalDetails extends Component {
                       ></Input>
                     </Item>
                   </Form>
-
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginLeft: 15
-                    }}
-                  >
-                    <Text
-                      style={[
-                        Style.Textmainstyle,
-                        { width: '45%', color: Colors.black }
-                      ]}
-                    >
-                      Cast
-              </Text>
-                    <Picker
-                      selectedValue={this.state.casttatus}
-                      onValueChange={(itemValue, itemIndex) =>
-                        this.setState({ casttatus: itemValue })
-                      }
-                      mode={'dialog'}
-                      style={{
-                        flex: 1,
-                        width: '100%',
-                        fontFamily: CustomeFonts.reguar,
-                        color: Colors.black
-                      }}
-                    >
-                      <Picker.Item label='Select Cast' value='0' />
-                      {this.state.cast.map((item, key) => (
-                        <Picker.Item
-                          label={item.cast_name}
-                          value={item.id}
-                          key={key}
-                        />
-                      ))}
-                    </Picker>
-                  </View>
 
                   <Form>
                     <Item stackedLabel>

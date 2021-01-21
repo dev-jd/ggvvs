@@ -31,7 +31,7 @@ import {
 import { pic_url } from '../Static'
 import Moment from 'moment'
 import { Collapse, CollapseHeader, CollapseBody } from "accordion-collapse-react-native";
-import { onShare, validationempty } from '../Theme/Const';
+import { onShare, showToast, validationempty } from '../Theme/Const';
 import IconEntypo from 'react-native-vector-icons/Entypo'
 import IconFeather from 'react-native-vector-icons/Feather'
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
@@ -61,20 +61,33 @@ class MatrimonyDetails extends Component {
       imageUrlMatrimony: '',
       country: '', state: '', city: '',
       visibleModalPersonal: null, visibleModalFamily: null, visibleModalEducation: null, visibleModalSpritual: null, visibleModalGeneral: null, visibleModalComm: null,
-      visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null
+      visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null, packageId: '',
+      viewPersonal: 0, viewEducation: 0, viewFamily: 0, viewLifestyle: 0, viewProfession: 0, viewSpiritual: 0, viewcommunication: 0, viewGeneral: 0, viewPhoto: 0,
+      is_parent_mobile_only: 0
     }
   }
 
   async componentWillMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-    console.log('samaj id ', samaj_id)
+    const packageId = await AsyncStorage.getItem('packageId')
+    console.log('packageId ', packageId)
     this.setState({
-      samaj_id: samaj_id
+      samaj_id: samaj_id, packageId
     })
 
+    this.getPackageDetails()
     this.apiCalling()
   }
 
+  async getPackageDetails() {
+    var response = await Helper.GET('packageDetails/' + this.state.packageId)
+    console.log('package details  -->', response)
+    this.setState({
+      viewPersonal: response.data.personal_details, viewEducation: response.data.education_details, viewFamily: response.data.family_details,
+      viewLifestyle: response.data.lifestyle_choices, viewProfession: response.data.profession_details, viewSpiritual: response.data.spiritual_details,
+      viewcommunication: response.data.communication_details, viewGeneral: response.data.general_questions, viewPhoto: response.data.adititional_details
+    })
+  }
   async apiCalling() {
     const details = this.props.navigation.getParam('itemData')
     // const member = this.props.navigation.getParam('member')
@@ -89,18 +102,19 @@ class MatrimonyDetails extends Component {
     //console.log('item Data  -->', response.data.member_master.state_masters.state_name)
     //console.log('item Data  -->', response.data.member_master.city_masters.city_name)
     this.setState({
-      item_details: response.data.member_master,
+      item_details: response.data,
       matrimonyData: response.data,
       imageUrl: imageUrl,
       imageUrlMatrimony, imageUrlMatrimony,
-      country: response.data.member_master.country_masters.country_name,
-      state: response.data.member_master.state_masters.state_name,
-      city: response.data.member_master.city_masters.city_name
+      country: response.data.country,
+      state: response.data.state,
+      city: response.data.city
     })
   }
 
   render() {
-    const { item_details, matrimonyData, imageUrl, imageUrlMatrimony, country, state, city } = this.state
+    const { item_details, matrimonyData, imageUrl, imageUrlMatrimony, country, state, city,
+      viewPersonal, viewEducation, viewFamily, viewLifestyle, viewProfession, viewSpiritual, viewcommunication, viewGeneral, viewPhoto } = this.state
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ImageBackground source={AppImages.back7}
@@ -125,43 +139,51 @@ class MatrimonyDetails extends Component {
               </View>
               {/* Row 1 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPersonal: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => {
+                  if (viewPersonal === 1) {
+                    this.setState({ visibleModalPersonal: 'bottom' })
+                  } else { showToast('This feature not available in your current package') }
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Personal</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalFamily: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => {
+                  if (viewFamily === 1) {
+                    this.setState({ visibleModalFamily: 'bottom' })
+                  } else { showToast('This feature not available in your current package') }
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Family</Text>
                 </TouchableOpacity>
               </View>
               {/* row 2 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalEducation: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewEducation === 1) { this.setState({ visibleModalEducation: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Education</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalProffessional: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => { if (viewProfession === 1) { this.setState({ visibleModalProffessional: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Professional</Text>
                 </TouchableOpacity>
               </View>
               {/* row 3 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalLifestyle: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewLifestyle === 1) { this.setState({ visibleModalLifestyle: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Lifestyle Choice</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalSpritual: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => { if (viewSpiritual === 1) { this.setState({ visibleModalSpritual: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Spiritual</Text>
                 </TouchableOpacity>
               </View>
               {/* row 4 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalGeneral: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewGeneral === 1) { this.setState({ visibleModalGeneral: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>General</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalComm: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => { if (viewcommunication === 1) { this.setState({ visibleModalComm: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Communication</Text>
                 </TouchableOpacity>
               </View>
               {/* Row 5 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewPhoto === 1) { this.setState({ visibleModalPhotos: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '5%', textAlign: 'center' }]}>Photos</Text>
                 </TouchableOpacity>
 
@@ -191,6 +213,14 @@ class MatrimonyDetails extends Component {
               <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Birth Place</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '50%' }]}>{matrimonyData.mm_birth_place}</Label>
+              </View>
+              <View style={[Style.flexView, { paddingVertical: '2%' }]}>
+                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Cast</Label>
+                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '50%' }]}>{matrimonyData.member_cast}</Label>
+              </View>
+              <View style={[Style.flexView, { paddingVertical: '2%' }]}>
+                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Subcast</Label>
+                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '50%' }]}>{matrimonyData.member_sub_cast}</Label>
               </View>
               <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Height</Label>
@@ -424,10 +454,17 @@ class MatrimonyDetails extends Component {
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Communication Details</Text>
-              <View style={[Style.flexView, { paddingVertical: '3%' }]}>
-                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '40%' }]}>Mobile Number</Label>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '60%' }]}>{validationempty(item_details.member_mobile) ? item_details.member_mobile : '-'}</Label>
-              </View>
+              {item_details.is_parent_mobile_only === 1 ?
+                <View style={{ paddingVertical: '3%' }}>
+                  <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Parents Mobile Number</Label>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '100%' }]}>Father Number - {validationempty(item_details.father_mobile) ? item_details.father_mobile : '-'}</Label>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '100%' }]}>Mother Number - {validationempty(item_details.mother_mobile) ? item_details.mother_mobile : '-'}</Label>
+                </View> :
+                <View style={[Style.flexView, { paddingVertical: '3%' }]}>
+                  <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '40%' }]}>Mobile Number</Label>
+                  <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '60%' }]}>{validationempty(item_details.member_mobile) ? item_details.member_mobile : '-'}</Label>
+                </View>
+              }
               <View style={{ paddingVertical: '3%' }}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Email ID</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '100%' }]}>{validationempty(item_details.member_email) ? item_details.member_email : '-'}</Label>
@@ -545,9 +582,10 @@ class MatrimonyDetails extends Component {
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Additional Photos</Text>
             <View style={[Style.flexView, { paddingVertical: '3%' }]}>
-              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal:5 }} onPress={() => {
-                this.setState({visibleModalPhotos:null})
-                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_1 })}}>
+              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal: 5 }} onPress={() => {
+                this.setState({ visibleModalPhotos: null })
+                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_1 })
+              }}>
                 <Image
                   resizeMode={'contain'}
                   source={
@@ -557,9 +595,10 @@ class MatrimonyDetails extends Component {
                   style={{ width: '100%', height: 150 }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal:5 }} onPress={() => {
-                this.setState({visibleModalPhotos:null})
-                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_2 })}}>
+              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal: 5 }} onPress={() => {
+                this.setState({ visibleModalPhotos: null })
+                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_2 })
+              }}>
                 <Image
                   resizeMode={'contain'}
                   source={!validationempty(matrimonyData.member_photo_1)
@@ -570,9 +609,10 @@ class MatrimonyDetails extends Component {
               </TouchableOpacity>
             </View>
             <View style={[Style.flexView, { paddingVertical: '3%' }]}>
-              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal:5 }} onPress={() => {
-                this.setState({visibleModalPhotos:null})
-                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_3 })}}>
+              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal: 5 }} onPress={() => {
+                this.setState({ visibleModalPhotos: null })
+                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_3 })
+              }}>
                 <Image
                   resizeMode={'contain'}
                   source={
@@ -582,9 +622,10 @@ class MatrimonyDetails extends Component {
                   style={{ width: '100%', height: 150 }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal:5 }} onPress={() => {
-                this.setState({visibleModalPhotos:null})
-                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_4 })}}>
+              <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal: 5 }} onPress={() => {
+                this.setState({ visibleModalPhotos: null })
+                this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_4 })
+              }}>
                 <Image
                   resizeMode={'contain'}
                   source={
@@ -595,9 +636,10 @@ class MatrimonyDetails extends Component {
                 />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal:5 }} onPress={() => {
-              this.setState({visibleModalPhotos:null})
-              this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_5 })}}>
+            <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal: 5 }} onPress={() => {
+              this.setState({ visibleModalPhotos: null })
+              this.props.navigation.navigate('KundliImage', { imageURl: imageUrlMatrimony + matrimonyData.member_photo_5 })
+            }}>
               <Image
                 resizeMode={'contain'}
                 source={

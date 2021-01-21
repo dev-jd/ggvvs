@@ -20,7 +20,6 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import CustomeFonts from '../Theme/CustomeFonts'
 import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
-import { pic_url } from '../Static'
 import { base_url } from '../Static'
 import axois from 'axios'
 import Moment from 'moment'
@@ -59,7 +58,7 @@ class BlockUser extends Component {
             report_reason: '',
             md_gender_id: '',
             f_age: '',
-            t_age: ''
+            t_age: '',pic_url:''
         }
     }
     async componentWillMount() {
@@ -83,7 +82,7 @@ class BlockUser extends Component {
         console.log(response)
         if (response.success) {
 
-            this.setState({ data_listMainmember: response.data })
+            this.setState({ data_listMainmember: response.data,pic_url:response.url })
         }
     }
     async blockApi() {
@@ -199,14 +198,13 @@ class BlockUser extends Component {
     }
 
     categoryRendeItemMain = ({ item, index }) => {
-        // console.log('check item -- >', item)
         return (
             <View style={[Style.cardback, { width: '100%', flexDirection: 'row', justifyContent: 'center' }]}>
                 <TouchableOpacity
                     style={{ width: '20%' }}
                     onPress={() =>
                         this.props.navigation.navigate('KundliImage', {
-                            imageURl: pic_url + item.member_photo,
+                            imageURl: this.state.pic_url + item.member_photo,
                         })
                     }>
                     {item.member_photo === null ? (
@@ -221,7 +219,7 @@ class BlockUser extends Component {
                     ) : (
                             <Image
                                 resizeMode='stretch'
-                                source={{ uri: pic_url + item.member_photo }}
+                                source={{ uri: this.state.pic_url + item.member_photo }}
                                 style={{ height: 80, width: 80, alignSelf: 'center', marginLeft: 5 }}
                             />
                         )}

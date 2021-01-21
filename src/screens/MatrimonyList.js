@@ -58,16 +58,20 @@ export default class App extends Component {
       report_reason: '',
       cast: [], heightDroupDown: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
       heightfFeet: '', heightInch: '', weight: '',
-      takedrink: '', smoke: '', nonveg: '', eggs: '', lookfornri: '', kundliBelive: '', isPustimarg: '',
+      takedrink: '', smoke: '', nonveg: '', eggs: '', lookfornri: '', kundliBelive: '', isPustimarg: '', packageActive: '', packageId: ''
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
+    const packageId = await AsyncStorage.getItem('packageId')
+    const packageActive = await AsyncStorage.getItem('packageActive')
     console.log('samaj id ', samaj_id)
+    console.log('packageId ', packageId)
+    console.log('packageActive ', packageActive)
     this.setState({
-      samaj_id, member_id
+      samaj_id, member_id, packageId, packageActive
     })
     this.castApi()
     this.apiCalling()
@@ -81,12 +85,14 @@ export default class App extends Component {
     var gender_id = this.props.navigation.getParam('gender_id')
     var fromage = this.props.navigation.getParam('f_age')
     var toage = this.props.navigation.getParam('t_age')
+    const member_id = await AsyncStorage.getItem('member_id')
 
     var { heightfFeet, lookfornri, isPustimarg, smoke, eggs, kundliBelive, takedrink, nonveg } = this.state
 
     var formdata = new FormData()
     formdata.append('gender_id', gender_id)
-    formdata.append('member_id', this.state.member_id)
+    // formdata.append('member_id','')
+    formdata.append('member_id',member_id)
     formdata.append('f_age', fromage)
     formdata.append('t_age', toage)
     formdata.append('looking_for_nri', lookfornri)
@@ -173,11 +179,17 @@ export default class App extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          if (validationempty(item.package_id)) {
-            this.props.navigation.navigate('MatrimonyDetails', {
-              itemData: item, member: 'main', imageUrl: this.state.imageUrlKundli,
-              imageUrlMatrimony: this.state.imageUrlMatrimony
-            })
+          if (validationempty(this.state.packageId) && validationempty(this.state.packageActive)) {
+            if (this.state.packageActive === 'Expired') {
+              showToast('In your profile no package available now ')
+            } else {
+              this.props.navigation.navigate('MatrimonyDetails', {
+                itemData: item, member: 'main', imageUrl: this.state.imageUrlKundli,
+                imageUrlMatrimony: this.state.imageUrlMatrimony
+              })
+            }
+          }else{
+            showToast('In your profile no package available now ')
           }
         }
         }
@@ -254,7 +266,7 @@ export default class App extends Component {
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
-        <NavigationEvents onDidFocus={payload => this.apiCalling()} />
+        {/* <NavigationEvents onDidFocus={payload => this.apiCalling()} /> */}
         <ImageBackground source={AppImages.back5}
           blurRadius={1}
           style={{
