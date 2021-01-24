@@ -185,7 +185,8 @@ export default class App extends Component {
             } else {
               this.props.navigation.navigate('MatrimonyDetails', {
                 itemData: item, member: 'main', imageUrl: this.state.imageUrlKundli,
-                imageUrlMatrimony: this.state.imageUrlMatrimony
+                imageUrlMatrimony: this.state.imageUrlMatrimony,
+                profileImg:this.state.imageUrlMember + item.member_photo 
               })
             }
           }else{

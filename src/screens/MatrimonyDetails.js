@@ -63,16 +63,19 @@ class MatrimonyDetails extends Component {
       visibleModalPersonal: null, visibleModalFamily: null, visibleModalEducation: null, visibleModalSpritual: null, visibleModalGeneral: null, visibleModalComm: null,
       visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null, packageId: '',
       viewPersonal: 0, viewEducation: 0, viewFamily: 0, viewLifestyle: 0, viewProfession: 0, viewSpiritual: 0, viewcommunication: 0, viewGeneral: 0, viewPhoto: 0,
-      is_parent_mobile_only: 0
+      is_parent_mobile_only: 0,profileimage:''
     }
   }
 
   async componentWillMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-    const packageId = await AsyncStorage.getItem('packageId')
+    const packageId= await AsyncStorage.getItem('packageId')
+    const profileimage = await this.props.navigation.getParam('profileImg')
+
     console.log('packageId ', packageId)
+    console.log('profileimage', profileimage)
     this.setState({
-      samaj_id: samaj_id, packageId
+      samaj_id: samaj_id, packageId,profileimage
     })
 
     this.getPackageDetails()
@@ -114,7 +117,7 @@ class MatrimonyDetails extends Component {
 
   render() {
     const { item_details, matrimonyData, imageUrl, imageUrlMatrimony, country, state, city,
-      viewPersonal, viewEducation, viewFamily, viewLifestyle, viewProfession, viewSpiritual, viewcommunication, viewGeneral, viewPhoto } = this.state
+      viewPersonal, viewEducation, viewFamily, viewLifestyle, viewProfession, viewSpiritual, viewcommunication, viewGeneral, viewPhoto,profileimage } = this.state
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ImageBackground source={AppImages.back7}
@@ -128,14 +131,38 @@ class MatrimonyDetails extends Component {
             <View>
               {/* profile tag */}
               <View style={[Style.cardback, Style.matrimonyCard]}>
-                <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>Name {item_details.member_name}</Text>
-                {/* <TextInputCustome title='Name' value={name} changetext={(name) => this.setState({ name })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} /> */}
-                {matrimonyData.profile_tag_line ?
-                  <View>
-                    <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>Profile Tag</Text>
-                    <Text style={[Style.Textstyle, { color: Colors.white, textAlign: 'center' }]}>{matrimonyData.profile_tag_line}</Text>
+                <View style={{ flexDirection: 'row',justifyContent:'center',alignItems:'center' }}>
+                <View style={{width:'70%'}}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>{item_details.name}</Text>
+                    {/* <TextInputCustome title='Name' value={name} changetext={(name) => this.setState({ name })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} /> */}
+                    {matrimonyData.profile_tag_line ?
+                      <View>
+                        {/* <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>Profile Tag</Text> */}
+                        <Text style={[Style.Textstyle, { color: Colors.white, textAlign: 'center' }]} numberOfLines={2}>{matrimonyData.profile_tag_line}</Text>
+                      </View>
+                      : null}
                   </View>
-                  : null}
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: profileimage })}>
+
+                    {profileimage === null ? (
+                      <Image
+                        resizeMode='stretch'
+                        source={{
+                          uri:
+                            'https://pngimage.net/wp-content/uploads/2018/05/default-user-profile-image-png-2.png'
+                        }}
+                        style={{ height: 80, width: 80, alignSelf: 'center' }}
+                      />
+                    ) : (
+                        <Image
+                          resizeMode='stretch'
+                          source={{ uri: profileimage }}
+                          style={{ height: 80, width: 80, alignSelf: 'center' }}
+                        />
+                      )}
+                  </TouchableOpacity>
+                 
+                </View>
               </View>
               {/* Row 1 */}
               <View style={Style.flexView}>
@@ -194,14 +221,19 @@ class MatrimonyDetails extends Component {
         {/* personal   */}
         <Modal
           isVisible={this.state.visibleModalPersonal === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalPersonal: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalPersonal: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'flex-end', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalPersonal: null })}
-          onBackButtonPress={() => this.setState({ visibleModalPersonal: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalPersonal: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalPersonal: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%' }]}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPersonal: null })}>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center' }]}>Personal Details</Text>
+              <Icon name='x' onPress={() => this.setState({ visibleModalPersonal: null })} size={20} />
+            </TouchableOpacity>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Personal Details</Text>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Personal Details</Text> */}
               <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Birth Date </Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '50%' }]}>{Moment(item_details.member_birth_date).format('DD-MM-YYYY')}</Label>
@@ -268,14 +300,20 @@ class MatrimonyDetails extends Component {
         {/* family modal */}
         <Modal
           isVisible={this.state.visibleModalFamily === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalFamily: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalFamily: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'flex-end', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalFamily: null })}
-          onBackButtonPress={() => this.setState({ visibleModalFamily: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalFamily: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalFamily: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%' }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalFamily: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Family Details</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalFamily: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Family Details</Text> */}
               <View style={{ paddingVertical: '3%' }}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Father Name</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '100%' }]}>{validationempty(item_details.member_father) ? item_details.member_father : '-'}</Label>
@@ -311,14 +349,20 @@ class MatrimonyDetails extends Component {
         {/* educational modal */}
         <Modal
           isVisible={this.state.visibleModalEducation === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalEducation: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalEducation: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalEducation: null })}
-          onBackButtonPress={() => this.setState({ visibleModalEducation: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalEducation: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalEducation: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalEducation: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Educational Details</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalEducation: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Educational Details</Text> */}
               <View style={[Style.flexView, { paddingVertical: '3%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '70%' }]}>Education Qualification</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, width: '30%' }]}>{validationempty(item_details.member_eq_id) ? item_details.member_eq_id : '-'}</Label>
@@ -333,14 +377,17 @@ class MatrimonyDetails extends Component {
         {/* Profession modal */}
         <Modal
           isVisible={this.state.visibleModalProffessional === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalProffessional: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalProffessional: null })}
-          onBackButtonPress={() => this.setState({ visibleModalProffessional: null })}>
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalProffessional: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Profession Details</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalProffessional: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Profession Details</Text> */}
               <View style={[Style.flexView, { paddingVertical: '3%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Profession</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '50%' }]}>{validationempty(matrimonyData.profession) ? matrimonyData.profession : '-'}</Label>
@@ -360,14 +407,17 @@ class MatrimonyDetails extends Component {
         {/* life style modal */}
         <Modal
           isVisible={this.state.visibleModalLifestyle === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalLifestyle: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalLifestyle: null })}
-          onBackButtonPress={() => this.setState({ visibleModalLifestyle: null })}>
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalLifestyle: null })}>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Profession Details</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalLifestyle: null })} />
+            </TouchableOpacity>
+
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Lifestyle Choices</Text>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Lifestyle Choices</Text> */}
               <View style={{ paddingVertical: '3%' }}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Them_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Description</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, foentFamily: CustomeFonts.regular, width: '100%' }]}>{validationempty(matrimonyData.lifestyle_choice) ? matrimonyData.lifestyle_choice : '-'}</Label>
@@ -382,14 +432,17 @@ class MatrimonyDetails extends Component {
         {/* spritual modal */}
         <Modal
           isVisible={this.state.visibleModalSpritual === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalSpritual: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalSpritual: null })}
-          onBackButtonPress={() => this.setState({ visibleModalSpritual: null })}>
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalSpritual: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Spritual Details</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalSpritual: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Spritual Details</Text> */}
               <View style={[Style.flexView, { paddingVertical: '3%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '80%' }]}>Do you follow Pustimarg ?</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '20%' }]}>{validationempty(matrimonyData.pustimarg) ? (matrimonyData.pustimarg == 2 ? "No" : "Yes") : '-'}</Label>
@@ -412,14 +465,17 @@ class MatrimonyDetails extends Component {
         {/* general model */}
         <Modal
           isVisible={this.state.visibleModalGeneral === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalGeneral: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalGeneral: null })}
-          onBackButtonPress={() => this.setState({ visibleModalGeneral: null })}>
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalGeneral: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>General Questionnaire</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalGeneral: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>General Questionnaire</Text> */}
               <View style={[Style.flexView, { paddingVertical: '3%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '75%' }]}>Looking For NRI?</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '25%' }]}>{validationempty(matrimonyData.looking_for_nri) ? (matrimonyData.looking_for_nri == 2 ? "No" : (matrimonyData.looking_for_nri == 1 ? "Yes" : "Both")) : '-'}</Label>
@@ -446,14 +502,17 @@ class MatrimonyDetails extends Component {
         {/* coomunication model */}
         <Modal
           isVisible={this.state.visibleModalComm === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalComm: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalComm: null })}
-          onBackButtonPress={() => this.setState({ visibleModalComm: null })}>
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalComm: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Communication Details</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalComm: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Communication Details</Text> */}
               {item_details.is_parent_mobile_only === 1 ?
                 <View style={{ paddingVertical: '3%' }}>
                   <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Parents Mobile Number</Label>
@@ -574,13 +633,15 @@ class MatrimonyDetails extends Component {
         {/* photos model */}
         <Modal
           isVisible={this.state.visibleModalPhotos === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalPhotos: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalPhotos: null })}
-          onBackButtonPress={() => this.setState({ visibleModalPhotos: null })}>
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Additional Photos</Text>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPhotos: null })}>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Additional Photos</Text>
+              <Icon name='x' size={20} onPress={() => this.setState({ visibleModalPhotos: null })} />
+            </TouchableOpacity>
+
             <View style={[Style.flexView, { paddingVertical: '3%' }]}>
               <TouchableOpacity style={{ height: 150, width: 150, marginHorizontal: 5 }} onPress={() => {
                 this.setState({ visibleModalPhotos: null })

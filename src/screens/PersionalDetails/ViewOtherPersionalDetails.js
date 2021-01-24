@@ -223,7 +223,7 @@ class ViewOtherPersionalDetails extends Component {
       gendertatus: otherDetails.member_gender_id,
       bloodGroupStatus: otherDetails.member_bgm_id,
       casttatus: parseInt(details.member_cast_id),
-      subcasttatus: parseInt(details.member_sub_cast_id),
+      subcasttatus: details.member_sub_cast,
       _isLoading: false
     })
     console.log('profilw id ', this.state.profile_pic_url + this.state.photoImage)
@@ -231,7 +231,7 @@ class ViewOtherPersionalDetails extends Component {
     console.log('family id ', this.state.family_pic_url + this.state.familyPhoto)
 
     console.log('birth date ===>', details.member_birth_date)
-    this.subCast(details.member_cast_id)
+    // this.subCast(details.member_cast_id)
     //country
     axois
       .get(base_url + 'countryList')
@@ -417,7 +417,7 @@ class ViewOtherPersionalDetails extends Component {
             formdata.append('sub_cast_id', '')
           } else {
             formdata.append('sub_cast_id', this.state.subcasttatus)
-          } 
+          }
           if (
             this.state.nativePlace === null || this.state.nativePlace === 'null' ||
             this.state.nativePlace === undefined
@@ -682,7 +682,7 @@ class ViewOtherPersionalDetails extends Component {
             <View
               style={[
                 Style.cardback,
-                { flex: 1, justifyContent: 'center', marginTop: 10 }
+                { flex: 1, justifyContent: 'center', marginTop: 10, padding: 1 }
               ]}
             >
               <View
@@ -862,51 +862,28 @@ class ViewOtherPersionalDetails extends Component {
               </Form>
               {this.state.member_type === '1' ? (
                 <View>
-                  <Form>
-                    <Item stackedLabel>
-                      <Label
-                        style={[
-                          Style.Textstyle,
-                          (style = {
-                            color: Colors.black,
-                            fontFamily: CustomeFonts.medium
-                          })
-                        ]}
-                      >
-                        Father Name
-                    </Label>
-                      <Input
-                        style={Style.Textstyle}
-                        onChangeText={value =>
-                          this.setState({ fatherName: value })
-                        }
-                        value={this.state.fatherName}
-                      ></Input>
-                    </Item>
-                  </Form>
+                  <TouchableOpacity
+                    style={{ paddingHorizontal: '3%' }}
+                    onPress={() => {
+                      this.setState({ visibleModalFamily: null })
+                      this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: this.state.member_id })
+                    }}>
 
-                  <Form>
-                    <Item stackedLabel>
-                      <Label
-                        style={[
-                          Style.Textstyle,
-                          (style = {
-                            color: Colors.black,
-                            fontFamily: CustomeFonts.medium
-                          })
-                        ]}
-                      >
-                        Mother Name
-                    </Label>
-                      <Input
-                        style={Style.Textstyle}
-                        onChangeText={value =>
-                          this.setState({ motherName: value })
-                        }
-                        value={this.state.motherName}
-                      ></Input>
-                    </Item>
-                  </Form>
+                    <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '2%' }]}>Father Name</Text>
+                    <Text style={[Style.Textstyle, { paddingVertical: '2%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{this.state.fatherName}</Text>
+                    <Item />
+
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ paddingHorizontal: '3%' }}
+                    onPress={() => {
+                      this.setState({ visibleModalFamily: null })
+                      this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: this.state.member_id })
+                    }}>
+                    <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '2%' }]}>Mother Name</Text>
+                    <Text style={[Style.Textstyle, { paddingVertical: '2%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{this.state.motherName}</Text>
+                    <Item />
+                  </TouchableOpacity>
                 </View>
               ) : null}
               <Form>
@@ -1002,45 +979,31 @@ class ViewOtherPersionalDetails extends Component {
                   ))}
                 </Picker>
               </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: 15
-                }}
-              >
-                <Text
-                  style={[
-                    Style.Textmainstyle,
-                    { width: '45%', color: Colors.black }
-                  ]}
-                >
-                  Sub Cast
-              </Text>
-                <Picker
-                  selectedValue={this.state.subcasttatus}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ subcasttatus: itemValue })
-                  }
-                  mode={'dialog'}
-                  style={{
-                    flex: 1,
-                    width: '100%',
-                    fontFamily: CustomeFonts.reguar,
-                    color: Colors.black
-                  }}
-                >
-                  <Picker.Item label='Select Sub Cast' value='0' />
-                  {this.state.subCast.map((item, key) => (
-                    <Picker.Item
-                      label={item.name}
-                      value={item.id}
-                      key={key}
-                    />
-                  ))}
-                </Picker>
-              </View>
+              <Form>
+                <Item stackedLabel>
+                  <Label
+                    style={[
+                      Style.Textstyle,
+                      (style = {
+                        color: Colors.black,
+                        fontFamily: CustomeFonts.medium
+                      })
+                    ]}
+                  >
+                    Subcast
+                </Label>
+                  <Input
+                    style={Style.Textstyle}
+                    multiline={false}
+                    keyboardType={'default'}
+                    // numberOfLines={3}
+                    onChangeText={value => this.setState({ subcasttatus: value })}
+                    value={this.state.subcasttatus}
+                  ></Input>
+
+                </Item>
+              </Form>
+
 
 
               <View

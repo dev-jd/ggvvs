@@ -292,13 +292,13 @@ export default class LookinForMatrimony extends Component {
       img_url: response.member_kundli,
       img_url_profile: response.matrimony_photo,
       casttatus: parseInt(response.member_details.member_cast_id),
-      subcast: parseInt(response.member_details.member_sub_cast_id),
+      subcast: response.member_details.member_sub_cast,
       fatherNo: response.member_details.father_mobile,
       motherNo: response.member_details.member_mother,
     })
     this.stateApiCall(response.other_information.member_country_id)
     this.cityApiCall(response.other_information.member_state_id)
-    this.subCast(response.member_details.member_cast_id)
+    // this.subCast(response.member_details.member_cast_id)
   }
 
   async CapturePhoto(type) {
@@ -693,7 +693,7 @@ export default class LookinForMatrimony extends Component {
       education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
       membedId, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, twitter, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
       member1image, matrimonyId, member2image, member3image, heightDroupDown, member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5,
-      fatherNo, motherNo } = this.state
+      fatherNo, motherNo, subcast } = this.state
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -807,14 +807,18 @@ export default class LookinForMatrimony extends Component {
         {/* personal modal */}
         <Modal
           isVisible={this.state.visibleModalPersonal === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalPersonal: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalPersonal: null })}
           swipeDirection={['down']}
-          style={{ justifyContent: 'flex-end', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalPersonal: null })}
-          onBackButtonPress={() => this.setState({ visibleModalPersonal: null })}>
+          style={{ justifyContent: 'flex-end', padding: 2 }}
+        // onBackdropPress={() => this.setState({ visibleModalPersonal: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalPersonal: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%' }]}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPersonal: null })}>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center' }]}>Personal Details</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalPersonal: null })} />
+            </TouchableOpacity>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Personal Details</Text>
               <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                 <View style={{ marginHorizontal: 5 }}>
                   <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Birth-Date</Label>
@@ -926,23 +930,7 @@ export default class LookinForMatrimony extends Component {
                 </Picker>
                 <Item />
               </View>
-              <View style={{ paddingVertical: 10, width: '100%' }}>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Subcast</Label>
-                <Picker
-                  selectedValue={this.state.subcast}
-                  onValueChange={(itemValue, itemIndex) => {
-                    this.setState({ subcast: itemValue })
-                    this.stateApiCall(itemValue)
-                  }}
-                  mode={'dialog'}
-                >
-                  <Picker.Item label='Select cast' value='0' />
-                  {this.state.subCastArray.map((item, key) => (
-                    <Picker.Item label={item.name} value={item.id} key={key} />
-                  ))}
-                </Picker>
-                <Item />
-              </View>
+              <TextInputCustome title='Sub Cast' value={subcast} changetext={(subcast) => this.setState({ subcast })} maxLength={50} multiline={false} numberOfLines={5} keyboardType={'default'} editable={true} />
               <View style={{ paddingVertical: '2%', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                 <Label style={[Style.Textstyle, { width: 'auto', color: Colors.black, fontFamily: CustomeFonts.medium }]}> Sani/Manglik</Label>
                 <Switch
@@ -996,14 +984,18 @@ export default class LookinForMatrimony extends Component {
         {/* family modal */}
         <Modal
           isVisible={this.state.visibleModalFamily === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalFamily: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalFamily: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'flex-end', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalFamily: null })}
-          onBackButtonPress={() => this.setState({ visibleModalFamily: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalFamily: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalFamily: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%' }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalFamily: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Family Details</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalFamily: null })} />
+            </TouchableOpacity>
+            <ScrollView showsVerticalScrollIndicator={false}>
               <Item>
                 <TouchableOpacity onPress={() => {
                   this.setState({ visibleModalFamily: null })
@@ -1042,14 +1034,19 @@ export default class LookinForMatrimony extends Component {
         {/* educational modal */}
         <Modal
           isVisible={this.state.visibleModalEducation === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalEducation: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalEducation: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalEducation: null })}
-          onBackButtonPress={() => this.setState({ visibleModalEducation: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalEducation: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalEducation: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalEducation: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Educational Details</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalEducation: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
               <TextInputCustome title='Education' value={education} changetext={(education) => this.setState({ education })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Education Description' value={educationdesc} changetext={(educationdesc) => this.setState({ educationdesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               {isLoding ?
@@ -1067,14 +1064,19 @@ export default class LookinForMatrimony extends Component {
         {/* Profession modal */}
         <Modal
           isVisible={this.state.visibleModalProffessional === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalProffessional: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalProffessional: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalProffessional: null })}
-          onBackButtonPress={() => this.setState({ visibleModalProffessional: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalProffessional: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalProffessional: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalProffessional: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Profession Details</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalProffessional: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
               <TextInputCustome title='Profession' value={profession} changetext={(profession) => this.setState({ profession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Yearly Income' value={income} changetext={(income) => this.setState({ income })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Profession Description' value={professiondesc} changetext={(professiondesc) => this.setState({ professiondesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
@@ -1094,14 +1096,19 @@ export default class LookinForMatrimony extends Component {
         {/* life style modal */}
         <Modal
           isVisible={this.state.visibleModalLifestyle === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalLifestyle: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalLifestyle: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalLifestyle: null })}
-          onBackButtonPress={() => this.setState({ visibleModalLifestyle: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalLifestyle: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalLifestyle: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalLifestyle: null })}>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Profession Details</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalLifestyle: null })} />
+            </TouchableOpacity>
+
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Lifestyle Choices</Text>
               <TextInputCustome title='Lifestyle Choices' value={lifestylechoice} changetext={(lifestylechoice) => this.setState({ lifestylechoice })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Member Expectation from life partner' value={expectation} changetext={(expectation) => this.setState({ expectation })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               {isLoding ?
@@ -1119,14 +1126,19 @@ export default class LookinForMatrimony extends Component {
         {/* spritual modal */}
         <Modal
           isVisible={this.state.visibleModalSpritual === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalSpritual: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalSpritual: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalSpritual: null })}
-          onBackButtonPress={() => this.setState({ visibleModalSpritual: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalSpritual: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalSpritual: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalSpritual: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Spritual Details</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalSpritual: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
               <View style={{ paddingVertical: '4%', flexDirection: 'row', alignItems: 'center' }}>
                 <Label style={[Style.Textstyle, { width: 'auto', color: Colors.black, fontFamily: CustomeFonts.medium }]}> Do you follow Pustimarg ?</Label>
                 <Switch
@@ -1161,14 +1173,19 @@ export default class LookinForMatrimony extends Component {
         {/* general model */}
         <Modal
           isVisible={this.state.visibleModalGeneral === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalGeneral: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalGeneral: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalGeneral: null })}
-          onBackButtonPress={() => this.setState({ visibleModalGeneral: null })}>
+        // onBackdropPress={() => this.setState({ visibleModalGeneral: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalGeneral: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalGeneral: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>General Questionnaire</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalGeneral: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
               <View style={{ paddingVertical: '3%', }}>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Looking for NRI?</Label>
                 <RadioButton.Group onValueChange={lookfornri => this.setState({ lookfornri })} value={lookfornri}>
@@ -1250,14 +1267,19 @@ export default class LookinForMatrimony extends Component {
         {/* coomunication model */}
         <Modal
           isVisible={this.state.visibleModalComm === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalComm: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalComm: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalComm: null })}
-          onBackButtonPress={() => this.setState({ visibleModalComm: null })}>
+          // onBackdropPress={() => this.setState({ visibleModalComm: null })}
+          // onBackButtonPress={() => this.setState({ visibleModalComm: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalComm: null })}>
+            <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Communication Details</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalComm: null })} />
+            </TouchableOpacity>
+
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Communication Details</Text>
               <TextInputCustome title='Mobile No' value={mobile} changetext={(mobile) => this.setState({ mobile })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'number'} editable={false} />
               <TextInputCustome title='Email' value={email} changetext={(email) => this.setState({ email })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'email-address'} editable={true} />
               <View style={{ paddingVertical: 10, width: '100%' }}>
@@ -1341,7 +1363,7 @@ export default class LookinForMatrimony extends Component {
                     }}>
                       {/* <TextInputCustome title='Mother Number Enter Whatsapp No With Country Code(Not +)' value={motherNo} changetext={(motherNo) => this.setState({ motherNo })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'number-pad'} editable={false} /> */}
                       <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '4%' }]}>Mother Number</Text>
-                      <Text style={[Style.Textstyle, { paddingVertical: '4%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{validationempty(motherNo)?motherNo:null}</Text>
+                      <Text style={[Style.Textstyle, { paddingVertical: '4%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{validationempty(motherNo) ? motherNo : null}</Text>
                     </TouchableOpacity>
                   </View>
                   :
@@ -1362,14 +1384,19 @@ export default class LookinForMatrimony extends Component {
         {/* photos model */}
         <Modal
           isVisible={this.state.visibleModalPhotos === 'bottom'}
-          onSwipeComplete={() => this.setState({ visibleModalPhotos: null })}
+          // onSwipeComplete={() => this.setState({ visibleModalPhotos: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          onBackdropPress={() => this.setState({ visibleModalPhotos: null })}
-          onBackButtonPress={() => this.setState({ visibleModalPhotos: null })}>
+          // onBackdropPress={() => this.setState({ visibleModalPhotos: null })}
+          // onBackButtonPress={() => this.setState({ visibleModalPhotos: null })}
+          >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+          <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPhotos: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Additional Photos</Text>
+              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalPhotos: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
               <View style={Style.flexView2}>
                 <View style={{ paddingVertical: '2%', width: '50%' }}>
                   <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Member Photo 1</Label>
