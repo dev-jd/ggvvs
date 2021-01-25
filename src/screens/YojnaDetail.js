@@ -36,13 +36,14 @@ import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
 import HTML from 'react-native-render-html'
 import Moment from 'moment'
+import axois from 'axios'
 
 import {
   IGNORED_TAGS,
   alterNode,
   makeTableRenderer
 } from 'react-native-render-html-table-bridge'
-import { pic_url } from '../Static'
+import { base_url,base_url_1,pic_url } from '../Static'
 
 const config = {
   WebViewComponent: WebView
@@ -97,13 +98,37 @@ export default class App extends Component {
     } 
   }
 
+  // async apiCalling() {
+  //   const details = this.props.navigation.getParam('itemData')
+  //   console.log('item Data -->', details)
+  //   this.setState({
+  //     yojna_list: details,
+  //     img_path: this.props.navigation.getParam('img_path')
+  //   })
+  // }
+
   async apiCalling() {
-    const details = this.props.navigation.getParam('itemData')
-    console.log('item Data -->', details)
-    this.setState({
-      yojna_list: details,
-      img_path: this.props.navigation.getParam('img_path')
-    })
+    const yojnaId = this.props.navigation.getParam('yojnaId')
+    this.setState({ isLoding: true })
+    console.log('base url: --', base_url + 'yojnaList?id=' + yojnaId)
+    axois
+      .get(base_url + 'yojnaList?id=' + yojnaId)
+      .then(res => {
+        console.log('yojnaList res---->', res.data.data)
+        this.setState({ isLoding: false })
+        if (res.data.success === true) {
+          this.setState({
+            yojna_list: res.data.data,
+            img_path: res.data.path,
+            isLoding: false
+          })
+        }
+        console.log('yojnaList res---->', yojna_list.size + "")
+      })
+      .catch(err => {
+        console.log(err)
+        this.setState({ isLoding: false })
+      })
   }
 
   render() {

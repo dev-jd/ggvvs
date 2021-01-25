@@ -243,6 +243,7 @@ const Stack_Navi = createStackNavigator(
         },
         YojnaDetail: {
             screen: YojnaDetail,
+            path: 'yojna-detail/:yojnaId'
         },
         EventLIst: {
             screen: EventLIst,
@@ -255,6 +256,7 @@ const Stack_Navi = createStackNavigator(
         },
         NewsDetail: {
             screen: NewsDetail,
+            path: 'news-detail/:newsId'
         },
         PropertyList: {
             screen: PropertyList,

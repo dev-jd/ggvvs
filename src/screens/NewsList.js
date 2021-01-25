@@ -43,8 +43,11 @@ import {
   alterNode,
   makeTableRenderer
 } from 'react-native-render-html-table-bridge'
-import { pic_url } from '../Static'
+import { base_url_1,pic_url } from '../Static'
 import AppImages from '../Theme/image'
+import IconFeather from 'react-native-vector-icons/Feather'
+import Share from 'react-native-share'
+
 const config = {
   WebViewComponent: WebView
 }
@@ -129,6 +132,31 @@ export default class App extends Component {
       })
   }
 
+  onShare = async (details) => {
+    console.log('check details', details)
+    //SimpleToast.show('Waiting for image download')
+    // RNFetchBlob.fetch('GET', this.state.postDataURL + details.post_image)
+    //   .then(resp => {
+    //     console.log('response : ', resp);
+    //     console.log(resp.data);
+    //     let base64image = resp.data;
+    //     //this.Share('data:image/png;base64,' + base64image);
+    //   })
+      let shareOptions = {
+        title: "GGVVS",
+        originalUrl: base_url_1 + 'news-detail/' + details.id,
+        message: base_url_1 + 'news-detail/' + details.id,
+      };
+
+      Share.open(shareOptions)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          err && console.log(err);
+        });
+  }
+
   categoryRendeItem = ({ item, index }) => {
     return (
       <TouchableOpacity
@@ -175,8 +203,23 @@ export default class App extends Component {
           <Icon
             name='ios-arrow-forward'
             size={20}
-            style={{ margin: 5, alignSelf: 'center' }}
+            style={{ margin: 10, alignSelf: 'center' }}
           />
+          <TouchableOpacity
+              transparent
+              style={{
+                flex: 0.3,
+                flexDirection: 'row',
+              }}
+              onPress={() => this.onShare(item)}
+          >
+              <IconFeather
+                color={Colors.Theme_color}
+                name='share-2'
+                size={18}
+                style={{ margin: -5,alignSelf: 'center' }}
+              />
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     )

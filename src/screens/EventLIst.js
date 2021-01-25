@@ -16,6 +16,8 @@ import { base_url, pic_url } from '../Static';
 import axois from 'axios'
 import Moment from 'moment'
 import AppImages from '../Theme/image';
+import IconFeather from 'react-native-vector-icons/Feather'
+import Share from 'react-native-share'
 
 export default class App extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -83,7 +85,30 @@ export default class App extends Component {
                 console.log("error ", err)
             })
     }
-
+    onShare = async (details) => {
+        console.log('check details', details)
+        //SimpleToast.show('Waiting for image download')
+        // RNFetchBlob.fetch('GET', this.state.postDataURL + details.post_image)
+        //   .then(resp => {
+        //     console.log('response : ', resp);
+        //     console.log(resp.data);
+        //     let base64image = resp.data;
+        //     //this.Share('data:image/png;base64,' + base64image);
+        //   })
+          let shareOptions = {
+            title: "GGVVS",
+            originalUrl: base_url_1 + 'event-detail/' + details.id,
+            message: base_url_1 + 'event-detail/' + details.id,
+          };
+    
+          Share.open(shareOptions)
+            .then(res => {
+              console.log(res);
+            })
+            .catch(err => {
+              err && console.log(err);
+            });
+      }
     categoryRendeItem = ({ item, index }) => {
 
         console.log('check event item-->', item[0])
@@ -103,7 +128,21 @@ export default class App extends Component {
                         <Text style={Style.Textmainstyle}>{item[0].em_reg_start_date}  To {item[0].em_reg_end_date}</Text>
                     </View>
                     <Icon name="ios-arrow-forward" size={20} style={{ margin: 5, alignSelf: 'center' }} />
-
+                    <TouchableOpacity
+                        transparent
+                        style={{
+                            flex: 0.3,
+                            flexDirection: 'row',
+                        }}
+                        onPress={() => this.onShare(item)}
+                    >
+                        <IconFeather
+                            color={Colors.Theme_color}
+                            name='share-2'
+                            size={18}
+                            style={{ margin: -5,alignSelf: 'center' }}
+                        />
+                    </TouchableOpacity>
                 </View>
             </TouchableOpacity>
         )
