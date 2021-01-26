@@ -47,7 +47,7 @@ class FamilyTreeMemberDetails extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = this.props.navigation.getParam('tree_member_id')
     const tree_member_id = this.props.navigation.getParam('tree_member_id')

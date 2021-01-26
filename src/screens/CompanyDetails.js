@@ -48,7 +48,7 @@ export default class CompanyDetails extends Component {
         }
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
 
         await NetInfo.addEventListener(state => {
             this.setState({ connection_Status: state.isConnected })

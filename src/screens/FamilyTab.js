@@ -61,7 +61,7 @@ class FamilyTab extends Component {
       }
     }
   
-    async componentWillMount () {
+    async componentDidMount () {
       const samaj_id = await AsyncStorage.getItem('member_samaj_id')
       const member_id = await AsyncStorage.getItem('member_id')
       const member_type = await AsyncStorage.getItem('type')
@@ -105,7 +105,7 @@ class FamilyTab extends Component {
            barStyle='light-content'
          />
          <NavigationEvents
-           onWillFocus={payload => this.componentWillMount()}
+           onWillFocus={payload => this.componentDidMount()}
          />
          <View style={{ height: '100%' }}>
          

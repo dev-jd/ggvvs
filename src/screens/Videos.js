@@ -40,7 +40,7 @@ export default class Videos extends PureComponent {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     this.setState({
       samaj_id: samaj_id

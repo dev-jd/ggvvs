@@ -42,7 +42,7 @@ export default class ViewMemberDoctorDetail extends Component {
             member_type: ''
         };
     }
-    async componentWillMount() {
+    async componentDidMount() {
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
         const membedId = this.props.navigation.getParam('member_id')
         const member_type = this.props.navigation.getParam('type')

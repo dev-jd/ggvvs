@@ -50,7 +50,7 @@ export default class MemberSearch extends Component {
       member_type:''
     }
   }
-  async componentWillMount () {
+  async componentDidMount () {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
     const member_type = await AsyncStorage.getItem('type')
@@ -128,7 +128,7 @@ export default class MemberSearch extends Component {
       })
   }
 
-  // componentWillMount() {
+  // componentDidMount() {
 
   // }
 

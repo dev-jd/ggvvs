@@ -40,7 +40,7 @@ class VideoView extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     this.setState({
       samaj_id: samaj_id

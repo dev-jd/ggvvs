@@ -43,10 +43,12 @@ import {
   alterNode,
   makeTableRenderer
 } from 'react-native-render-html-table-bridge'
-import { base_url_1,pic_url } from '../Static'
+import { base_url_1, pic_url } from '../Static'
 import AppImages from '../Theme/image'
 import IconFeather from 'react-native-vector-icons/Feather'
 import Share from 'react-native-share'
+import RNFetchBlob from 'rn-fetch-blob'
+import { showToast, STRINGNAME } from '../Theme/Const'
 
 const config = {
   WebViewComponent: WebView
@@ -104,7 +106,7 @@ export default class App extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-      if (this.state.connection_Status === true) {
+    if (this.state.connection_Status === true) {
       this.apiCalling()
     }
   }
@@ -115,16 +117,16 @@ export default class App extends Component {
     axois
       .get(base_url + 'newsList?samaj_id=' + this.state.samaj_id)
       .then(res => {
-        
+
         this.setState({ isLoding: false })
         if (res.data.success === true) {
           this.setState({
             data_list: res.data.data,
-            img_path : res.data.path,
+            img_path: res.data.path,
             isLoding: false
           })
         }
-        console.log('newsList res---->',data_list.size+"")
+        console.log('newsList res---->', data_list.size + "")
       })
       .catch(err => {
         console.log(err)
@@ -134,36 +136,33 @@ export default class App extends Component {
 
   onShare = async (details) => {
     console.log('check details', details)
-    //SimpleToast.show('Waiting for image download')
-    // RNFetchBlob.fetch('GET', this.state.postDataURL + details.post_image)
-    //   .then(resp => {
-    //     console.log('response : ', resp);
-    //     console.log(resp.data);
-    //     let base64image = resp.data;
-    //     //this.Share('data:image/png;base64,' + base64image);
-    //   })
-      let shareOptions = {
-        title: "GGVVS",
-        originalUrl: base_url_1 + 'news-detail/' + details.id,
-        message: base_url_1 + 'news-detail/' + details.id,
-      };
+    showToast('Waiting for image download')
+    RNFetchBlob.fetch('GET',this.state.img_path + '/' + details.sn_image)
+      .then(resp => {
+        console.log('response : ', resp);
+        console.log(resp.data);
+        let base64image = resp.data;
+        //this.Share('data:image/png;base64,' + base64image);
 
-      Share.open(shareOptions)
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => {
-          err && console.log(err);
-        });
+        let shareOptions = {
+          title: STRINGNAME.appName,
+          url: 'data:image/png;base64,' + base64image,
+          message: details.sn_title+'\ncheck this news from ggvvs\n' + base_url_1 + 'news-detail/' + details.id,
+        };
+
+        Share.open(shareOptions)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            err && console.log(err);
+          });
+      }).catch(err => console.log(err));
   }
 
   categoryRendeItem = ({ item, index }) => {
     return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate('NewsDetail', { itemData: item  , img_path : this.state.img_path})
-        }
-      >
+      <View>
         <View
           style={[Style.cardback, (style = { flex: 1, flexDirection: 'row' })]}
         >
@@ -179,12 +178,14 @@ export default class App extends Component {
           ) : (
               <Image
                 resizeMode='stretch'
-                source={{ uri: this.state.img_path+'/' + item.sn_image }}
+                source={{ uri: this.state.img_path + '/' + item.sn_image }}
                 style={{ height: 80, width: 80, alignSelf: 'center' }}
               />
             )}
 
-          <View
+          <TouchableOpacity  onPress={() =>
+          this.props.navigation.navigate('NewsDetail', { itemData: item, img_path: this.state.img_path })
+        }
             style={{
               flex: 5,
               justifyContent: 'center',
@@ -194,34 +195,32 @@ export default class App extends Component {
           >
             <Text style={Style.Textmainstyle}>{item.sn_title}</Text>
             <Text style={Style.Textstyle}>{item.sn_date}</Text>
-            {/* <Text numberOfLines={2} style={Style.Textstyle}>
-              meLorem Ipsum is simply dummy text of the printing and typesetting
-              industryssage
-            </Text> */}
-            {/* <HTML html={item.sn_description} numberOfLines={2} /> */}
-          </View>
-          <Icon
+
+          </TouchableOpacity >
+          <TouchableOpacity
+            transparent
+            style={{
+              flex: 0.3,
+              flexDirection: 'row',
+              position: 'absolute', right: 10, top: 10
+            }}
+            onPress={() => this.onShare(item)}
+          >
+            <IconFeather
+              color={Colors.Theme_color}
+              name='share-2'
+              size={20}
+              style={{ margin: -5, alignSelf: 'center' }}
+            />
+          </TouchableOpacity>
+          {/* <Icon
             name='ios-arrow-forward'
             size={20}
             style={{ margin: 10, alignSelf: 'center' }}
           />
-          <TouchableOpacity
-              transparent
-              style={{
-                flex: 0.3,
-                flexDirection: 'row',
-              }}
-              onPress={() => this.onShare(item)}
-          >
-              <IconFeather
-                color={Colors.Theme_color}
-                name='share-2'
-                size={18}
-                style={{ margin: -5,alignSelf: 'center' }}
-              />
-          </TouchableOpacity>
+         */}
         </View>
-      </TouchableOpacity>
+      </View >
     )
   }
 
@@ -238,7 +237,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { banner_img ,banner_url} = this.state
+    const { banner_img, banner_url } = this.state
 
     return (
       <SafeAreaView style={Style.cointainer1}>
@@ -256,17 +255,17 @@ export default class App extends Component {
               }
           }
           style={{ backgroundColor: Colors.white, height: 200, width: '100%', marginBottom: 10 }} /> */}
-          <View style={{padding:'2%'}}>
-        {this.state.isLoding ? (
-          <ActivityIndicator color={Colors.Theme_color} size={'large'} />
-        ) : (
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={this.state.data_list}
-              renderItem={item => this.categoryRendeItem(item)}
-            />
-          )}
-          </View>
+        <View style={{ padding: '2%' }}>
+          {this.state.isLoding ? (
+            <ActivityIndicator color={Colors.Theme_color} size={'large'} />
+          ) : (
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={this.state.data_list}
+                renderItem={item => this.categoryRendeItem(item)}
+              />
+            )}
+        </View>
       </SafeAreaView>
     )
   }

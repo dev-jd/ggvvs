@@ -78,7 +78,7 @@ class Login extends Component {
     await this.setState({ playerId: device.userId })
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
 
     await NetInfo.addEventListener(state => {
       console.log('Connection type', state.type)

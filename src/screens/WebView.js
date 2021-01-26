@@ -27,7 +27,7 @@ class WebViewData extends Component {
         };
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         const data = await this.props.navigation.getParam('url')
         console.log("url video --> ", data)
         var code = data.split("=")[1]

@@ -62,7 +62,7 @@ class BecomeDoner extends Component {
       amount:''
     }
   }
-  async componentWillMount () {
+  async componentDidMount () {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
     console.log('member id ', member_id)

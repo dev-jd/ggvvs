@@ -23,7 +23,7 @@ export default class App extends Component {
     member_type: ''
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     console.disableYellowBox = true;
     const member_id = await AsyncStorage.getItem('member_id')
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')

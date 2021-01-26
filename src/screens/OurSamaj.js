@@ -52,7 +52,7 @@ class OurSamaj extends Component {
     banner_url: ''
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const banner = this.props.navigation.getParam('banner_image')
     const banner_url = this.props.navigation.getParam('banner_url')
     console.log("banner:-", banner)

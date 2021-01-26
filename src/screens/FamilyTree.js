@@ -61,7 +61,7 @@ export default class FamilyTree extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
     const main_member_id = await AsyncStorage.getItem('main_member_id')
@@ -102,7 +102,7 @@ export default class FamilyTree extends Component {
             barStyle='light-content'
           />
           <NavigationEvents
-            onWillFocus={payload => this.componentWillMount()}
+            onWillFocus={payload => this.componentDidMount()}
           />
           <View style={{ height:'100%', width:'100%'}}>
           <WebView source={{ uri: 'http://new.mysamaaj.com/familyChart/1/'+this.state.member_id }} 

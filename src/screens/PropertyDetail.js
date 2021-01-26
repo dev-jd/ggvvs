@@ -71,7 +71,7 @@ export default class App extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_type = await AsyncStorage.getItem('type')
 

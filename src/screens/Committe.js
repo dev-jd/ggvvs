@@ -66,7 +66,7 @@ class Committe extends Component {
     }
   }
 
-  async componentWillMount () {
+  async componentDidMount () {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     console.log('samaj id ', samaj_id)
     this.setState({

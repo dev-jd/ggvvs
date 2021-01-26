@@ -5,16 +5,15 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-
   ActivityIndicator,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native'
 import { Text, View } from 'native-base'
 import Swiper from 'react-native-swiper'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
-import Icon from 'react-native-vector-icons/Ionicons'
+import IconFeather from 'react-native-vector-icons/Feather'
 import CustomeFonts from '../Theme/CustomeFonts'
 import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
@@ -22,6 +21,9 @@ import { base_url, pic_url } from '../Static'
 import axois from 'axios'
 import AppImages from '../Theme/image'
 import HTML from 'react-native-render-html'
+import { showToast, STRINGNAME } from '../Theme/Const'
+import RNFetchBlob from 'rn-fetch-blob'
+import Share from 'react-native-share'
 
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -48,7 +50,7 @@ export default class App extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const banner = this.props.navigation.getParam('banner_image')
     const banner_url = this.props.navigation.getParam('banner_url')
@@ -87,16 +89,48 @@ export default class App extends Component {
         console.log('error ', err)
       })
   }
+  onShare = async (details) => {
+    console.log('check details', details)
+    showToast('Waiting for image download')
+    RNFetchBlob.fetch('GET', this.state.img_path + details.sc_image)
+      .then(resp => {
+        console.log('response : ', resp);
+        console.log(resp.data);
+        let base64image = resp.data;
+        //this.Share('data:image/png;base64,' + base64image);
 
+        let shareOptions = {
+          title: STRINGNAME.appName,
+          url: 'data:image/png;base64,' + base64image,
+          message: details.sc_title+'\ncheck this circular from ggvvs\n',
+        };
+
+        Share.open(shareOptions)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            err && console.log(err);
+          });
+      }).catch(err => console.log(err));
+  }
   categoryRendeItem = ({ item, index }) => {
     return (
-      <TouchableOpacity>
+      <View>
         <View
           style={[
             Style.cardback,
-            (style = { flex: 1, flexDirection: 'column' })
+            { flex: 1, flexDirection: 'column' }
           ]}
         >
+          <TouchableOpacity onPress={() => this.onShare(item)}>
+           <IconFeather
+            color={Colors.Theme_color}
+            name='share-2'
+            size={20}
+            style={{ margin: 5, alignSelf: 'flex-end' }}
+          />
+          </TouchableOpacity>
           <Image
             resizeMode='stretch'
             source={
@@ -118,7 +152,8 @@ export default class App extends Component {
             baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.regular }}
           />
         </View>
-      </TouchableOpacity>
+      
+      </View>
     )
   }
 

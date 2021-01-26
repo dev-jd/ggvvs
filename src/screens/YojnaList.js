@@ -40,6 +40,8 @@ import Moment from 'moment'
 import AppImages from '../Theme/image'
 import IconFeather from 'react-native-vector-icons/Feather'
 import Share from 'react-native-share'
+import RNFetchBlob from 'rn-fetch-blob'
+import { showToast, STRINGNAME } from '../Theme/Const'
 
 export default class YojnaList extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -64,7 +66,7 @@ export default class YojnaList extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     console.log('samaj id ', samaj_id)
     const banner = this.props.navigation.getParam('banner_image')
@@ -99,7 +101,7 @@ export default class YojnaList extends Component {
         if (res.data.success === true) {
           this.setState({
             yojna_list: res.data.data,
-            img_path: res.data.path,
+            img_path: res.data.path+'/',
             isLoding: false
           })
         }
@@ -113,18 +115,19 @@ export default class YojnaList extends Component {
   
   onShare = async (details) => {
     console.log('check details', details)
-    //SimpleToast.show('Waiting for image download')
-    // RNFetchBlob.fetch('GET', this.state.postDataURL + details.post_image)
-    //   .then(resp => {
-    //     console.log('response : ', resp);
-    //     console.log(resp.data);
-    //     let base64image = resp.data;
-    //     //this.Share('data:image/png;base64,' + base64image);
-    //   })
+    console.log('check details', this.state.img_path + details.ym_image)
+    showToast('Waiting for image download')
+    RNFetchBlob.fetch('GET', this.state.img_path + details.ym_image)
+      .then(resp => {
+        console.log('response : ', resp);
+        console.log(resp.data);
+        let base64image = resp.data;
+        //this.Share('data:image/png;base64,' + base64image);
+     
       let shareOptions = {
-        title: "GGVVS",
-        originalUrl: base_url_1 + 'yojna-detail/' + details.id,
-        message: base_url_1 + 'yojna-detail/' + details.id,
+        title: STRINGNAME.appName,
+        url:  'data:image/png;base64,' + base64image,
+        message: details.ym_name+'\ncheck this yojna from ggvvs\n' +base_url_1 + 'yojna-detail/' + details.id,
       };
 
       Share.open(shareOptions)
@@ -134,6 +137,7 @@ export default class YojnaList extends Component {
         .catch(err => {
           err && console.log(err);
         });
+      })
   }
 
   categoryRendeItem = ({ item, index }) => {
@@ -153,17 +157,18 @@ export default class YojnaList extends Component {
             </Text>
           </View>
          
-          
+{/*           
           <Icon
             name='ios-arrow-forward'
             size={20}
             style={{ margin: 10, alignSelf: 'center' }}
-          />
+          /> */}
            <TouchableOpacity
               transparent
               style={{
                 flex: 0.3,
                 flexDirection: 'row',
+                position: 'absolute', right: 5, top: 5
               }}
               onPress={() => this.onShare(item)}
           >
@@ -171,7 +176,7 @@ export default class YojnaList extends Component {
                 color={Colors.Theme_color}
                 name='share-2'
                 size={18}
-                style={{ margin: -5,alignSelf: 'center' }}
+                style={{ margin: 2,alignSelf: 'center' }}
               />
           </TouchableOpacity>
         </View>

@@ -52,7 +52,7 @@ export default class FamilyTreeRequest extends Component {
     }
   }
 
-  async componentWillMount () {
+  async componentDidMount () {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
     const member_type = await AsyncStorage.getItem('type')
@@ -83,7 +83,7 @@ export default class FamilyTreeRequest extends Component {
             barStyle='light-content'
           />
           <NavigationEvents
-            onWillFocus={payload => this.componentWillMount()}
+            onWillFocus={payload => this.componentDidMount()}
           />
           <View style={{ height: '100%',paddingHorizontal:'2%',justifyContent:'center',alignItems:'center',backgroundColor:Colors.white }}>
             <Text style={[Style.title]}>Comming Soon</Text>

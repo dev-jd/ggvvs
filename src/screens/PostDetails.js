@@ -68,7 +68,7 @@ class PostDetails extends Component {
       member_type: '',
     }
   }
-  async componentWillMount () {
+  async componentDidMount () {
 
     await NetInfo.addEventListener(state => {
       this.setState({ connection_Status: state.isConnected })

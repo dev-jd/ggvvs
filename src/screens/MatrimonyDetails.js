@@ -67,7 +67,7 @@ class MatrimonyDetails extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const packageId= await AsyncStorage.getItem('packageId')
     const profileimage = await this.props.navigation.getParam('profileImg')

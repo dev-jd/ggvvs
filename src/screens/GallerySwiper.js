@@ -72,7 +72,7 @@ class ImageGallery extends Component {
       return (
         <SafeAreaView style={{ flex: 1 }}>
           <NavigationEvents
-            onWillFocus={payload => this.componentWillMount()}
+            onWillFocus={payload => this.componentDidMount()}
           />
           <StatusBar
             backgroundColor={Colors.Theme_color}

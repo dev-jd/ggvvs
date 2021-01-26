@@ -60,7 +60,7 @@ export default class App extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const banner = this.props.navigation.getParam('banner_image')
     const banner_url = this.props.navigation.getParam('banner_url')

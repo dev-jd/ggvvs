@@ -61,7 +61,7 @@ class Otp extends Component {
 
   
 
-  async componentWillMount () {
+  async componentDidMount () {
     
     var email = await this.props.navigation.getParam('email')
     var mobile = await this.props.navigation.getParam('mobile')

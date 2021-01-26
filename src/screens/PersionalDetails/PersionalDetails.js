@@ -52,7 +52,7 @@ class PersionalDetails extends Component {
       business_logo_url: ''
     }
   }
-  async componentWillMount() {
+  async componentDidMount() {
     var member_type, member_id
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     // const member_id = await AsyncStorage.getItem('member_id')

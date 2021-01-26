@@ -61,7 +61,7 @@ class BlockUser extends Component {
             t_age: '',pic_url:''
         }
     }
-    async componentWillMount() {
+    async componentDidMount() {
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
         const member_id = await AsyncStorage.getItem('member_id')
 

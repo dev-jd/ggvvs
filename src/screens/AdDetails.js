@@ -62,7 +62,7 @@ class AdDetails extends Component {
       img_url: ''
     }
   }
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
     console.log('samaj id ', samaj_id)

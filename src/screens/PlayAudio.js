@@ -55,7 +55,7 @@ export default class PlayAudio extends React.Component {
     this.sliderEditing = false
   }
 
-  async componentWillMount () {
+  async componentDidMount () {
     const id = await this.props.navigation.getParam('id')
     const audioUrl = await this.props.navigation.getParam('audioUrl')
     const title = await this.props.navigation.getParam('title')

@@ -89,7 +89,7 @@ export default class App extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     console.disableYellowBox = true
     const member_id = await AsyncStorage.getItem('member_id')
     const member_can_post = await AsyncStorage.getItem('member_can_post')

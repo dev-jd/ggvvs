@@ -42,7 +42,7 @@ export default class App extends Component {
     }
     // this.maindata = []
   }
-  async componentWillMount() {
+  async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
     const member_id = await AsyncStorage.getItem('member_id')
     console.log('member id ', member_id)
