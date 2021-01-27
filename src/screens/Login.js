@@ -399,11 +399,6 @@ class Login extends Component {
               />
               
             </View>
-            <Text style={[Style.SubTextstyle]}>
-                <Text style={[Style.Textbold]}>Attention Indian Users </Text>- if you are notgetting OTP through SMS, kindly enable the button <Text  style={[Style.Textbold]}> "I am out of India" </Text> and enter your email id which you have filed in the GGVVS Membership form, you will be getting OTP into your email (check your spam)
-            </Text>
-            <View style={{ height: 25 }} />
-
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               {this.state._isLoading ? (
                 <ActivityIndicator color={Colors.Theme_color} />
@@ -423,6 +418,12 @@ class Login extends Component {
                   </TouchableOpacity>
                 )}
             </View>
+            
+            <View style={{ height: 25 }} />
+
+            <Text style={[Style.SubTextstyle]}>
+                <Text style={[Style.Textbold]}>Attention Indian Users </Text>- if you are notgetting OTP through SMS, kindly enable the button <Text  style={[Style.Textbold]}> "I am out of India" </Text> and enter your email id which you have filed in the GGVVS Membership form, you will be getting OTP into your email (check your spam)
+            </Text>
           </View>
         </View>
         <Modal

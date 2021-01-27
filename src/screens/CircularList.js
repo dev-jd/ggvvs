@@ -17,7 +17,7 @@ import IconFeather from 'react-native-vector-icons/Feather'
 import CustomeFonts from '../Theme/CustomeFonts'
 import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
-import { base_url, pic_url } from '../Static'
+import { base_url,base_url_1, pic_url } from '../Static'
 import axois from 'axios'
 import AppImages from '../Theme/image'
 import HTML from 'react-native-render-html'
@@ -102,7 +102,7 @@ export default class App extends Component {
         let shareOptions = {
           title: STRINGNAME.appName,
           url: 'data:image/png;base64,' + base64image,
-          message: details.sc_title+'\ncheck this circular from ggvvs\n',
+          message: details.sc_title+'\ncheck this circular from ggvvs\n'+base_url_1 + 'circular-detail/' + details.id,
         };
 
         Share.open(shareOptions)
@@ -116,44 +116,50 @@ export default class App extends Component {
   }
   categoryRendeItem = ({ item, index }) => {
     return (
-      <View>
-        <View
-          style={[
-            Style.cardback,
-            { flex: 1, flexDirection: 'column' }
-          ]}
-        >
-          <TouchableOpacity onPress={() => this.onShare(item)}>
-           <IconFeather
-            color={Colors.Theme_color}
-            name='share-2'
-            size={20}
-            style={{ margin: 5, alignSelf: 'flex-end' }}
-          />
-          </TouchableOpacity>
-          <Image
-            resizeMode='stretch'
-            source={
-              item.sc_image === null || item.sc_image === ''
-                ? AppImages.placeHolder
-                : { uri: this.state.img_path + item.sc_image }
-            }
-            style={{
-              backgroundColor: Colors.white,
-              height: 200,
-              width: '100%',
-              marginBottom: 10
-            }}
-          />
-          <Text style={Style.Textmainstyle}>{item.sc_title}</Text>
+      <TouchableOpacity
+        onPress={() =>
+          this.props.navigation.navigate('CircularDetail', { circularId:item.id })
+        }
+      >
+        <View>
+          <View
+            style={[
+              Style.cardback,
+              { flex: 1, flexDirection: 'column' }
+            ]}
+          >
+            <TouchableOpacity onPress={() => this.onShare(item)}>
+            <IconFeather
+              color={Colors.Theme_color}
+              name='share-2'
+              size={20}
+              style={{ margin: 5, alignSelf: 'flex-end' }}
+            />
+            </TouchableOpacity>
+            <Image
+              resizeMode='stretch'
+              source={
+                item.sc_image === null || item.sc_image === ''
+                  ? AppImages.placeHolder
+                  : { uri: this.state.img_path + item.sc_image }
+              }
+              style={{
+                backgroundColor: Colors.white,
+                height: 200,
+                width: '100%',
+                marginBottom: 10
+              }}
+            />
+            <Text style={Style.Textmainstyle}>{item.sc_title}</Text>
 
-          <HTML
-            html={item.sc_description}
-            baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.regular }}
-          />
+            <HTML
+              html={item.sc_description}
+              baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.regular }}
+            />
+          </View>
+        
         </View>
-      
-      </View>
+      </TouchableOpacity>
     )
   }
 

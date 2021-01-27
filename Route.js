@@ -16,6 +16,7 @@ import EventLIst from './src/screens/EventLIst'
 import EventDetail from './src/screens/EventDetail'
 import NewsList from './src/screens/NewsList'
 import NewsDetail from './src/screens/NewsDetail'
+import CircularDetail from './src/screens/CircularDetails'
 import PropertyList from './src/screens/PropertyList'
 import PropertyDetail from './src/screens/PropertyDetail'
 import PropertyBookingList from './src/screens/PropertyBookingList'
@@ -257,6 +258,10 @@ const Stack_Navi = createStackNavigator(
         NewsDetail: {
             screen: NewsDetail,
             path: 'news-detail/:newsId'
+        },
+        CircularDetail: {
+            screen: CircularDetail,
+            path: 'circular-detail/:circularId'
         },
         PropertyList: {
             screen: PropertyList,

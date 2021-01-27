@@ -104,7 +104,7 @@ export default class LookinForMatrimony extends Component {
       console.log('Is connected?', state.isConnected)
       this.setState({ connection_Status: state.isConnected })
     })
-    console.log('isTermsAccept' + isTermsAccept)
+    //console.log('isTermsAccept' + isTermsAccept)
 
     if (this.state.connection_Status === true) {
       if (isTermsAccept === 'true') {
@@ -120,7 +120,7 @@ export default class LookinForMatrimony extends Component {
   }
   termsConditionApi = async () => {
     var response = await Helper.POST('terms')
-    console.log('check the terms condition ', response)
+    //console.log('check the terms condition ', response)
     this.setState({ termsConditionsData: response.data.description })
   }
   packageApi = async () => {
@@ -134,9 +134,9 @@ export default class LookinForMatrimony extends Component {
     this.setState({ cast: response.data })
   }
   subCast = async (value) => {
-    console.log('subcast -- > ', value)
+    //console.log('subcast -- > ', value)
     var response = await Helper.GET('sub_cast_list?cast_id=' + value)
-    console.log('response subcast -- > ', response)
+    //console.log('response subcast -- > ', response)
     if (response.success) {
       this.setState({ subCastArray: response.data })
     }
@@ -909,7 +909,7 @@ export default class LookinForMatrimony extends Component {
               </View>
               <TextInputCustome title='Weight' value={weight} changetext={(weight) => this.setState({ weight })} maxLength={3} multiline={false} numberOfLines={1} keyboardType={'numeric'} editable={true} />
               <TextInputCustome title='Skin Complexion' value={skinColor} changetext={(skinColor) => this.setState({ skinColor })} maxLength={10} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Personal Description Or Any Medical Issue' value={personaldesc} changetext={(personaldesc) => this.setState({ personaldesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Personal Description with Medical (Health) Condition' value={personaldesc} changetext={(personaldesc) => this.setState({ personaldesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               <View style={{ paddingVertical: 10, width: '100%' }}>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Cast</Label>
                 <Picker

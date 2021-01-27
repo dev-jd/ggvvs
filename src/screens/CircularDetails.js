@@ -61,7 +61,7 @@ const htmlConfig = {
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Yojna Detail',
+      title: 'Circular Detail',
       headerTitleStyle: {
         width: '100%',
         fontWeight: '200',
@@ -73,9 +73,9 @@ export default class App extends Component {
   constructor() {
     super()
     this.state = {
-      yojna_list: {},
-      img_path : null,
-      isLoding: false
+        circularData: {},
+        img_path : null,
+        isLoding: false
     }
   }
 
@@ -107,20 +107,20 @@ export default class App extends Component {
   // }
   async apiCalling() {
     this.setState({ isLoding: true })
-    const yojnaId = this.props.navigation.getParam('yojnaId')
-console.log("yojnaId",yojnaId);
-    var responce = await Helper.GET('yojnaDetails/' + yojnaId)
-    console.log('yojna detaails responce -->', responce)
+    const circularId = this.props.navigation.getParam('circularId')
+    console.log("circularId",circularId);
+    var responce = await Helper.GET('circularDetails/' + circularId)
+    console.log('circular details responce -->', responce.url)
     this.setState({
-      yojna_list: responce.data,
-      img_path: responce.url,
-      isLoding: false
+        circularData: responce.data,
+        img_path: responce.url,
+        isLoding: false
     })
   }
 
   render() {
-    const { yojna_list } = this.state
-    console.log('data  --> ', this.state.img_path +"/"+ yojna_list.ym_image)
+    const { circularData } = this.state
+    console.log('data image --> ', this.state.img_path +"/"+ circularData.sc_image)
     return (
       <SafeAreaView style={Style.cointainer1}>
         <StatusBar
@@ -136,14 +136,16 @@ console.log("yojnaId",yojnaId);
                   (style = { alignSelf: 'center', color: Colors.Theme_color })
                 ]}
               >
-                {yojna_list.ym_name}
+                {circularData.sc_title}
               </Text>
             </View>
             <Image
               resizeMode='stretch'
-              source={{
-                uri: this.state.img_path +"/"+ yojna_list.ym_image
-              }}
+              source={
+                circularData.sc_image === null || circularData.sc_image === ''
+                  ? AppImages.placeHolder
+                  : { uri: this.state.img_path +"/"+ circularData.sc_image }
+              }
               style={{
                 backgroundColor: Colors.white,
                 height: 200,
@@ -153,40 +155,14 @@ console.log("yojnaId",yojnaId);
             />
 
             <View style={{ padding: 10 }}>
-              <Text style={Style.Textstyle}>
-                From: {yojna_list.ym_start_date} To: {yojna_list.ym_end_date}
-              </Text>
+              
               <Text style={[Style.Textmainstyle, { marginTop: 10 }]}>
                 Description
               </Text>
 
-              <HTML html={yojna_list.ym_description}
+              <HTML html={circularData.sc_description}
                 baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium, color: Colors.black }} />
-
-              <Text style={[Style.Textmainstyle, { marginTop: 10 }]}>
-                Benefits
-              </Text>
-
-              <HTML html={yojna_list.ym_benefits}
-                baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium, color: Colors.black }} />
-
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={[Style.Textmainstyle, { marginTop: 10, width: '50%' }]}>
-                  Committee
-              </Text>
-                <Text
-                  style={[Style.Textstyle, { color: Colors.black, marginTop: 10, width: '50%' }]}
-                  note
-                >
-                  {yojna_list.committe_name}
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={[Style.Buttonback, { marginTop: 10 }]}
-                onPress={() => this.props.navigation.navigate('BecomeDoner')}
-              >
-                <Text style={Style.buttonText}>Apply (Doner)</Text>
-              </TouchableOpacity>
+              
             </View>
           </View>
         </ScrollView>
