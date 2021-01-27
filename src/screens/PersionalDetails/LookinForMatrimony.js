@@ -712,12 +712,9 @@ export default class LookinForMatrimony extends Component {
                 <View style={[Style.cardback, Style.matrimonyCard]}>
                   <View>
                     <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white }]}>Package {packageDetails.package_name}</Text>
-                    {validationempty(packageDetails.description) ?
-                      <Text style={[Style.SubTextstyle, { textAlign: 'center', color: Colors.white, paddingVertical: '3%' }]} numberOfLines={3}>{packageDetails.description}</Text> :
-                      null}
                   </View>
                   <View>
-                    <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text>
+                    {/* <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text> */}
                     <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Tranjection Id - {validationempty(packageDetails.transaction_id) ? packageDetails.transaction_id : 'Free Package'}</Text>
                   </View>
                   <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Package Limit {packageDetails.days} days</Text>
@@ -730,7 +727,7 @@ export default class LookinForMatrimony extends Component {
                     style={[Style.Buttonback, { marginVertical: 10, width: '50%', alignSelf: 'center', backgroundColor: Colors.white }]}
                     onPress={() => this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })}
                   >
-                    <Text style={[Style.buttonText, { color: Colors.Theme_color }]}>Select Package</Text>
+                    <Text style={[Style.buttonText, { color: Colors.Theme_color }]}>Click To Pay</Text>
                   </TouchableOpacity>
                 </View>}
 
@@ -1270,12 +1267,12 @@ export default class LookinForMatrimony extends Component {
           // onSwipeComplete={() => this.setState({ visibleModalComm: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          // onBackdropPress={() => this.setState({ visibleModalComm: null })}
-          // onBackButtonPress={() => this.setState({ visibleModalComm: null })}
+        // onBackdropPress={() => this.setState({ visibleModalComm: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalComm: null })}
         >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalComm: null })}>
-            <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Communication Details</Text>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Communication Details</Text>
               <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalComm: null })} />
             </TouchableOpacity>
 
@@ -1387,11 +1384,11 @@ export default class LookinForMatrimony extends Component {
           // onSwipeComplete={() => this.setState({ visibleModalPhotos: null })}
           swipeDirection={['down']}
           style={{ justifyContent: 'center', padding: 5 }}
-          // onBackdropPress={() => this.setState({ visibleModalPhotos: null })}
-          // onBackButtonPress={() => this.setState({ visibleModalPhotos: null })}
-          >
+        // onBackdropPress={() => this.setState({ visibleModalPhotos: null })}
+        // onBackButtonPress={() => this.setState({ visibleModalPhotos: null })}
+        >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
-          <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPhotos: null })}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPhotos: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Additional Photos</Text>
               <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalPhotos: null })} />
             </TouchableOpacity>

@@ -14,6 +14,7 @@ import Moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
+import { Helper } from '../Helper/Helper';
 
 export default class App extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -44,10 +45,14 @@ export default class App extends Component {
             samaj_id: samaj_id
         })
 
-        const details = await this.props.navigation.getParam('eventDetails')
-        console.log("details---->", details)
+        const eventId = await this.props.navigation.getParam('eventDetails')
+
+        var responce = await Helper.GET('eventDetails/' + eventId)
+        console.log('news detaails responce -->', responce)
+
+        console.log("details---->", responce)
         this.setState({
-            eventDetails: details,
+            eventDetails: responce.data,
             img_path : this.props.navigation.getParam('img_path')
         })
 

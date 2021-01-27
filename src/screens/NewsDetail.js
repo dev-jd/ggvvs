@@ -5,7 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
- SafeAreaView,
+  SafeAreaView,
   ScrollView
 } from 'react-native'
 import {
@@ -42,6 +42,7 @@ import {
   makeTableRenderer
 } from 'react-native-render-html-table-bridge'
 import { pic_url } from '../Static'
+import { Helper } from '../Helper/Helper';
 const config = {
   WebViewComponent: WebView
 }
@@ -72,7 +73,7 @@ export default class App extends Component {
     super()
     this.state = {
       item_details: {},
-      img_path : null,
+      img_path: null,
       isLoding: false
     }
   }
@@ -90,17 +91,19 @@ export default class App extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-      if (this.state.connection_Status === true) {
+    if (this.state.connection_Status === true) {
       this.apiCalling()
-    } 
+    }
   }
 
   async apiCalling() {
-    const details = this.props.navigation.getParam('itemData')
-    console.log('item Data -->', details)
+    const newsId = this.props.navigation.getParam('itemData')
+
+    var responce = await Helper.GET('newsDetails/' + newsId)
+    console.log('news detaails responce -->', responce)
     this.setState({
-      item_details: details,
-      img_path : this.props.navigation.getParam('img_path')
+      item_details: responce.data,
+      img_path: responce.url
     })
   }
 
@@ -169,7 +172,7 @@ export default class App extends Component {
               ) : (
                   <Image
                     resizeMode='stretch'
-                    source={{ uri: this.state.img_path +"/"+ item_details.sn_image }}
+                    source={{ uri: this.state.img_path + "/" + item_details.sn_image }}
                     style={{
                       backgroundColor: Colors.white,
                       height: 200,

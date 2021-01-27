@@ -314,7 +314,7 @@ export default class App extends Component {
                     onPress={() => this.props.navigation.navigate('LookinForMatrimony')}
                     style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
                   >
-                    <Text style={Style.buttonText}>Your Matrimony Profile</Text>
+                    <Text style={Style.buttonText}>My Matrimony Profile</Text>
                   </TouchableOpacity>
                 </View>
               </View>

@@ -184,7 +184,7 @@ export default class App extends Component {
             )}
 
           <TouchableOpacity  onPress={() =>
-          this.props.navigation.navigate('NewsDetail', { itemData: item, img_path: this.state.img_path })
+          this.props.navigation.navigate('NewsDetail', { itemData: item.id})
         }
             style={{
               flex: 5,

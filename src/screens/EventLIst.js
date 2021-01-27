@@ -18,6 +18,7 @@ import Moment from 'moment'
 import AppImages from '../Theme/image';
 import IconFeather from 'react-native-vector-icons/Feather'
 import Share from 'react-native-share'
+import { validationempty } from '../Theme/Const';
 
 export default class App extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -95,27 +96,27 @@ export default class App extends Component {
         //     let base64image = resp.data;
         //     //this.Share('data:image/png;base64,' + base64image);
         //   })
-          let shareOptions = {
+        let shareOptions = {
             title: "GGVVS",
             originalUrl: base_url_1 + 'event-detail/' + details.id,
             message: base_url_1 + 'event-detail/' + details.id,
-          };
-    
-          Share.open(shareOptions)
+        };
+
+        Share.open(shareOptions)
             .then(res => {
-              console.log(res);
+                console.log(res);
             })
             .catch(err => {
-              err && console.log(err);
+                err && console.log(err);
             });
-      }
+    }
     categoryRendeItem = ({ item, index }) => {
 
         console.log('check event item-->', item[0])
-        console.log('check event item-->', item[0].em_name)
+        console.log('check event item-->', item[0].id)
 
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('EventDetail', { eventDetails: item[0], img_path: this.state.img_path })}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('EventDetail', { eventDetails: item[0].id})}>
                 <View style={[Style.cardback, { flex: 1, flexDirection: 'row' }]}>
                     <View style={{ flex: 5, justifyContent: 'center' }} >
                         <Text style={Style.Textmainstyle}>{item[0].em_name}</Text>
@@ -125,14 +126,15 @@ export default class App extends Component {
                                 Event Date : {item[0].em_event_date}</Text>
                         </View>
                         <Text style={[Style.Textstyle, { marginTop: 5 }]}>Registration Between</Text>
-                        <Text style={Style.Textmainstyle}>{item[0].em_reg_start_date}  To {item[0].em_reg_end_date}</Text>
+                        <Text style={Style.Textmainstyle}>{validationempty(item[0].em_reg_start_date) ? item[0].em_reg_start_date : null}   {validationempty(item[0].em_reg_end_date) ? item[0].em_reg_end_date : null}</Text>
                     </View>
-                    <Icon name="ios-arrow-forward" size={20} style={{ margin: 5, alignSelf: 'center' }} />
+                    {/* <Icon name="ios-arrow-forward" size={20} style={{ margin: 5, alignSelf: 'center' }} /> */}
                     <TouchableOpacity
                         transparent
                         style={{
                             flex: 0.3,
                             flexDirection: 'row',
+                            position: 'absolute', top: 15, right: 15
                         }}
                         onPress={() => this.onShare(item)}
                     >
@@ -140,7 +142,7 @@ export default class App extends Component {
                             color={Colors.Theme_color}
                             name='share-2'
                             size={18}
-                            style={{ margin: -5,alignSelf: 'center' }}
+                            style={{ margin: -5, alignSelf: 'center' }}
                         />
                     </TouchableOpacity>
                 </View>
