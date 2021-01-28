@@ -42,6 +42,7 @@ import AppImages from '../Theme/image'
 import { Helper } from '../Helper/Helper'
 import SimpleToast from 'react-native-simple-toast'
 import { validationempty } from '../Theme/Const'
+import realm from 'realm';
 
 const config = {
   WebViewComponent: WebView

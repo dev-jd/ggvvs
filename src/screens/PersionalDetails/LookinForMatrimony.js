@@ -725,7 +725,13 @@ export default class LookinForMatrimony extends Component {
                   <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white, }]}>To view your profile to be in search list buy package</Text>
                   <TouchableOpacity
                     style={[Style.Buttonback, { marginVertical: 10, width: '50%', alignSelf: 'center', backgroundColor: Colors.white }]}
-                    onPress={() => this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })}
+                    onPress={() => {
+                      if (validationempty(matrimonyId)) {
+                        this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })
+                      } else {
+                        showToast('First add your personal details')
+                      }
+                    }}
                   >
                     <Text style={[Style.buttonText, { color: Colors.Theme_color }]}>Click To Pay</Text>
                   </TouchableOpacity>
@@ -909,7 +915,7 @@ export default class LookinForMatrimony extends Component {
               </View>
               <TextInputCustome title='Weight' value={weight} changetext={(weight) => this.setState({ weight })} maxLength={3} multiline={false} numberOfLines={1} keyboardType={'numeric'} editable={true} />
               <TextInputCustome title='Skin Complexion' value={skinColor} changetext={(skinColor) => this.setState({ skinColor })} maxLength={10} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Personal Description with Medical (Health) Condition' value={personaldesc} changetext={(personaldesc) => this.setState({ personaldesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Personal Description with Medical (Health) Conditions (max 200 words)' value={personaldesc} changetext={(personaldesc) => this.setState({ personaldesc })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               <View style={{ paddingVertical: 10, width: '100%' }}>
                 <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}>Cast</Label>
                 <Picker
@@ -1013,8 +1019,8 @@ export default class LookinForMatrimony extends Component {
                 </TouchableOpacity>
               </Item>
               <TextInputCustome title='Mother Profession' value={motherprofession} changetext={(motherprofession) => this.setState({ motherprofession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Other Family Details (Brother& Sister)' value={otherfamilydetails} changetext={(otherfamilydetails) => this.setState({ otherfamilydetails })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Family Description' value={familydesc} changetext={(familydesc) => this.setState({ familydesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Other Family Details (Brother& Sister) (max 200 words)' value={otherfamilydetails} changetext={(otherfamilydetails) => this.setState({ otherfamilydetails })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Family Description (max 200 words)' value={familydesc} changetext={(familydesc) => this.setState({ familydesc })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Native Place' value={nativeplace} changetext={(nativeplace) => this.setState({ nativeplace })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               {isLoding ?
                 <Indicator /> :
@@ -1045,7 +1051,7 @@ export default class LookinForMatrimony extends Component {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <TextInputCustome title='Education' value={education} changetext={(education) => this.setState({ education })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Education Description' value={educationdesc} changetext={(educationdesc) => this.setState({ educationdesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Education Description (max 200 words)' value={educationdesc} changetext={(educationdesc) => this.setState({ educationdesc })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               {isLoding ?
                 <Indicator /> :
                 <TouchableOpacity
@@ -1076,7 +1082,7 @@ export default class LookinForMatrimony extends Component {
             <ScrollView showsVerticalScrollIndicator={false}>
               <TextInputCustome title='Profession' value={profession} changetext={(profession) => this.setState({ profession })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Yearly Income' value={income} changetext={(income) => this.setState({ income })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Profession Description' value={professiondesc} changetext={(professiondesc) => this.setState({ professiondesc })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Profession Description (max 200 words)' value={professiondesc} changetext={(professiondesc) => this.setState({ professiondesc })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
 
               {isLoding ?
                 <Indicator /> :
@@ -1106,8 +1112,8 @@ export default class LookinForMatrimony extends Component {
             </TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              <TextInputCustome title='Lifestyle Choices' value={lifestylechoice} changetext={(lifestylechoice) => this.setState({ lifestylechoice })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Member Expectation from life partner' value={expectation} changetext={(expectation) => this.setState({ expectation })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Lifestyle Choices (max 200 words)' value={lifestylechoice} changetext={(lifestylechoice) => this.setState({ lifestylechoice })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Member Expectation from life partner (max 200 words)' value={expectation} changetext={(expectation) => this.setState({ expectation })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               {isLoding ?
                 <Indicator /> :
                 <TouchableOpacity
@@ -1153,8 +1159,8 @@ export default class LookinForMatrimony extends Component {
                 />
               </View>
               <TextInputCustome title='Which Religion / Spiritual path Do You Follow' value={religion} changetext={(religion) => this.setState({ religion })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Write Few Negative Points about self' value={negativePoint} changetext={(negativePoint) => this.setState({ negativePoint })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
-              <TextInputCustome title='Write Few Positive Points about self' value={positivePoint} changetext={(positivePoint) => this.setState({ positivePoint })} maxLength={500} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Write Few Negative Points about self (max 200 words)' value={negativePoint} changetext={(negativePoint) => this.setState({ negativePoint })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
+              <TextInputCustome title='Write Few Positive Points about self (max 200 words)' value={positivePoint} changetext={(positivePoint) => this.setState({ positivePoint })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
               {isLoding ?
                 <Indicator /> :
                 <TouchableOpacity
