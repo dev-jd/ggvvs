@@ -133,8 +133,8 @@ export default class App extends Component {
     axois
       .post(base_url + 'profile_data', formdata)
       .then(async (res) => {
-        console.log('profile_data res---->', res.data.member_details)
-        console.log('profile_data res---->', res.data.package_details.status)
+        // console.log('profile_data res---->', res.data.member_details)
+        // console.log('profile_data res---->', res.data.package_details.status)
         this.setState({ isLoding: false })
         if (res.data.status === true) {
           this.setState({
@@ -143,8 +143,9 @@ export default class App extends Component {
             logourl: res.data.samaj_logo,
           })
 
+          console.log('package id ---->', res.data.is_matrimony_search)
+          await AsyncStorage.setItem('isMatrimonySearch', res.data.is_matrimony_search+ '')
           if (validationempty(res.data.package_details.package_id) && res.data.package_details.status !== 'Expired') {
-            console.log('package id ---->', res.data.package_details.package_id)
 
             await AsyncStorage.setItem('packageId', res.data.package_details.package_id + '')
             await AsyncStorage.setItem('packageActive', res.data.package_details.status + '')

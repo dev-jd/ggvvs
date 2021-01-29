@@ -58,7 +58,8 @@ export default class App extends Component {
       report_reason: '',
       cast: [], heightDroupDown: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
       heightfFeet: '', heightInch: '', weight: '',
-      takedrink: '', smoke: '', nonveg: '', eggs: '', lookfornri: '', kundliBelive: '', isPustimarg: '', packageActive: '', packageId: ''
+      takedrink: '', smoke: '', nonveg: '', eggs: '', lookfornri: '', kundliBelive: '', isPustimarg: '', packageActive: '', packageId: '',
+      isMatrimonySearch:''
     }
   }
 
@@ -67,11 +68,12 @@ export default class App extends Component {
     const member_id = await AsyncStorage.getItem('member_id')
     const packageId = await AsyncStorage.getItem('packageId')
     const packageActive = await AsyncStorage.getItem('packageActive')
+    const isMatrimonySearch = await AsyncStorage.getItem('isMatrimonySearch')
     console.log('samaj id ', samaj_id)
     console.log('packageId ', packageId)
     console.log('packageActive ', packageActive)
     this.setState({
-      samaj_id, member_id, packageId, packageActive
+      samaj_id, member_id, packageId, packageActive, isMatrimonySearch
     })
     this.castApi()
     this.apiCalling()
@@ -179,7 +181,8 @@ export default class App extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          if (validationempty(this.state.packageId) && validationempty(this.state.packageActive)) {
+          // || validationempty(this.state.packageId) || validationempty(this.state.packageActive)
+          if (validationempty(this.state.isMatrimonySearch) && this.state.isMatrimonySearch === '1' ) {
             if (this.state.packageActive === 'Expired') {
               showToast('In your profile no package available now ')
             } else {

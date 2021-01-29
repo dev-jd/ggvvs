@@ -189,14 +189,15 @@ class Login extends Component {
       var response = await Helper.POST('login', formdata)
       console.log('check Responce login-- > ', response)
       this.setState({
-        _isLoading: false
+        _isLoading: false 
       })
       if (response.status === true) {
         SimpleToast.show("Login successfully")
 
         this.props.navigation.replace('Otp', {
           email: this.state.email, mobile: this.state.code + this.state.mobile,
-          password: this.state.password, deviceId: this.state.deviceId, playerId: this.state.playerId
+          password: this.state.password, deviceId: this.state.deviceId, playerId: this.state.playerId,
+          indiaOrNot:this.state.indiaOrNot
         })
 
         // AsyncStorage.setItem('member_id', response.data.member_id + '')

@@ -1,4 +1,4 @@
-import React, { Component} from 'react'
+import React, { Component } from 'react'
 import {
   Text,
   View,
@@ -54,15 +54,15 @@ class Otp extends Component {
     checkFour: '',
     member_id: '',
     email: '',
-    resendButtonDisabledTime: RESEND_OTP_TIME_LIMIT, 
-    resendOtpTimerInterval: RESEND_OTP_TIME_LIMIT, 
+    resendButtonDisabledTime: RESEND_OTP_TIME_LIMIT,
+    resendOtpTimerInterval: RESEND_OTP_TIME_LIMIT,
     time: this.secondsToHms(RESEND_OTP_TIME_LIMIT),
   }
 
-  
 
-  async componentDidMount () {
-    
+
+  async componentDidMount() {
+
     var email = await this.props.navigation.getParam('email')
     var mobile = await this.props.navigation.getParam('mobile')
     var password = await this.props.navigation.getParam('password')
@@ -75,52 +75,54 @@ class Otp extends Component {
       email: email
     })
 
-    
+
     this.startResendOtpTimer();
     await this.generateOTP()
   }
-  
-  startResendOtpTimer(){
+
+  startResendOtpTimer() {
     if (this.state.resendOtpTimerInterval) {
       clearInterval(this.state.resendOtpTimerInterval);
     }
 
-    BackgroundTimer.runBackgroundTimer(() => { 
+    BackgroundTimer.runBackgroundTimer(() => {
       //code that will be called every 3 seconds 
       //this.timer = setInterval(this.countDown, 1000)
       if (this.state.resendButtonDisabledTime <= 0) {
         clearInterval(this.state.resendOtpTimerInterval);
       } else {
         let seconds = this.state.resendButtonDisabledTime - 1;
-        this.setState({resendButtonDisabledTime:seconds,time:this.secondsToHms(seconds)})
+        this.setState({ resendButtonDisabledTime: seconds, time: this.secondsToHms(seconds) })
       }
       // console.log("otp time",this.state.time)
 
-    },1000);
+    }, 1000);
   }
 
-   secondsToHms(d) {
+  secondsToHms(d) {
     const sec = parseInt(d, 10); // convert value to number if it's string
-    let hours   = Math.floor(sec / 3600); // get hours
+    let hours = Math.floor(sec / 3600); // get hours
     let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
     let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
     // add 0 if value < 10; Example: 2 => 02
-    if (hours   < 10) {hours   = "0"+hours;}
-    if (minutes < 10) {minutes = "0"+minutes;}
-    if (seconds < 10) {seconds = "0"+seconds;}
-    return minutes+':'+seconds; // Return is HH : MM : SS
-}
+    if (hours < 10) { hours = "0" + hours; }
+    if (minutes < 10) { minutes = "0" + minutes; }
+    if (seconds < 10) { seconds = "0" + seconds; }
+    return minutes + ':' + seconds; // Return is HH : MM : SS
+  }
 
-  async generateOTP () {
-    
+  async generateOTP() {
+
     var email = await this.props.navigation.getParam('email')
     var mobile = await this.props.navigation.getParam('mobile')
     var password = await this.props.navigation.getParam('password')
     var deviceId = await this.props.navigation.getParam('deviceId')
     var playerId = await this.props.navigation.getParam('playerId')
+    var indiaOrNot = await this.props.navigation.getParam('indiaOrNot')
 
     const randomNumber = Math.floor(1000 + Math.random() * 1000) + 1
     console.log('randome Number ---->', randomNumber)
+    console.log('indiaOrNot ---->', indiaOrNot)
     await this.setState({
       OtpGenerate: randomNumber,
       checkOne: randomNumber.toString().split('')[0],
@@ -130,11 +132,7 @@ class Otp extends Component {
     })
 
     const formData = new FormData()
-    if (
-      mobile === '' ||
-      mobile === null ||
-      mobile === undefined||mobile === 'code'
-    ) {
+    if (indiaOrNot) {
       formData.append('member_email', email)
     } else {
       formData.append('member_mobile', mobile)
@@ -154,7 +152,7 @@ class Otp extends Component {
 
     var response = await Helper.POST('otp', formData)
 
-    this.setState({resendButtonDisabledTime:RESEND_OTP_TIME_LIMIT})
+    this.setState({ resendButtonDisabledTime: RESEND_OTP_TIME_LIMIT })
     //this.startResendOtpTimer();
     console.log('check Responce otp-- > ', response)
     await Toast.show('OTP send Sucessfully')
@@ -197,18 +195,19 @@ class Otp extends Component {
     }
   }
 
-  async onSubmit () {
+  async onSubmit() {
 
     // this.props.navigation.replace('Dashboard')
-  
+
     var email = await this.props.navigation.getParam('email')
     var mobile = await this.props.navigation.getParam('mobile')
     var password = await this.props.navigation.getParam('password')
     var deviceId = await this.props.navigation.getParam('deviceId')
     var playerId = await this.props.navigation.getParam('playerId')
+    var indiaOrNot = await this.props.navigation.getParam('indiaOrNot')
 
-    console.log('check mobile---->',mobile)
-    console.log('check email---->',email)
+    console.log('check mobile---->', mobile)
+    console.log('check email---->', email)
     if (
       this.state.checkOne === this.state._one &&
       this.state.checkTwo === this.state._two &&
@@ -216,10 +215,10 @@ class Otp extends Component {
       this.state.checkFour === this.state._four
     ) {
       console.log('success')
-      
+
       var formdata = new FormData()
 
-      if (mobile === '' || mobile === null || mobile === undefined||mobile === 'code') {
+      if (indiaOrNot) {
         formdata.append('member_email', email)
       } else {
         formdata.append('member_mobile', mobile)
@@ -229,7 +228,7 @@ class Otp extends Component {
       formdata.append('device_token', deviceId)
       formdata.append('member_player_id', playerId)
       console.log('check the login formdaya', formdata)
-     
+
       var response = await Helper.POST('login', formdata)
       console.log('check Responce login-- > ', response)
       this.setState({
@@ -274,7 +273,7 @@ class Otp extends Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <SafeAreaView
         style={{
@@ -316,7 +315,7 @@ class Otp extends Component {
             <View
               style={[
                 (this.state.f1 && this.state._one.length >= 0) ||
-                this.state._one !== ''
+                  this.state._one !== ''
                   ? Style.filled_otp
                   : Style.unfilled_otp
               ]}
@@ -335,7 +334,7 @@ class Otp extends Component {
             <View
               style={[
                 (this.state.f2 && this.state._two.length >= 0) ||
-                this.state._two !== ''
+                  this.state._two !== ''
                   ? Style.filled_otp
                   : Style.unfilled_otp
               ]}
@@ -356,7 +355,7 @@ class Otp extends Component {
             <View
               style={[
                 (this.state.f3 && this.state._three.length >= 0) ||
-                this.state._three !== ''
+                  this.state._three !== ''
                   ? Style.filled_otp
                   : Style.unfilled_otp
               ]}
@@ -377,7 +376,7 @@ class Otp extends Component {
             <View
               style={[
                 (this.state.f4 && this.state._four.length >= 0) ||
-                this.state._four !== ''
+                  this.state._four !== ''
                   ? Style.filled_otp
                   : Style.unfilled_otp
               ]}
@@ -392,7 +391,7 @@ class Otp extends Component {
                 keyboardType='number-pad'
                 style={Style.opt_input_textStyle}
                 onFocus={() => this.setState({ f4: true })}
-                // onEndEditing={() => this._dismissKeyboard()}
+              // onEndEditing={() => this._dismissKeyboard()}
               />
             </View>
           </View>
@@ -413,30 +412,30 @@ class Otp extends Component {
           </TouchableOpacity>
 
           {this.state.resendButtonDisabledTime > 0 ? (
-              <Text style={{paddingVertical:'5%'}}>
-                Resend OTP in {' ' + this.state.time}
-              </Text>
-            
-          ) : (
-            // <CustomButton
-            //   type={'link'}
-            //   text={'Resend OTP'}
-            //   buttonStyle={styles.otpResendButton}
-            //   textStyle={styles.otpResendButtonText}
-            //   onPress={onResendOtpButtonPress}
-            // />
-            <Text
-              onPress={() => this.generateOTP()}
-              style={[
-                Style.Textmainstyle,
-                { textDecorationLine: 'underline', marginTop: 10 }
-              ]}
-            >
-              Resend OTP
+            <Text style={{ paddingVertical: '5%' }}>
+              Resend OTP in {' ' + this.state.time}
             </Text>
-          )}
 
-          
+          ) : (
+              // <CustomButton
+              //   type={'link'}
+              //   text={'Resend OTP'}
+              //   buttonStyle={styles.otpResendButton}
+              //   textStyle={styles.otpResendButtonText}
+              //   onPress={onResendOtpButtonPress}
+              // />
+              <Text
+                onPress={() => this.generateOTP()}
+                style={[
+                  Style.Textmainstyle,
+                  { textDecorationLine: 'underline', marginTop: 10 }
+                ]}
+              >
+                Resend OTP
+              </Text>
+            )}
+
+
           {/* <Text
             style={[Style.Textmainstyle,{marginTop: 10 }]}>
            OTP is {this.state.OtpGenerate}</Text> */}

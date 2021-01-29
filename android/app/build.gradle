@@ -133,8 +133,8 @@ android {
         applicationId "com.ggvvssamaaj"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 19
-        versionName "1.15"
+        versionCode 20
+        versionName "1.16"
         multiDexEnabled true
     }
     splits {

@@ -63,19 +63,19 @@ class MatrimonyDetails extends Component {
       visibleModalPersonal: null, visibleModalFamily: null, visibleModalEducation: null, visibleModalSpritual: null, visibleModalGeneral: null, visibleModalComm: null,
       visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null, packageId: '',
       viewPersonal: 0, viewEducation: 0, viewFamily: 0, viewLifestyle: 0, viewProfession: 0, viewSpiritual: 0, viewcommunication: 0, viewGeneral: 0, viewPhoto: 0,
-      is_parent_mobile_only: 0,profileimage:''
+      is_parent_mobile_only: 0, profileimage: ''
     }
   }
 
   async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-    const packageId= await AsyncStorage.getItem('packageId')
+    const packageId = await AsyncStorage.getItem('packageId')
     const profileimage = await this.props.navigation.getParam('profileImg')
 
     console.log('packageId ', packageId)
     console.log('profileimage', profileimage)
     this.setState({
-      samaj_id: samaj_id, packageId,profileimage
+      samaj_id: samaj_id, packageId, profileimage
     })
 
     this.getPackageDetails()
@@ -117,7 +117,7 @@ class MatrimonyDetails extends Component {
 
   render() {
     const { item_details, matrimonyData, imageUrl, imageUrlMatrimony, country, state, city,
-      viewPersonal, viewEducation, viewFamily, viewLifestyle, viewProfession, viewSpiritual, viewcommunication, viewGeneral, viewPhoto,profileimage } = this.state
+      viewPersonal, viewEducation, viewFamily, viewLifestyle, viewProfession, viewSpiritual, viewcommunication, viewGeneral, viewPhoto, profileimage } = this.state
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ImageBackground source={AppImages.back7}
@@ -131,8 +131,8 @@ class MatrimonyDetails extends Component {
             <View>
               {/* profile tag */}
               <View style={[Style.cardback, Style.matrimonyCard]}>
-                <View style={{ flexDirection: 'row',justifyContent:'center',alignItems:'center' }}>
-                <View style={{width:'70%'}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                  <View style={{ width: '70%' }}>
                     <Text style={[Style.Textmainstyle, { color: Colors.white, textAlign: 'center' }]}>{item_details.name}</Text>
                     {/* <TextInputCustome title='Name' value={name} changetext={(name) => this.setState({ name })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} /> */}
                     {matrimonyData.profile_tag_line ?
@@ -161,56 +161,84 @@ class MatrimonyDetails extends Component {
                         />
                       )}
                   </TouchableOpacity>
-                 
+
                 </View>
               </View>
               {/* Row 1 */}
               <View style={Style.flexView}>
                 <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => {
-                  if (viewPersonal === 1) {
-                    this.setState({ visibleModalPersonal: 'bottom' })
-                  } else { showToast('This feature not available in your current package') }
+                  // if (viewPersonal === 1) {
+                  this.setState({ visibleModalPersonal: 'bottom' })
+                  // } else { showToast('This feature not available in your current package') }
                 }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Personal</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => {
-                  if (viewFamily === 1) {
-                    this.setState({ visibleModalFamily: 'bottom' })
-                  } else { showToast('This feature not available in your current package') }
+                  // if (viewFamily === 1) {
+                  this.setState({ visibleModalFamily: 'bottom' })
+                  // } else { showToast('This feature not available in your current package') }
                 }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Family</Text>
                 </TouchableOpacity>
               </View>
               {/* row 2 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewEducation === 1) { this.setState({ visibleModalEducation: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => {
+                  // if (viewEducation === 1) { 
+                  this.setState({ visibleModalEducation: 'bottom' })
+                  //  } else { showToast('This feature not available in your current package') }
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Education</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => { if (viewProfession === 1) { this.setState({ visibleModalProffessional: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => {
+                  // if (viewProfession === 1) {
+                  this.setState({ visibleModalProffessional: 'bottom' })
+                  //  } else { showToast('This feature not available in your current package') } 
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Professional</Text>
                 </TouchableOpacity>
               </View>
               {/* row 3 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewLifestyle === 1) { this.setState({ visibleModalLifestyle: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => {
+                  // if (viewLifestyle === 1) { 
+                  this.setState({ visibleModalLifestyle: 'bottom' })
+                  // } else { showToast('This feature not available in your current package') }
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Lifestyle Choice</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => { if (viewSpiritual === 1) { this.setState({ visibleModalSpritual: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => {
+                  // if (viewSpiritual === 1) { 
+                  this.setState({ visibleModalSpritual: 'bottom' })
+                  //  } else { showToast('This feature not available in your current package') } 
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Spiritual</Text>
                 </TouchableOpacity>
               </View>
               {/* row 4 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewGeneral === 1) { this.setState({ visibleModalGeneral: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => {
+                  // if (viewGeneral === 1) { 
+                  this.setState({ visibleModalGeneral: 'bottom' })
+                  // } else { showToast('This feature not available in your current package') } 
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>General</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => { if (viewcommunication === 1) { this.setState({ visibleModalComm: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => {
+                  //  if (viewcommunication === 1) { 
+                  this.setState({ visibleModalComm: 'bottom' })
+                  //  } else { showToast('This feature not available in your current package') } 
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Communication</Text>
                 </TouchableOpacity>
               </View>
               {/* Row 5 */}
               <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => { if (viewPhoto === 1) { this.setState({ visibleModalPhotos: 'bottom' }) } else { showToast('This feature not available in your current package') } }}>
+                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => {
+                  //  if (viewPhoto === 1) { 
+                  this.setState({ visibleModalPhotos: 'bottom' })
+                  // } else { showToast('This feature not available in your current package') } 
+                }}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '5%', textAlign: 'center' }]}>Photos</Text>
                 </TouchableOpacity>
 
