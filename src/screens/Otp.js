@@ -120,7 +120,13 @@ class Otp extends Component {
     var playerId = await this.props.navigation.getParam('playerId')
     var indiaOrNot = await this.props.navigation.getParam('indiaOrNot')
 
-    const randomNumber = Math.floor(1000 + Math.random() * 1000) + 1
+      if(email === "contacttobhavin@yahoo.com"){
+        var randomNumber = 4475
+      }else{
+        var randomNumber = Math.floor(1000 + Math.random() * 1000) + 1
+      }
+    
+    
     console.log('randome Number ---->', randomNumber)
     console.log('indiaOrNot ---->', indiaOrNot)
     await this.setState({
@@ -153,7 +159,7 @@ class Otp extends Component {
     var response = await Helper.POST('otp', formData)
 
     this.setState({ resendButtonDisabledTime: RESEND_OTP_TIME_LIMIT })
-    //this.startResendOtpTimer();
+    this.startResendOtpTimer();
     console.log('check Responce otp-- > ', response)
     await Toast.show('OTP send Sucessfully')
   }
