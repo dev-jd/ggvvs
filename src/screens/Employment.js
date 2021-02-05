@@ -25,6 +25,7 @@ import {
   Right,
   View
 } from 'native-base'
+import { RadioButton } from 'react-native-paper';
 
 import RadioGroup from 'react-native-radio-buttons-group'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -36,6 +37,7 @@ import { pic_url } from '../Static'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
+import { showToast, validationempty } from '../Theme/Const';
 export default class App extends Component {
   state = {
     data: [
@@ -49,7 +51,8 @@ export default class App extends Component {
       }
     ],
     banner_img: null,
-    banner_url: ''
+    banner_url: '',
+    userJobType: ''
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -63,7 +66,7 @@ export default class App extends Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const banner = this.props.navigation.getParam('banner_image')
     const banner_url = this.props.navigation.getParam('banner_url')
     console.log('banner:-', banner)
@@ -87,27 +90,38 @@ export default class App extends Component {
         : this.props.navigation.navigate('Jobseeker')
     }
   }
-
-  render () {
-    const { banner_img, banner_url } = this.state
+  CreateProfile = () => {
+    var { userJobType } = this.state
+    if (validationempty(userJobType)) {
+      if (userJobType == '1') {
+        this.props.navigation.navigate('LookingForJob')
+      } else {
+        this.props.navigation.navigate('ViewJobProvider')
+      }
+    }else{
+      showToast('Select what you looking for')
+    }
+  }
+  render() {
+    const { banner_img, banner_url, userJobType } = this.state
     return (
       <SafeAreaView style={Style.cointainer1}>
         <StatusBar
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
-        <View style={{ flexDirection: 'column',paddingHorizontal:'2%',paddingVertical:'2%' }}>
+        <View style={{ flexDirection: 'column', paddingHorizontal: '2%', paddingVertical: '2%' }}>
           <Card>
             <Image
               resizeMode='stretch'
               source={
                 banner_img === null ||
-                banner_img === '' ||
-                banner_img === undefined
+                  banner_img === '' ||
+                  banner_img === undefined
                   ? AppImages.placeHolder
                   : {
-                      uri: banner_url + banner_img
-                    }
+                    uri: banner_url + banner_img
+                  }
               }
               style={{
                 backgroundColor: Colors.white,
@@ -116,31 +130,39 @@ export default class App extends Component {
               }}
             />
 
-            {/* <View style={{ justifyContent: 'center', padding: 10 }} >
-                            <Text style={[Style.Textmainstyle, style = { alignSelf: 'center', color: Colors.Theme_color }]}>Search for candidates</Text>
-                        </View> */}
 
             <View
               style={{
                 width: '100%',
                 justifyContent: 'center',
-                paddingTop: 10,
-                paddingBottom: 10
+                alignItems: 'center',
+                padding: '5%'
               }}
             >
-              <RadioGroup
-                radioButtons={this.state.data}
-                onPress={this.onPress}
-                flexDirection='row'
-              />
+
+              <RadioButton.Group onValueChange={userJobType => this.setState({ userJobType })} value={userJobType}>
+                <View style={Style.flexView2}>
+                  <RadioButton value="1" color={Colors.Theme_color} />
+                  <Text style={[Style.Textstyle, { width: '40%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Job Seeker</Text>
+                  <RadioButton value="2" color={Colors.Theme_color} />
+                  <Text style={[Style.Textstyle, { width: '40%', color: Colors.black, fontFamily: CustomeFonts.medium }]}>Job Provider</Text>
+                </View>
+              </RadioButton.Group>
             </View>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => this._OnEmployDetail()}
               style={[Style.Buttonback, (style = { margin: 10 })]}
             >
               <Text style={Style.buttonText}>Search</Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+              onPress={() => this.CreateProfile()}
+              style={[Style.Buttonback, { margin: 10 }]}
+            >
+              <Text style={Style.buttonText}>Create Your Profile</Text>
             </TouchableOpacity>
+
           </Card>
         </View>
       </SafeAreaView>

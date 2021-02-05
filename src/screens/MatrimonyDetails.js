@@ -440,14 +440,14 @@ class MatrimonyDetails extends Component {
         >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalLifestyle: null })}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Profession Details</Text>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Lifestyle Choice</Text>
               <Icon name='x' size={20} onPress={() => this.setState({ visibleModalLifestyle: null })} />
             </TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false}>
               {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Lifestyle Choices</Text> */}
               <View style={{ paddingVertical: '3%' }}>
-                <Label style={[Style.Textmainstyle, { color: Colors.Them_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Description</Label>
+                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Description</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, foentFamily: CustomeFonts.regular, width: '100%' }]}>{validationempty(matrimonyData.lifestyle_choice) ? matrimonyData.lifestyle_choice : '-'}</Label>
               </View>
               <View style={{ paddingVertical: '3%' }}>

@@ -29,6 +29,9 @@ import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
+import { Helper } from '../../Helper/Helper'
+import MultiSelect from 'react-native-multiple-select';
+
 const options = {
   title: 'Select Image',
   takePhotoButtonTitle: 'Take Photo',
@@ -70,7 +73,9 @@ export default class LookinForJob extends Component {
       defaultImages: '',
       isLoding: false,
       selectedFiles: [],
-      member_type: ''
+      member_type: '', businessType: [],
+      jobType: [{ id: "Full Time" }, { id: "Part Time" }, { id: "Work From Home" }, { id: "Contract Base" }, { id: "Freelances" }],
+      selectedJobTypeList:[]
     }
   }
 
@@ -92,24 +97,32 @@ export default class LookinForJob extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-      if (this.state.connection_Status === true) {
+    if (this.state.connection_Status === true) {
       this.apiCalling()
-    } 
+    }
   }
 
   async apiCalling() {
-    const details = this.props.navigation.getParam('itemData')
-    const url = this.props.navigation.getParam('image_url')
-    console.log('item Data -->', details)
+    // const details = this.props.navigation.getParam('itemData')
+    // const url = this.props.navigation.getParam('image_url')
+    // console.log('item Data -->', details)
 
-    this.setState({
-      details: details,
-      interest: details.member_area_of_interest,
-      skills: details.member_skills,
-      img_url: url,
-      cvFileName: details.member_CV,
-      defaultImages: details.member_CV
-    })
+    // this.setState({
+    //   details: details,
+    //   interest: details.member_area_of_interest,
+    //   skills: details.member_skills,
+    //   img_url: url,
+    //   cvFileName: details.member_CV,
+    //   defaultImages: details.member_CV
+    // })
+    this.businessType()
+  }
+  async businessType() {
+    var response = await Helper.GET('business_type_list')
+    // console.log('Check the  business type ',response)
+    if (response.success) {
+      this.setState({ businessType: response.data })
+    }
   }
   async attachFile() {
     const files = []
@@ -182,7 +195,7 @@ export default class LookinForJob extends Component {
     formData.append('member_id', this.state.member_id)
     formData.append('member_samaj_id', this.state.samaj_id)
     formData.append('member_type', this.state.member_type)
-    if (this.state.cvPath === '' || this.state.cvPath === null|| this.state.cvPath==undefined) {
+    if (this.state.cvPath === '' || this.state.cvPath === null || this.state.cvPath == undefined) {
       formData.append('member_CV', this.state.defaultImages)
     } else {
       formData.append('member_CV', {
@@ -215,8 +228,12 @@ export default class LookinForJob extends Component {
       Toast.show('No Internet Connection')
     }
   }
-
+  onjobTypeSelectionChange = async (selectedItems) => {
+    console.log('check the selected Items',selectedItems)
+    await this.setState({ selectedJobTypeList: selectedItems });
+};
   render() {
+    var { jobType ,selectedJobTypeList} = this.state
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -224,18 +241,18 @@ export default class LookinForJob extends Component {
             <View
               style={[
                 Style.cardback,
-                (style = { flex: 1, justifyContent: 'center', marginTop: 10 })
+                { flex: 1, justifyContent: 'center', marginTop: 10 }
               ]}
             >
-              <Form>
+              {/* <Form>
                 <Item stackedLabel>
                   <Label
                     style={[
                       Style.Textstyle,
-                      (style = {
+                      {
                         color: Colors.black,
                         fontFamily: CustomeFonts.medium
-                      })
+                      }
                     ]}
                   >
                     Area Of Interest
@@ -247,17 +264,59 @@ export default class LookinForJob extends Component {
                     value={this.state.interest}
                   ></Input>
                 </Item>
-              </Form>
-
+              </Form> */}
+              <View style={{ paddingVertical: 10, width: '100%' }}>
+                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}> Area Of Interest</Label>
+                <Picker
+                  selectedValue={this.state.interest}
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ interest: itemValue })
+                  }}
+                  mode={'dialog'}
+                >
+                  <Picker.Item label='Select Interest' value='0' />
+                  {this.state.businessType.map((item, key) => (
+                    <Picker.Item label={item.bm_type} value={item.id} key={key} />
+                  ))}
+                </Picker>
+                <Item />
+              </View>
+              <View style={{ paddingVertical: 10, width: '100%' }}>
+                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium }]}> Area Of Interest</Label>
+                <MultiSelect
+                  hideTags
+                  items={jobType}
+                  uniqueKey="id"
+                  ref={(component) => { this.multiSelectchapter = component }}
+                  onSelectedItemsChange={this.onjobTypeSelectionChange}
+                  selectedItems={selectedJobTypeList}
+                  selectText="Select Job Type"
+                  searchInputPlaceholderText="Search Job Type"
+                  onChangeInput={(text) => console.log(text)}
+                  altFontFamily={CustomeFonts.medium}
+                  fontFamily={CustomeFonts.medium}
+                  searchInputStyle={{ fontFamily: CustomeFonts.medium, color: Colors.Theme_color }}
+                  styleSelectorContainer={{ fontFamily: CustomeFonts.medium, color: Colors.Theme_color }}
+                  selectedItemTextColor={Colors.Theme_color}
+                  selectedItemIconColor={Colors.Theme_color}
+                  styleMainWrapper={{ width: '100%' }}
+                  itemTextColor={Colors.Theme_color}
+                  itemFontFamily={CustomeFonts.medium}
+                  selectedItemFontFamily={CustomeFonts.medium}
+                  displayKey="id"
+                  hideSubmitButton
+                />
+                {/* <Item /> */}
+              </View>
               <Form>
                 <Item stackedLabel>
                   <Label
                     style={[
                       Style.Textstyle,
-                      (style = {
+                      {
                         color: Colors.black,
                         fontFamily: CustomeFonts.medium
-                      })
+                      }
                     ]}
                   >
                     Skills
@@ -283,10 +342,10 @@ export default class LookinForJob extends Component {
                 <Text
                   style={[
                     Style.Textstyle,
-                    (style = {
+                    {
                       color: Colors.black,
                       fontFamily: CustomeFonts.medium
-                    })
+                    }
                   ]}
                 >
                   Your CV
@@ -299,7 +358,7 @@ export default class LookinForJob extends Component {
                                     style={{ height: 100, width: 150, marginLeft: 20 }}
                                     resizeMode='stretch'
                                 /> */}
-                  <Text style={[Style.Textstyle,{ width: '70%' }]}>{this.state.cvFileName}</Text>
+                  <Text style={[Style.Textstyle, { width: '70%' }]}>{this.state.cvFileName}</Text>
                   <TouchableOpacity
                     style={{
                       alignSelf: 'flex-end',
@@ -329,7 +388,7 @@ export default class LookinForJob extends Component {
               <ActivityIndicator color={Colors.Theme_color} size={'large'} />
             ) : (
                 <TouchableOpacity
-                  style={[Style.Buttonback, (style = { marginTop: 10 })]}
+                  style={[Style.Buttonback, { marginTop: 10 }]}
                   onPress={() => this.editData()}
                 >
                   <Text style={Style.buttonText}>Update Details</Text>

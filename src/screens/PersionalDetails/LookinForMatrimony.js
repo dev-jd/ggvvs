@@ -782,9 +782,9 @@ export default class LookinForMatrimony extends Component {
               {/* Row 5 */}
               <View style={Style.flexView}>
                 <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Photos</Text>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' , textAlign:'center'}]}>Photos</Text>
                 </TouchableOpacity>
-                <View style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]}>
+                {/* <View style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]}>
                   <View style={[Style.flexView, { paddingVertical: '2%', }]}>
                     <CheckBox checked={approvedMatrimony} size={30} color={Colors.white} style={{ justifyContent: 'flex-start' }}
                       onPress={() => {
@@ -802,7 +802,7 @@ export default class LookinForMatrimony extends Component {
                     <Label style={[Style.Textstyle, { alignSelf: 'flex-end', paddingLeft: '10%', width: '90%', color: Colors.white, fontFamily: CustomeFonts.medium }]}>Now, My Profile is reday to be in search list</Label>
                   </View>
 
-                </View>
+                </View> */}
               </View>
             </ScrollView>
           </View>
@@ -1107,7 +1107,7 @@ export default class LookinForMatrimony extends Component {
         >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalLifestyle: null })}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Profession Details</Text>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Lifestyle Choices</Text>
               <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalLifestyle: null })} />
             </TouchableOpacity>
 

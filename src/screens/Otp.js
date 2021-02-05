@@ -85,7 +85,7 @@ class Otp extends Component {
       clearInterval(this.state.resendOtpTimerInterval);
     }
 
-    BackgroundTimer.runBackgroundTimer(() => {
+    BackgroundTimer.runBackgroundTimer(() => { 
       //code that will be called every 3 seconds 
       //this.timer = setInterval(this.countDown, 1000)
       if (this.state.resendButtonDisabledTime <= 0) {
