@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, TouchableOpacity, Switch, Image, PermissionsAndroid, StatusBar, Picker, ActivityIndicator, SafeAreaView, ImageBackground } from 'react-native'
+import { ScrollView, TouchableOpacity, Switch, Image, PermissionsAndroid, StatusBar, Picker, ActivityIndicator, SafeAreaView, ImageBackground, Linking } from 'react-native'
 import CustomeFonts from '../../Theme/CustomeFonts'
 import { Form, Item, Label, Text, View } from 'native-base'
 import Style from '../../Theme/Style'
@@ -19,21 +19,22 @@ import { Icon, CheckBox } from 'react-native-elements'
 import TextInputCustome from '../../Compoment/TextInputCustome'
 import { Helper } from '../../Helper/Helper'
 import { Dimensions } from 'react-native'
-import { Indicator, showToast, validationBlank, validationempty } from '../../Theme/Const'
+import { Indicator, showToast, STRINGNAME, validationBlank, validationempty } from '../../Theme/Const'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RadioButton } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker'
 import MatrimonyPackage from '../MatrimonyPackage'
 import HTML from 'react-native-render-html'
 import { NavigationEvents } from 'react-navigation'
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const options = {
   title: 'Select Image',
   takePhotoButtonTitle: 'Take Photo',
   chooseFromLibraryButtonTitle: 'Choose From Gallery',
   quality: 1,
-  maxWidth: 200,
-  maxHeight: 200,
+  maxWidth: 500,
+  maxHeight: 500,
 }
 
 export default class LookinForMatrimony extends Component {
@@ -81,7 +82,8 @@ export default class LookinForMatrimony extends Component {
       heightDroupDown: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
       visibleModalPersonal: null, visibleModalFamily: null, visibleModalEducation: null, visibleModalSpritual: null, visibleModalGeneral: null, visibleModalComm: null,
       visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null,
-      signal: '', termsConditionsData: '', subCastArray: [], subcast: '', fatherNo: '', motherNo: ''
+      signal: '', termsConditionsData: '', subCastArray: [], subcast: '', fatherNo: '', motherNo: '',
+      lat: 0.0, long: 0.0, location: ''
     }
   }
   async componentDidMount() {
@@ -693,7 +695,7 @@ export default class LookinForMatrimony extends Component {
       education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
       membedId, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, twitter, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
       member1image, matrimonyId, member2image, member3image, heightDroupDown, member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5,
-      fatherNo, motherNo, subcast } = this.state
+      fatherNo, motherNo, subcast, member_id } = this.state
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -782,29 +784,17 @@ export default class LookinForMatrimony extends Component {
               {/* Row 5 */}
               <View style={Style.flexView}>
                 <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' , textAlign:'center'}]}>Photos</Text>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', paddingVertical: '12%', textAlign: 'center' }]}>Photos</Text>
                 </TouchableOpacity>
-                {/* <View style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]}>
-                  <View style={[Style.flexView, { paddingVertical: '2%', }]}>
-                    <CheckBox checked={approvedMatrimony} size={30} color={Colors.white} style={{ justifyContent: 'flex-start' }}
-                      onPress={() => {
-                        if (validationempty(packageId)) {
-                          this.setState({ approvedMatrimony: !this.state.approvedMatrimony })
-                          this.ApproveDataSubmit()
-                        } else {
-                          if (validationempty(matrimonyId)) {
-                            this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })
-                          } else {
-                            showToast("Submit your Personal details first")
-                          }
-                        }
-                      }} checkedColor={Colors.white} containerStyle={{ width: '8%' }} />
-                    <Label style={[Style.Textstyle, { alignSelf: 'flex-end', paddingLeft: '10%', width: '90%', color: Colors.white, fontFamily: CustomeFonts.medium }]}>Now, My Profile is reday to be in search list</Label>
-                  </View>
-
-                </View> */}
+                {/* <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%', textAlign: 'center' }]}>Download Bio-Data</Text>
+                </TouchableOpacity> */}
               </View>
             </ScrollView>
+            {validationempty(packageId) ?
+              <View style={{ position: 'absolute', bottom: 5, right: 5 }}>
+                <Icon raised name='download' type='feather' onPress={() => Linking.openURL('https://new.mysamaaj.com/generatBiodata/' + member_id + '/1')} />
+              </View> : null}
           </View>
         </ImageBackground>
         {/* personal modal */}
@@ -1338,6 +1328,53 @@ export default class LookinForMatrimony extends Component {
                 </View>
               </View>
               <TextInputCustome title='Address' value={address} changetext={(address) => this.setState({ address })} maxLength={50} multiline={true} numberOfLines={3} keyboardType={'default'} editable={true} />
+              {/* <View style={{ paddingVertical: 10 }}>
+                <GooglePlacesAutocomplete
+                  clearButtonMode={'always'}
+                  placeholder='Search Landmark, Location'
+                  minLength={2} // minimum length of text to search
+                  fetchDetails={true}
+                  onPress={(data, details = null) => {
+                    // 'details' is provided when fetchDetails = true
+                    console.log(data);
+                    console.log(details);
+                    console.log('lat long', details.geometry.location.lat,);
+                    this.setState({ lat: details.geometry.location.lat, long: details.geometry.location.long })
+                  }}
+                  currentLocation={true}
+                  query={{
+                    key: STRINGNAME.searchKey,
+                    language: 'en',
+                  }}
+                  nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                  GoogleReverseGeocodingQuery={{
+                    // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                    key: STRINGNAME.searchKey,
+                    language: 'en'
+                  }}
+                  GooglePlacesSearchQuery={{
+                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                    key: STRINGNAME.searchKey,
+                    rankby: 'distance',
+                    types: 'establishment',
+                    country: 'IN'
+                  }}
+                  filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
+                  GooglePlacesDetailsQuery={{ fields: 'geometry', }}
+
+                  styles={{
+                    textInputContainer: {
+                      borderBottomWidth: 1,
+                      borderBottomColor: Colors.white,
+                      color: Colors.white
+                    },
+                    textInput: {
+                      color: Colors.white,
+                    },
+
+                  }}
+                />
+              </View> */}
               <TextInputCustome title='Facebook Profile' value={fbuser} changetext={(fbuser) => this.setState({ fbuser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Instagram Profile' value={instauser} changetext={(instauser) => this.setState({ instauser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Linkedin Profile' value={linkedin} changetext={(linkedin) => this.setState({ linkedin })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
@@ -1396,7 +1433,7 @@ export default class LookinForMatrimony extends Component {
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPhotos: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Additional Photos</Text>
-              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalPhotos: null })} />
+              <Icon name='x' type='feather' color={Colors.Theme_color} onPress={() => this.setState({ visibleModalPhotos: null })} />
             </TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false}>

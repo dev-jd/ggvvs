@@ -20,7 +20,8 @@ const URL = {
 const STRINGNAME = {
   appName:'GGVVS Samaaj',
 //   razerpayKey:'rzp_test_lemdGJXOYmQDZZ'
-  razerpayKey:'rzp_live_8zIAqo1XI3uG0M'
+  razerpayKey:'rzp_live_8zIAqo1XI3uG0M',
+  searchKey:'AIzaSyD8rFXA6KM_9OCzNcErc4d9Vsr1KeTPIxk',  
 }
 
 const randomNumber = () => {

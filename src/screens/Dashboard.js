@@ -970,7 +970,7 @@ export default class App extends Component {
                 </View>
 
               
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  {/* <View style={[Style.dashcard, { marginTop: 10 }]}>
                     <TouchableOpacity
                       onPress={() =>
                         this.props.navigation.navigate('Employment', {
@@ -997,7 +997,7 @@ export default class App extends Component {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                  </View>
+                  </View> */}
                 <View style={[Style.dashcard, { marginTop: 10 }]}>
                   <TouchableOpacity
                     onPress={() =>

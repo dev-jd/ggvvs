@@ -42,6 +42,7 @@ import { base_url } from '../Static'
 import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
+import { validationempty } from '../Theme/Const'
 
 class AddFamilyMember extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -167,18 +168,18 @@ class AddFamilyMember extends Component {
     } else if (this.state.countrytatus === '' || this.state.countrytatus === null || this.state.countrytatus === undefined || this.state.countrytatus === '0') {
       Toast.show("Select Country")
     } else if (this.state.statetatus === '' || this.state.statetatus === null || this.state.statetatus === undefined || this.state.countrytatus === '0') {
-      Toast.show("Select Country")
+      Toast.show("Select State")
     } else if (this.state.citytatus === '' || this.state.citytatus === null || this.state.citytatus === undefined || this.state.countrytatus === '0') {
-      Toast.show("Select Country")
+      Toast.show("Select City")
     } else if (this.state.name === '' || this.state.name === null || this.state.name === undefined) {
       Toast.show("Enter Name")
-
     } else {
-      if (this.state.mobile.length === 0) {
-        this.api_call()
-      } else if (this.state.mobile.length < 8) {
-        console.log('checked else', this.state.mobile.length)
-        Toast.show("Enter Valid mobile number")
+      if (validationempty(this.state.mobile)) {
+        if (validationempty(this.state.mobilecode)) {
+          this.api_call()
+        } else {
+          Toast.show("Select the country code for mobile number")
+        }
       } else {
         this.api_call()
       }
@@ -211,7 +212,7 @@ class AddFamilyMember extends Component {
     formData.append('place_birth', this.state.placeofbirth)
     formData.append('place_death', this.state.placeofdeath)
     formData.append('member_birth_date', Moment(this.state.dob, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
-    formData.append('member_death_date',  Moment(this.state.dod, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
+    formData.append('member_death_date', Moment(this.state.dod, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
     formData.append('member_type', '2')
 
     console.log("formdata-->", formData)
@@ -480,7 +481,7 @@ class AddFamilyMember extends Component {
             <View style={Style.flexView}>
               <Picker
                 selectedValue={this.state.mobilecode}
-                onValueChange={(value) => this.setState({mobilecode:value})}
+                onValueChange={(value) => this.setState({ mobilecode: value })}
                 mode={'dialog'}
                 style={{
                   flex: 1,
@@ -492,7 +493,7 @@ class AddFamilyMember extends Component {
                 <Picker.Item label='Select code' value='0' />
                 {this.state.Country.map((item, key) => (
                   <Picker.Item
-                    label={item.country_name}
+                    label={item.mobile_code}
                     value={item.mobile_code}
                     key={key}
                   />

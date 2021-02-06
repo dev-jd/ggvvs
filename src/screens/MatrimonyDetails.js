@@ -391,9 +391,9 @@ class MatrimonyDetails extends Component {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Educational Details</Text> */}
-              <View style={[Style.flexView, { paddingVertical: '3%' }]}>
-                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '70%' }]}>Education Qualification</Label>
-                <Label style={[Style.Textstyle, { color: Colors.black, width: '30%' }]}>{validationempty(item_details.member_eq_id) ? item_details.member_eq_id : '-'}</Label>
+              <View style={{ paddingVertical: '3%' }}>
+                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Education Qualification</Label>
+                <Label style={[Style.Textstyle, { color: Colors.black, width: '100%' }]}>{validationempty(item_details.member_eq_id) ? item_details.member_eq_id : '-'}</Label>
               </View>
               <View style={{ paddingVertical: '3%' }}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Description</Label>
@@ -447,7 +447,7 @@ class MatrimonyDetails extends Component {
             <ScrollView showsVerticalScrollIndicator={false}>
               {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Lifestyle Choices</Text> */}
               <View style={{ paddingVertical: '3%' }}>
-                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Description</Label>
+                <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '100%' }]}>Lifestyle Choice</Label>
                 <Label style={[Style.Textstyle, { color: Colors.black, foentFamily: CustomeFonts.regular, width: '100%' }]}>{validationempty(matrimonyData.lifestyle_choice) ? matrimonyData.lifestyle_choice : '-'}</Label>
               </View>
               <View style={{ paddingVertical: '3%' }}>
