@@ -1328,53 +1328,77 @@ export default class LookinForMatrimony extends Component {
                 </View>
               </View>
               <TextInputCustome title='Address' value={address} changetext={(address) => this.setState({ address })} maxLength={50} multiline={true} numberOfLines={3} keyboardType={'default'} editable={true} />
-              {/* <View style={{ paddingVertical: 10 }}>
+              <View style={{ paddingVertical: 10 }}>
                 <GooglePlacesAutocomplete
+                  ref={(instance) => { this.GooglePlacesRef = instance }}
                   clearButtonMode={'always'}
                   placeholder='Search Landmark, Location'
-                  minLength={2} // minimum length of text to search
+                  autoFocus={true}
+                  placeholderTextColor={Colors.white}
+                  minLength={1} // minimum length of text to search
                   fetchDetails={true}
                   onPress={(data, details = null) => {
                     // 'details' is provided when fetchDetails = true
-                    console.log(data);
-                    console.log(details);
-                    console.log('lat long', details.geometry.location.lat,);
-                    this.setState({ lat: details.geometry.location.lat, long: details.geometry.location.long })
+                    console.log(data, details);
+                    console.log('lat long', data);
+                    // var region = {
+                    //   latitude: details.geometry.location.lat,
+                    //   longitude: details.geometry.location.lng,
+                    //   latitudeDelta: LATITUDE_DELTA,
+                    //   longitudeDelta: LONGITUDE_DELTA
+                    // }
+                    // that.setRegion(region);
+                    // that.mapview.fitToCoordinates(region, {
+                    //   edgePadding: {
+                    //     right: (WIDTH / 20),
+                    //     bottom: (HEIGHT / 20),
+                    //     left: (WIDTH / 20),
+                    //     top: (HEIGHT / 20),
+                    //   }
+                    // })
+                    that.setState({ isSearchvisible: false, address: data.description, lat: details.geometry.location.lat, long: details.geometry.location.lng })
+                    // this.serchSocity(details.geometry.location.lat, details.geometry.location.lng)
+
                   }}
                   currentLocation={true}
+                  currentLocationLabel="Current location"
                   query={{
                     key: STRINGNAME.searchKey,
                     language: 'en',
+                    // location: location,
+                    radius: 1000,
+                    // components: 'country:india',
                   }}
-                  nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                  nearbyPlacesAPI='GoogleReverseGeocoding' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
                   GoogleReverseGeocodingQuery={{
                     // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
                     key: STRINGNAME.searchKey,
-                    language: 'en'
+                    language: 'en',
+                    // location: location,
+                    radius: 1000,
                   }}
-                  GooglePlacesSearchQuery={{
-                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-                    key: STRINGNAME.searchKey,
-                    rankby: 'distance',
-                    types: 'establishment',
-                    country: 'IN'
+                  filterReverseGeocodingByTypes={['locality', 'sublocality', 'sublocality_level_5', 'point_of_interest', 'landmark']}
+                  textInputProps={{
+                    placeholderTextColor: Colors.white,
+                    onFocus: () => {
+                      this.setState({ isSearchvisible: true })
+                      console.log('issearch', this.state.isSearchvisible)
+                    },
                   }}
-                  filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
-                  GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-
                   styles={{
                     textInputContainer: {
+                      color: Colors.Theme_color,
                       borderBottomWidth: 1,
                       borderBottomColor: Colors.white,
-                      color: Colors.white
+                      width: '95%'
                     },
                     textInput: {
                       color: Colors.white,
                     },
-
                   }}
                 />
-              </View> */}
+
+              </View>
               <TextInputCustome title='Facebook Profile' value={fbuser} changetext={(fbuser) => this.setState({ fbuser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Instagram Profile' value={instauser} changetext={(instauser) => this.setState({ instauser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Linkedin Profile' value={linkedin} changetext={(linkedin) => this.setState({ linkedin })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
@@ -1564,29 +1588,30 @@ export default class LookinForMatrimony extends Component {
                 imagesMaxWidth={Dimensions.get('window').width}
                 baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium, color: Colors.black }}
               />
-              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                <TouchableOpacity
-                  style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
-                  onPress={() => {
-                    AsyncStorage.setItem('isTermsAccept', 'true')
-                    this.setState({ visibleModal: null })
-                  }}>
-                  <Text style={[
-                    Style.Textmainstyle,
-                    { color: Colors.white }
-                  ]}>Accept</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
-                  onPress={() => this.props.navigation.goBack()}
-                >
-                  <Text style={[
-                    Style.Textmainstyle,
-                    { color: Colors.white }
-                  ]}>Decline</Text>
-                </TouchableOpacity>
-              </View>
+
             </ScrollView>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <TouchableOpacity
+                style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                onPress={() => {
+                  AsyncStorage.setItem('isTermsAccept', 'true')
+                  this.setState({ visibleModal: null })
+                }}>
+                <Text style={[
+                  Style.Textmainstyle,
+                  { color: Colors.white }
+                ]}>Accept</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                onPress={() => this.props.navigation.goBack()}
+              >
+                <Text style={[
+                  Style.Textmainstyle,
+                  { color: Colors.white }
+                ]}>Decline</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Modal>
       </SafeAreaView >
