@@ -189,9 +189,9 @@ class AddFamilyMember extends Component {
     var isalive
 
     if (this.state.alive) {
-      isalive = 0
-    } else {
       isalive = 1
+    } else {
+      isalive = 0
     }
 
     this.setState({ isLoading: true })

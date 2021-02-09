@@ -456,13 +456,13 @@ export default class App extends Component {
             color={Colors.white}
             onPress={() => this.props.navigation.navigate('Notification')}
           />
-          <Icon
+          {/* <Icon
               style={{ flex: 1, paddingHorizontal: '1%' }}
               name='sign-out'
               size={25}
               color={Colors.white}
               onPress={() => this.onLogout()}
-            />
+            /> */}
         </View>
         {/* banner  */}
         {this.state.isAdLoading ?

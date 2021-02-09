@@ -281,8 +281,8 @@ export default class LookinForMatrimony extends Component {
     this.setState({
       name: response.member_details.member_name,
       dob: response.member_details.member_birth_date,
-      fathername: response.other_information.member_father,
-      mothername: response.other_information.member_mother,
+      fathername: response.member_details.member_father,
+      mothername: response.member_details.member_mother,
       nativeplace: response.other_information.member_native_place,
       email: response.other_information.member_email,
       country: response.other_information.member_country_id,
@@ -296,7 +296,7 @@ export default class LookinForMatrimony extends Component {
       casttatus: parseInt(response.member_details.member_cast_id),
       subcast: response.member_details.member_sub_cast,
       fatherNo: response.member_details.father_mobile,
-      motherNo: response.member_details.member_mother,
+      motherNo: response.member_details.mother_mobile,
     })
     this.stateApiCall(response.other_information.member_country_id)
     this.cityApiCall(response.other_information.member_state_id)

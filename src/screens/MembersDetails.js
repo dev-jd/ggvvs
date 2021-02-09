@@ -18,6 +18,7 @@ import WebView from 'react-native-webview'
 import IconEntypo from 'react-native-vector-icons/Entypo'
 import IconFeather from 'react-native-vector-icons/Feather'
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
+import IconFontMatrialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import CustomeFonts from '../Theme/CustomeFonts'
 import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
@@ -28,6 +29,22 @@ import PersionalDetails from './PersionalDetails/PersionalDetails'
 import FamilyDetails from './FamilyDetails'
 import MemberSearch from './MemberSearch'
 import Products from './Products'
+import ImagePicker from 'react-native-image-picker'
+import { PermissionsAndroid } from 'react-native'
+import { showToast } from '../Theme/Const'
+
+
+const options = {
+  title: 'Select Image',
+  takePhotoButtonTitle: 'Take Photo',
+  chooseFromLibraryButtonTitle: 'Choose From Gallery',
+  quality: 1,
+  maxWidth: 500,
+  maxHeight: 500,
+  storageOptions: {
+    skipBackup: true
+  }
+}
 
 class MembersDetails extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -54,7 +71,7 @@ class MembersDetails extends Component {
       isTheory: true,
       isVideos: false,
       isFiles: false,
-      isProduct:false,
+      isProduct: false,
       fb: '',
       instagram: '',
       linkedin: '',
@@ -65,7 +82,9 @@ class MembersDetails extends Component {
       editWapp: false,
       editLinked: false,
       editTwitter: false,
-      ProductArray:[]
+      ProductArray: [], photoPath: '',
+      photoFileName: '',
+      photoType: '',
     }
   }
 
@@ -140,7 +159,7 @@ class MembersDetails extends Component {
           this.setState({
             memberDetails: res.data.member_details,
             profile_pic_url: res.data.member_photo,
-            profilepic: res.data.member_details.member_photo 
+            profilepic: res.data.member_details.member_photo
           })
         }
       })
@@ -196,6 +215,89 @@ class MembersDetails extends Component {
       })
   }
 
+  async CapturePhoto(type) {
+    console.log('click on image ')
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      {
+        title: 'Samaj App Camera Permission',
+        message: 'Samaj App needs access to your camera ',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK'
+      }
+    )
+
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You can use the camera')
+      ImagePicker.showImagePicker(options, response => {
+        console.log('responce cammera', response)
+
+        if (response.didCancel) {
+          this.setState({
+            photoSelect: false,
+          })
+          console.log('responce didCancel')
+        } else if (response.error) {
+          console.log('responce error')
+          this.setState({
+            photoSelect: false,
+          })
+        } else {
+          const source = response.uri
+          if (response.fileSize > 300000) {
+            showToast('Image is large select 300 KB image only')
+          } else {
+            this.setState({
+              profilepic: source,
+              photoPath: response.path,
+              photoFileName: response.fileName,
+              photoType: response.type,
+              photoSelect: true
+            })
+          }
+        }
+      })
+    } else {
+      console.log('Camera permission denied')
+    }
+  }
+  submit() {
+    var formdata = new FormData()
+
+    formdata.append('member_id', this.state.member_id)
+    formdata.append('member_samaj_id', this.state.samaj_id)
+    formdata.append('type', this.state.member_type)
+
+    if (
+      this.state.photoPath === '' ||
+      this.state.photoPath === null || this.state.photoPath === 'null' ||
+      this.state.photoPath === undefined
+    ) {
+      formdata.append('member_photo', this.state.photoImage)
+    } else {
+      formdata.append('member_photo', {
+        uri: 'file://' + this.state.photoPath,
+        name: this.state.photoFileName,
+        type: this.state.photoType
+      })
+    }
+    axois
+      .post(base_url + 'member_details_edit', formdata)
+      .then(response => {
+        console.log('member_details_edit Response---->', response.data)
+        this.setState({ _isLoading: false })
+        if (response.data.success === true) {
+          showToast(response.data.message)
+          this.props.navigation.navigate('Dashboard')
+        } else {
+          showToast(response.data.message)
+        }
+      })
+      .catch(err => {
+        this.setState({ _isLoading: false })
+        console.log('member_details_edit err', err)
+      })
+  }
   render() {
     const {
       memberDetails,
@@ -203,12 +305,12 @@ class MembersDetails extends Component {
       banner_url,
       profilepic,
       profile_pic_url,
-      isTheory,isProduct,
+      isTheory, isProduct,
       isVideos,
       isFiles, editFb, editInsta, editLinked, editTwitter, editWapp,
       member_id, fb, instagram, whatsapp, linkedin, twitter
     } = this.state
-    console.log("profilepic ===>",profilepic)
+    console.log("profilepic ===>", profilepic)
     return (
       <SafeAreaView style={Style.cointainer1}>
         <StatusBar
@@ -217,20 +319,23 @@ class MembersDetails extends Component {
         />
         <ScrollView>
           <Image
-            resizeMode='stretch'
+            resizeMode='contain'
             source={
               profilepic === null || profilepic === ''
-                ? AppImages.placeHolder
-                : { uri: profile_pic_url + profilepic }
+                ? AppImages.placeHolder :
+                this.state.photoSelect ? { uri: profilepic }
+                  : { uri: profile_pic_url + profilepic }
             }
             style={{
               backgroundColor: Colors.white,
-              height: 320,
+              height: 350,
               width: '100%',
-
               position: 'absolute'
             }}
           />
+          {this.state.photoSelect ?
+            <IconFontMatrialIcon name='check' size={30} color={Colors.Theme_color} style={{ position: 'absolute', right: 5, top: 3, elevation: 5, alignSelf: 'center', padding: '2%', borderRadius: 50, backgroundColor: Colors.white }}
+              onPress={() => this.submit()} /> : null}
           <View style={{ marginTop: 250, paddingHorizontal: '5%' }}>
             <Text style={[Style.Textmainstyle, { color: Colors.Theme_color }]}>
               {memberDetails.member_name}
@@ -238,6 +343,9 @@ class MembersDetails extends Component {
             <Text style={[Style.Textmainstyle, { color: Colors.Theme_color }]}>
               {memberDetails.member_code}
             </Text>
+            <IconFontMatrialIcon name='image-edit' size={30} color={Colors.Theme_color} style={{ position: 'absolute', right: 5, bottom: 3, elevation: 5, alignSelf: 'center', padding: '2%', borderRadius: 50, backgroundColor: Colors.white }}
+              onPress={() => this.CapturePhoto('photo')} />
+
           </View>
 
           <View
@@ -253,7 +361,7 @@ class MembersDetails extends Component {
                 this.setState({
                   isTheory: true,
                   isVideos: false,
-                  isFiles: false,isProduct:false
+                  isFiles: false, isProduct: false
                 })
               }
               style={isTheory ? Style.isActivateTab : Style.isDeactiveTab}
@@ -268,7 +376,7 @@ class MembersDetails extends Component {
                 this.setState({
                   isTheory: false,
                   isVideos: true,
-                  isFiles: false,isProduct:false
+                  isFiles: false, isProduct: false
                 })
               }
               style={isVideos ? Style.isActivateTab : Style.isDeactiveTab}
@@ -284,7 +392,7 @@ class MembersDetails extends Component {
                   isTheory: false,
                   isVideos: false,
                   isFiles: true,
-                  isProduct:false
+                  isProduct: false
                 })
               }
               style={isFiles ? Style.isActivateTab : Style.isDeactiveTab}
@@ -293,7 +401,7 @@ class MembersDetails extends Component {
                 Social
               </Text>
             </TouchableOpacity>
-           
+
           </View>
 
           {isTheory ? (
@@ -305,7 +413,7 @@ class MembersDetails extends Component {
               navigation={this.props.navigation}
             />
           ) :
-          (
+              (
                 <View
                   style={{
                     padding: '2%',

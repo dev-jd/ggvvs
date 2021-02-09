@@ -26,8 +26,8 @@ const options = {
   takePhotoButtonTitle: 'Take Photo',
   chooseFromLibraryButtonTitle: 'Choose From Gallery',
   quality: 1,
-  maxWidth: 300,
-  maxHeight: 300,
+  maxWidth: 500,
+  maxHeight: 500,
   storageOptions: {
     skipBackup: true
   }
@@ -194,8 +194,8 @@ class ViewOtherPersionalDetails extends Component {
       // ),
       // // dob: details.member_birth_date,
       dob: Moment(details.member_birth_date, "YYYY-MM-DD", true).format("DD-MM-YYYY"),
-      fatherName: otherDetails.member_father,
-      motherName: otherDetails.member_mother,
+      fatherName: details.member_father,
+      motherName: details.member_mother,
       address: otherDetails.member_address,
       pincode: otherDetails.member_pincode,
       email: otherDetails.member_email,
@@ -1548,7 +1548,7 @@ class ViewOtherPersionalDetails extends Component {
                     })
                   ]}
                 >
-                  Photo{' '}
+                 Profile Photo{' '}
                 </Text>
                 {/* <Text>{this.state.photoImage}</Text> */}
                 <View
