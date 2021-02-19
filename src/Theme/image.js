@@ -30,6 +30,8 @@ const AppImages =
     back5:require('../images/back5.jpg'),
     back6:require('../images/back6.jpg'),
     back7:require('../images/back7.jpg'),
+    employment_banner:require('../images/employment_banner.png'),
+    nodata:require('../images/nodata.png'),
     
 
 }

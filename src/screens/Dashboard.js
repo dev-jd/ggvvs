@@ -86,7 +86,7 @@ export default class App extends Component {
       postad1: {},
       postad2: {},
       postadimageUrl: '',
-      postAdsArray: [],
+      postAdsArray: [],isProfessional:false
     }
   }
 
@@ -145,6 +145,10 @@ export default class App extends Component {
 
           console.log('package id ---->', res.data.is_matrimony_search)
           await AsyncStorage.setItem('isMatrimonySearch', res.data.is_matrimony_search+ '')
+
+          if(validationempty(res.data.professional_info)){
+            this.setState({isProfessional:true})
+          }
           if (validationempty(res.data.package_details.package_id) && res.data.package_details.status !== 'Expired') {
 
             await AsyncStorage.setItem('packageId', res.data.package_details.package_id + '')
@@ -970,13 +974,13 @@ export default class App extends Component {
                 </View>
 
               
-                  {/* <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <View style={[Style.dashcard, { marginTop: 10 }]}>
                     <TouchableOpacity
                       onPress={() =>
                         this.props.navigation.navigate('Employment', {
                           banner_image: this.state.banner_data.length>0?this.state.banner_data.bn_employment:null,
-                          banner_url:
-                            this.state.banner_paths.bn_employment + '/'
+                          banner_url:this.state.banner_paths.bn_employment + '/',
+                          isProfessional:this.state.isProfessional
                         })
                       }
                     >
@@ -997,7 +1001,7 @@ export default class App extends Component {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                  </View> */}
+                  </View>
                 <View style={[Style.dashcard, { marginTop: 10 }]}>
                   <TouchableOpacity
                     onPress={() =>

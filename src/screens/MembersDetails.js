@@ -328,7 +328,7 @@ class MembersDetails extends Component {
             }
             style={{
               backgroundColor: Colors.white,
-              height: 350,
+              height: 300,
               width: '100%',
               position: 'absolute'
             }}

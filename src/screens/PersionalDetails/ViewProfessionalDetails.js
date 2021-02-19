@@ -19,6 +19,7 @@ import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import Products from '../Products';
 import { showToast, validateName, validationBlank, validationempty } from '../../Theme/Const';
+import { Helper } from '../../Helper/Helper';
 
 const options = {
     title: 'Select Image',
@@ -58,6 +59,7 @@ export default class ViewProfessionalDetails extends Component {
             member_type: '',
             businessTypeArray: [],
             businesstype: '',
+            businessCatType: '',
             photoImage: '',
             photoPath: '',
             photoFileName: '',
@@ -80,7 +82,7 @@ export default class ViewProfessionalDetails extends Component {
             ytubelink: '',
             isProfessional: true,
             isProduct: false,
-            phonecode:''
+            phonecode: '', businessCatList: []
 
         };
     }
@@ -111,7 +113,7 @@ export default class ViewProfessionalDetails extends Component {
 
         console.log('item Data -->', details)
         console.log('item Data -->', logoUrl)
-        
+
 
         this.setState({
             details: details,
@@ -134,6 +136,9 @@ export default class ViewProfessionalDetails extends Component {
             photoImage: details.business_logo,
             company_pic_url: logoUrl,
         })
+        if (validationempty(details.business_category_id)) {
+            this.setState({ businessCatType: parseInt(details.business_category_id), })
+        }
         this.BusinessTypeApi()
         this.CountryApi()
     }
@@ -147,12 +152,25 @@ export default class ViewProfessionalDetails extends Component {
                     this.setState({
                         businessTypeArray: res.data.data
                     })
+
+                    this.bizCatListApiCall(this.state.businesstype)
                 }
             })
             .catch(err => {
                 console.log(err)
                 this.setState({ isLoding: false })
             })
+    }
+
+    bizCatListApiCall = async (bizId) => {
+        var formData = new FormData()
+        formData.append('business_type_id', bizId)
+        console.log('business formdata', formData)
+        var responce = await Helper.POST('business_category_list', formData)
+        console.log('check the response biz cat', responce)
+        if (responce.success) {
+            this.setState({ businessCatList: responce.data })
+        }
     }
 
     async CountryApi() {
@@ -224,15 +242,16 @@ export default class ViewProfessionalDetails extends Component {
     }
 
     async validation() {
-        if ( validationBlank(this.state.phonecode, 'Select Code')) {
+        if (validationBlank(this.state.businesstype, 'Select Business Type') && validationBlank(this.state.countrytatus, 'Select Country') && validationBlank(this.state.state, 'Select State') &&
+            validationBlank(this.state.city, 'Select City') && validationBlank(this.state.cmpName, 'Enter Company Name') && validationBlank(this.state.cmpPhone, 'Enter Company Number') &&
+            validationBlank(this.state.email, 'Enter Company Email') && validationBlank(this.state.p_whatsapp, 'Enter Company Whatsapp Number')) {
             this.editData()
         }
     }
 
     async editData() {
 
-        console.log('check the code --> ',this.state.phonecode)
-        this.setState({ isLoading: true })
+
         const formData = new FormData()
         formData.append('member_co_name', this.state.cmpName)
         formData.append('member_co_designation', this.state.designation)
@@ -245,6 +264,7 @@ export default class ViewProfessionalDetails extends Component {
         formData.append('city_id', this.state.citytatus)
         formData.append('email', this.state.email)
         formData.append('business_type', this.state.businesstype)
+        formData.append('business_category_id', this.state.businessCatType)
         formData.append('p_instagram', this.state.p_instagram)
         formData.append('p_facebook', this.state.p_facebook)
         formData.append('p_linkedin', this.state.p_linkedin)
@@ -357,12 +377,11 @@ export default class ViewProfessionalDetails extends Component {
                 </View>
                 {isProfessional ?
                     <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={Style.cointainer}>
+                        <View style={Style.dashcointainer1}>
 
 
                             <View>
-                                <View style={[Style.cardback, style = { flex: 1, justifyContent: 'center', marginTop: 10, }]}>
-
+                                <View style={[Style.cardback, { flex: 1, justifyContent: 'center', marginTop: 10, }]}>
                                     <View
                                         style={{
                                             flexDirection: 'row',
@@ -381,9 +400,10 @@ export default class ViewProfessionalDetails extends Component {
                                          </Text>
                                         <Picker
                                             selectedValue={this.state.businesstype}
-                                            onValueChange={(itemValue, itemIndex) =>
+                                            onValueChange={(itemValue, itemIndex) => {
                                                 this.setState({ businesstype: itemValue })
-                                            }
+                                                this.bizCatListApiCall(itemValue)
+                                            }}
                                             mode='dialog'
                                             style={{
                                                 flex: 1,
@@ -395,6 +415,41 @@ export default class ViewProfessionalDetails extends Component {
                                             <Picker.Item label='Select Business type' value='0' />
                                             {this.state.businessTypeArray.map((item, key) => (
                                                 <Picker.Item label={item.bm_type} value={item.id} key={key} />
+                                            ))}
+                                        </Picker>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginLeft: 15
+                                        }}
+                                    >
+                                        <Text
+                                            style={[
+                                                Style.Textmainstyle,
+                                                { width: '45%', color: Colors.black }
+                                            ]}
+                                        >
+                                            Business Category
+                                         </Text>
+                                        <Picker
+                                            selectedValue={this.state.businessCatType}
+                                            onValueChange={(itemValue, itemIndex) =>
+                                                this.setState({ businessCatType: itemValue })
+                                            }
+                                            mode='dialog'
+                                            style={{
+                                                flex: 1,
+                                                width: '100%',
+                                                fontFamily: CustomeFonts.reguar,
+                                                color: Colors.black
+                                            }}
+                                        >
+                                            <Picker.Item label='Select Business type' value='0' />
+                                            {this.state.businessCatList.map((item, key) => (
+                                                <Picker.Item label={item.name} value={item.id} key={key} />
                                             ))}
                                         </Picker>
                                     </View>
@@ -653,15 +708,15 @@ export default class ViewProfessionalDetails extends Component {
                                                     ))}
                                                 </Picker>
                                                 </View> */}
-                                                <Input style={[Style.Textstyle,{width:'100%'}]}
-                                                    multiline={false}
-                                                    onChangeText={(value) => this.setState({ p_whatsapp: value })}
-                                                    value={this.state.p_whatsapp}
-                                                    keyboardType='number-pad'
-                                                    maxLength={13}
-                                                    minLength={8}
-                                                >
-                                                </Input>
+                                            <Input style={[Style.Textstyle, { width: '100%' }]}
+                                                multiline={false}
+                                                onChangeText={(value) => this.setState({ p_whatsapp: value })}
+                                                value={this.state.p_whatsapp}
+                                                keyboardType='number-pad'
+                                                maxLength={13}
+                                                minLength={8}
+                                            >
+                                            </Input>
                                             {/* </View> */}
                                         </Item>
                                     </Form>

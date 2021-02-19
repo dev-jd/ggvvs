@@ -22,6 +22,7 @@ const STRINGNAME = {
 //   razerpayKey:'rzp_test_lemdGJXOYmQDZZ'
   razerpayKey:'rzp_live_8zIAqo1XI3uG0M',
   searchKey:'AIzaSyD8rFXA6KM_9OCzNcErc4d9Vsr1KeTPIxk',  
+  termscondition_url:'http://new.mysamaaj.com/terms-policy'
 }
 
 const randomNumber = () => {
@@ -285,7 +286,7 @@ class NoData extends React.Component {
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
                 <Image
                     style={{ width: WIDTH * 0.8, height: HEIGHT * 0.35, marginTop: HEIGHT * 0.28 }}
-                    source={Images.noData}
+                    source={Images.nodata}
                     resizeMode='contain'
                 />
             </View>

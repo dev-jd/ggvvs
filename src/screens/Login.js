@@ -30,6 +30,9 @@ import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Dimensions } from 'react-native'
+import { CheckBox } from 'react-native-elements'
+import { Linking } from 'react-native'
+import { showToast, STRINGNAME } from '../Theme/Const'
 
 class Login extends Component {
   constructor(props) {
@@ -55,7 +58,8 @@ class Login extends Component {
     deviceId: '',
     playerId: '',
     countrycode: [],
-    code: '91'
+    code: '91',
+    isAccept: false
   }
 
   componentWillUnmount() {
@@ -117,51 +121,38 @@ class Login extends Component {
   }
   onPressLogin() {
     // this.apiCalling()
+
     if (this.state.indiaOrNot) {
-      if (
-        this.state.email === '' ||
-        this.state.email === null ||
-        this.state.email === undefined
-      ) {
+      if (this.state.email === '' ||this.state.email === null ||this.state.email === undefined) {
         Toast.show('Enter email')
-      } else if (
-        this.state.password === '' ||
-        this.state.password === null ||
-        this.state.password === undefined
-      ) {
+      } else if (this.state.password === '' ||this.state.password === null ||this.state.password === undefined) {
         Toast.show('Enter password')
       } else {
-        //  this.props.navigation.replace('Otp')
-        this.apiCalling()
+        if (this.state.isAccept) {
+          this.apiCalling()
+        } else {
+          showToast('Accept terms and conditions first ')
+        }
       }
     } else {
-      if (
-        this.state.code === '' ||
-        this.state.code === null ||
-        this.state.code === undefined ||
-        this.state.code === 'code'
-      ) {
+      if (this.state.code === '' ||this.state.code === null ||this.state.code === undefined ||this.state.code === 'code') {
         Toast.show('Select Country Code')
       } else
-        if (
-          this.state.mobile === '' ||
-          this.state.mobile === null ||
-          this.state.mobile === undefined
-        ) {
+        if (this.state.mobile === '' ||this.state.mobile === null ||this.state.mobile === undefined) {
           Toast.show('Enter mobile no')
         } else if (this.state.mobile.length < 8) {
           Toast.show('Enter valid mobile no')
-        } else if (
-          this.state.password === '' ||
-          this.state.password === null ||
-          this.state.password === undefined
-        ) {
+        } else if (this.state.password === '' ||this.state.password === null ||this.state.password === undefined) {
           Toast.show('Enter password')
         } else {
-          //  this.props.navigation.replace('Otp')
-          this.apiCalling()
+          if (this.state.isAccept) {
+            this.apiCalling()
+          } else {
+            showToast('Accept terms and conditions first ')
+          }
         }
     }
+
   }
 
   async apiCalling() {
@@ -189,7 +180,7 @@ class Login extends Component {
       var response = await Helper.POST('login', formdata)
       console.log('check Responce login-- > ', response)
       this.setState({
-        _isLoading: false 
+        _isLoading: false
       })
       if (response.status === true) {
         SimpleToast.show("Login successfully")
@@ -197,7 +188,7 @@ class Login extends Component {
         this.props.navigation.replace('Otp', {
           email: this.state.email, mobile: this.state.code + this.state.mobile,
           password: this.state.password, deviceId: this.state.deviceId, playerId: this.state.playerId,
-          indiaOrNot:this.state.indiaOrNot
+          indiaOrNot: this.state.indiaOrNot
         })
 
         // AsyncStorage.setItem('member_id', response.data.member_id + '')
@@ -249,56 +240,33 @@ class Login extends Component {
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
-        <ScrollView style={{flex: 1}}>
-        <View style={{height:Dimensions.get('window').height}}>
-          <Image
-            source={images.logo}
-            style={{ alignSelf: 'center', width: '40%', height: "40%" }}
-            resizeMode='center'
-          />
-          <View
-            style={{
-              borderColor: 'blue',
-
-              height: 400,
-              paddingHorizontal: '2%'
-            }}
-          >
-            <View>
-              <Text style={[Style.title, Style.leftTitle]}>Sign In</Text>
-              <Text style={[Style.Textmainstyle, Style.leftTitle]}>
-                Please Sign in to continue
+        <ScrollView style={{ flex: 1 }}>
+          <View style={{ height: Dimensions.get('window').height }}>
+            <Image
+              source={images.logo}
+              style={{ alignSelf: 'center', width: '40%', height: "40%" }}
+              resizeMode='center'
+            />
+            <View
+              style={{
+                borderColor: 'blue',
+                height: 400,
+                paddingHorizontal: '2%'
+              }}
+            >
+              <View>
+                <Text style={[Style.title, Style.leftTitle]}>Sign In</Text>
+                <Text style={[Style.Textmainstyle, Style.leftTitle]}>
+                  Please Sign in to continue
             </Text>
-            </View>
-            <View style={{ height: 10 }} />
-            <View>
-              <View style={Style.InputContainerrow}>
-                {this.state.indiaOrNot ? (
-                  <View style={{ flexDirection: 'row' }}>
-                    <Icon
-                      name='mail'
-                      size={28}
-                      style={{
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        alignSelf: 'center'
-                      }}
-                    />
-
-                    <TextInput
-                      style={[Style.body, { width: '80%' }]}
-                      placeholder='Email'
-                      onChangeText={text => this.setState({ email: text })}
-                      value={this.state.email}
-                      keyboardType='email-address'
-                      placeholderTextColor='grey'
-                      underlineColorAndroid='transparent'
-                    />
-                  </View>
-                ) : (
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              </View>
+              <View style={{ height: 10 }} />
+              <View>
+                <View style={Style.InputContainerrow}>
+                  {this.state.indiaOrNot ? (
+                    <View style={{ flexDirection: 'row' }}>
                       <Icon
-                        name='phone'
+                        name='mail'
                         size={28}
                         style={{
                           paddingLeft: 10,
@@ -306,84 +274,115 @@ class Login extends Component {
                           alignSelf: 'center'
                         }}
                       />
-                      <TouchableOpacity>
-                        <Text style={[Style.body, { width: '100%' }]}>{this.state.code}</Text>
-                      </TouchableOpacity>
 
                       <TextInput
                         style={[Style.body, { width: '80%' }]}
-                        placeholder='Mobile number'
-                        onChangeText={text => this.setState({ mobile: text })}
-                        value={this.state.mobile}
-                        keyboardType='number-pad'
+                        placeholder='Email'
+                        onChangeText={text => this.setState({ email: text })}
+                        value={this.state.email}
+                        keyboardType='email-address'
                         placeholderTextColor='grey'
                         underlineColorAndroid='transparent'
-                        maxLength={13}
-                        minLength={8}
                       />
                     </View>
-                  )}
-              </View>
-              <View style={{ height: 2 }} />
+                  ) : (
+                      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon
+                          name='phone'
+                          size={28}
+                          style={{
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            alignSelf: 'center'
+                          }}
+                        />
+                        <TouchableOpacity>
+                          <Text style={[Style.body, { width: '100%' }]}>{this.state.code}</Text>
+                        </TouchableOpacity>
 
-              <View style={{ height: 10 }} />
+                        <TextInput
+                          style={[Style.body, { width: '80%' }]}
+                          placeholder='Mobile number'
+                          onChangeText={text => this.setState({ mobile: text })}
+                          value={this.state.mobile}
+                          keyboardType='number-pad'
+                          placeholderTextColor='grey'
+                          underlineColorAndroid='transparent'
+                          maxLength={13}
+                          minLength={8}
+                        />
+                      </View>
+                    )}
+                </View>
+                <View style={{ height: 2 }} />
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <Text
-                  style={[
-                    Style.rightTitle,
-                    {
-                      width: '80%',
-                      paddingVertical: '3%'
+                <View style={{ height: 10 }} />
+
+
+
+                <View style={Style.flexView}>
+                  <Text
+                    style={[
+                      Style.rightTitle,
+                      {
+                        width: '80%',
+                        paddingVertical: '3%'
+                      }
+                    ]}
+                  >
+                    I'm out of India
+                      </Text>
+                  <Switch
+                    value={this.state.indiaOrNot}
+                    onValueChange={indiaOrNot => this.setState({ indiaOrNot })}
+                    thumbColor={
+                      this.state.indiaOrNot ? Colors.Theme_color : Colors.light_pink
                     }
-                  ]}
-                >
-                  I'm out of India
-              </Text>
-                <Switch
-                  value={this.state.indiaOrNot}
-                  onValueChange={indiaOrNot => this.setState({ indiaOrNot })}
-                  thumbColor={
-                    this.state.indiaOrNot ? Colors.Theme_color : Colors.light_pink
-                  }
-                  trackColor={{ false: '#767577', true: Colors.lightThem }}
-                />
+                    trackColor={{ false: '#767577', true: Colors.lightThem }}
+                  />
+                </View>
+                <View style={Style.flexView}>
+                  <CheckBox
+                    checked={this.state.isAccept}
+                    containerStyle={{ width: '10%' }}
+                    iconType='feather'
+                    checkedColor={Colors.Theme_color}
+                    checkedIcon='check-square'
+                    uncheckedIcon='square'
+                    onPress={() => this.setState({ isAccept: !this.state.isAccept })}
+                  />
+                  <TouchableOpacity style={{ width: '90%' }} onPress={() => Linking.openURL(STRINGNAME.termscondition_url)}>
+                    <Text style={[Style.SubTextstyle]}>I have read and agreed to this - End User License Agreement (EULA) Read Here</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  {this.state._isLoading ? (
+                    <ActivityIndicator color={Colors.Theme_color} />
+                  ) : (
+                      <TouchableOpacity
+                        onPress={() => this.onPressLogin()}
+                        style={[
+                          Style.Buttonback,
+                          {
+                            width: '100%',
+                            paddingLeft: 10,
+                            paddingRight: 10
+                          }
+                        ]}
+                      >
+                        <Text style={Style.buttonText}>Log In</Text>
+                      </TouchableOpacity>
+                    )}
+                </View>
 
-              </View>
-              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                {this.state._isLoading ? (
-                  <ActivityIndicator color={Colors.Theme_color} />
-                ) : (
-                    <TouchableOpacity
-                      onPress={() => this.onPressLogin()}
-                      style={[
-                        Style.Buttonback,
-                        {
-                          width: '100%',
-                          paddingLeft: 10,
-                          paddingRight: 10
-                        }
-                      ]}
-                    >
-                      <Text style={Style.buttonText}>Log In</Text>
-                    </TouchableOpacity>
-                  )}
-              </View>
+                <View style={{ height: 25 }} />
 
-              <View style={{ height: 25 }} />
-
-              <Text style={[Style.SubTextstyle]}>
-                <Text style={[Style.Textbold]}>Attention Indian Users </Text>- if you are notgetting OTP through SMS, kindly enable the button <Text style={[Style.Textbold]}> "I am out of India" </Text> and enter your email id which you have filed in the GGVVS Membership form, you will be getting OTP into your email (check your spam)
+                <Text style={[Style.SubTextstyle]}>
+                  <Text style={[Style.Textbold]}>Attention Indian Users </Text>- if you are notgetting OTP through SMS, kindly enable the button <Text style={[Style.Textbold]}> "I am out of India" </Text> and enter your email id which you have filed in the GGVVS Membership form, you will be getting OTP into your email (check your spam)
             </Text>
+              </View>
             </View>
           </View>
-        </View>
         </ScrollView>
       </SafeAreaView>
     )

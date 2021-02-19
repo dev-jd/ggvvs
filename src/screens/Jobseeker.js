@@ -20,6 +20,10 @@ import {
   makeTableRenderer
 } from 'react-native-render-html-table-bridge'
 import { pic_url } from '../Static'
+import { Helper } from '../Helper/Helper';
+import TextInputCustome from '../Compoment/TextInputCustome';
+import { TextInput } from 'react-native';
+import { validationempty } from '../Theme/Const';
 const config = {
   WebViewComponent: WebView
 }
@@ -51,7 +55,9 @@ export default class App extends Component {
     super()
     this.state = {
       data_list: [],
-      isLoding: false
+      allData_list: [],
+      isLoding: false,
+      search: ''
     }
   }
 
@@ -61,58 +67,29 @@ export default class App extends Component {
     this.setState({
       samaj_id: samaj_id
     })
-
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
-        this.apiCalling()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
+    this.apiCalling()
   }
 
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      this.apiCalling()
-    } else {
-      this.setState({ connection_Status: false })
-    }
-  }
 
   async apiCalling() {
     this.setState({ isLoding: true })
-    console.log('base url: --', base_url + 'jobList?samaj_id=' + this.state.samaj_id)
-    axois
-      .get(base_url + 'jobList?samaj_id=' + this.state.samaj_id)
-      .then(res => {
-        console.log('jobList res---->', res.data.data)
-        this.setState({ isLoding: false })
-        if (res.data.status === true) {
-          this.setState({
-            data_list: res.data.data,
-            isLoding: false
-          })
-        }
-      })
-      .catch(err => {
-        console.log('jobList error --->', err)
-        this.setState({ isLoding: false })
-      })
+    var response = await Helper.POST('jobProviders')
+    console.log('response', response)
+    this.setState({
+      isLoding: false,
+      data_list: response.data,
+      allData_list: response.data
+    })
+
   }
 
   categoryRendeItem = ({ item, index }) => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('JobDetails', { item, title: item.post_name })}>
         <View
           style={[
             Style.cardback,
-            (style = { flex: 1, flexDirection: 'column' })
+            { flex: 1, flexDirection: 'column' }
           ]}
         >
           <View
@@ -121,14 +98,15 @@ export default class App extends Component {
               flexDirection: 'row',
               width: '100%',
               justifyContent: 'center',
+              alignItems: 'center',
               marginTop: 5
             }}
           >
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
-              Member name
+            <Text style={[Style.Tital18, { flex: 7, color: Colors.Theme_color }]}>
+              {item.post_name}
             </Text>
-            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-              {item.member_name}
+            <Text style={[Style.SubTextstyle, { flex: 3, textAlign: 'right' }]}>
+              {item.posted_date}
             </Text>
           </View>
           <View
@@ -140,11 +118,8 @@ export default class App extends Component {
               marginTop: 5
             }}
           >
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
-              Member Mobile No.
-            </Text>
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-              {item.member_mobile}
+              {item.company_name}
             </Text>
           </View>
           <View
@@ -156,15 +131,10 @@ export default class App extends Component {
               marginTop: 5
             }}
           >
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
-              Member Email
-            </Text>
-            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-              {item.member_email}
+            <Text style={[Style.SubTextstyle, { flex: 6, textAlign: 'left' }]}>
+              Location : {item.city}, {item.state}
             </Text>
           </View>
-
-
           <View
             style={{
               flex: 1,
@@ -174,74 +144,56 @@ export default class App extends Component {
               marginTop: 5
             }}
           >
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
-              Post
-            </Text>
-            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-              {item.member_job_post}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              width: '100%',
-              justifyContent: 'center',
-              marginTop: 5
-            }}
-          >
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
-              Qualification
-            </Text>
-            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-              {item.member_job_qualification}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              width: '100%',
-              justifyContent: 'center',
-              marginTop: 5
-            }}
-          >
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
-              Job Description
-            </Text>
-            {/* <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-              {item.member_job_description}
-            </Text> */}
-
-            <HTML 
-             style={[Style.Textstyle, { flex: 6,textAlign:'center' }]}
-            html={item.member_job_description}
-                baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium,  }} />
-
+            <Text style={[Style.Textstyle, { flex: 1, }]}>Experiacne :  {item.experience} Year {validationempty(item.experience_month) ? item.experience_month + ' ' + 'Months' : null}</Text>
 
           </View>
+
+
+
         </View>
       </TouchableOpacity>
     )
   }
+  handleSearch(text) {
+    const newData = this.state.allData_list.filter(item => {
+      const itemData = `${item.keywords.toUpperCase()}   
+      ${item.experience.toUpperCase()}`;
 
+      const textData = text.toUpperCase();
+
+      return itemData.indexOf(textData) > -1;
+    });
+
+    this.setState({ data_list: newData, search: text });
+  }
   render() {
+    var { search } = this.state
     return (
       <SafeAreaView style={Style.cointainer1}>
         <StatusBar
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
+        <View style={[Style.InputContainerrow, { margin: '2%', width: '95%', paddingHorizontal: '2%' }]}>
+          <TextInput
+            style={{ width: '100%' }}
+            autoCapitalize="none"
+            autoCorrect={false}
+            // clearButtonMode="always"
+            value={search}
+            onChangeText={queryText => this.handleSearch(queryText)}
+            placeholder="Search"
+          />
+        </View>
         {this.state.isLoding ? (
           <ActivityIndicator color={Colors.Theme_color} size={'large'} />
         ) : (
             <FlatList
-            style={{paddingHorizontal:'2%',paddingVertical:'2%' }}
+              style={{ paddingHorizontal: '2%', paddingVertical: '2%' }}
               showsVerticalScrollIndicator={false}
               data={this.state.data_list}
               renderItem={item => this.categoryRendeItem(item)}
+              keyExtractor={item => item.id}
             />
           )}
       </SafeAreaView>

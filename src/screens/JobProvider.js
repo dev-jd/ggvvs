@@ -21,6 +21,8 @@ import {
 import { pic_url } from '../Static'
 import RNFetchBlob from 'rn-fetch-blob';
 import Toast from 'react-native-simple-toast'
+import { Helper } from '../Helper/Helper';
+import { TextInput } from 'react-native';
 
 const config = {
   WebViewComponent: WebView
@@ -51,8 +53,10 @@ export default class App extends Component {
     super()
     this.state = {
       data_list: [],
+      allData_list: [],
       isLoding: false,
-      cvUrl: ''
+      cvUrl: '',
+      search:''
     }
   }
 
@@ -69,9 +73,9 @@ export default class App extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-      if (this.state.connection_Status === true) {
-        this.apiCalling()
-      }
+    if (this.state.connection_Status === true) {
+      this.apiCalling()
+    }
   }
 
   async _checkDownload(member_CV) {
@@ -117,7 +121,7 @@ export default class App extends Component {
 
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       const docUrl = member_CV
-
+      console.log('docUrl', docUrl)
       const path = '/storage/emulated/0/Attachments/' + cvname
       console.log("path-->", path)
       const { config, fs } = RNFetchBlob;
@@ -159,31 +163,50 @@ export default class App extends Component {
 
   async apiCalling() {
     this.setState({ isLoding: true })
-    console.log('base url: --', base_url + 'jobProviderList?samaj_id=' + this.state.samaj_id)
-    axois
-      .get(base_url + 'jobProviderList?samaj_id=' + this.state.samaj_id)
-      .then(res => {
-        console.log('jobProviderList res---->', res.data.data)
-        this.setState({ isLoding: false })
-        if (res.data.status === true) {
-          this.setState({
-            data_list: res.data.data,
-            isLoding: false,
-            cvUrl: res.data.path + '/'
-          })
-        }
-      })
-      .catch(err => {
-        console.log('jobProviderList error --->', err)
-        this.setState({ isLoding: false })
-      })
-  }
+    // axois
+    //   .get(base_url + 'jobProviders' + this.state.samaj_id)
+    //   .then(res => {
+    //     console.log('jobProviderList res---->', res.data.data)
+    //     this.setState({ isLoding: false })
+    //     if (res.data.status === true) {
+    //       this.setState({
+    //         data_list: res.data.data,
+    //         isLoding: false,
+    //         cvUrl: res.data.path + '/'
+    //       })
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log('jobProviderList error --->', err)
+    //     this.setState({ isLoding: false })
+    //   })
+    var response = await Helper.POST('jobSeekers')
+    console.log('response', response)
+    this.setState({
+      isLoding: false,
+      data_list: response.data,
+      cvUrl: response.url,
+      allData_list: response.data
+    })
 
+  }
+  handleSearch(text) {
+    const newData = this.state.allData_list.filter(item => {
+      const itemData = `${item.keywords.toUpperCase()}   
+      ${item.experience.toUpperCase()}`;
+
+      const textData = text.toUpperCase();
+
+      return itemData.indexOf(textData) > -1;
+    });
+
+    this.setState({ data_list: newData, search: text });
+  }
   categoryRendeItem = ({ item, index }) => {
     return (
-      <TouchableOpacity >
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('EmployeeDetails', { item, title: item.member_name, cvUrl: this.state.cvUrl })}>
 
-        <View style={[Style.cardback, style = { flex: 1, flexDirection: 'column' }]}>
+        <View style={[Style.cardback, { flex: 1, flexDirection: 'column' }]}>
           <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
             <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>Member name</Text>
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>{item.member_name}</Text>
@@ -198,36 +221,35 @@ export default class App extends Component {
             <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>Email</Text>
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>{item.member_email}</Text>
           </View>
-
           <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>Area of interest</Text>
-            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>{item.member_area_of_interest}</Text>
+            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>Working As</Text>
+            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>{item.keywords}</Text>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
-            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>Skills</Text>
-            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>{item.member_skills}</Text>
-          </View>
-          {item.member_CV === null || item.member_CV === '' ? null :
-            <TouchableOpacity onPress={() => this._checkDownload(item.member_CV)}>
-              <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
-                <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>CV</Text>
-                <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>{item.member_CV}</Text>
-              </View>
-            </TouchableOpacity>
-          }
         </View>
       </TouchableOpacity>
     )
   }
 
   render() {
+    var {search} = this.state
     return (
       <SafeAreaView style={Style.cointainer1}>
         <StatusBar
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
+        <View style={[Style.InputContainerrow, { margin: '2%', width: '95%', paddingHorizontal: '2%' }]}>
+          <TextInput
+            style={{ width: '100%' }}
+            autoCapitalize="none"
+            autoCorrect={false}
+            // clearButtonMode="always"
+            value={search}
+            onChangeText={queryText => this.handleSearch(queryText)}
+            placeholder="Search"
+          />
+        </View>
         {this.state.isLoding ? (
           <ActivityIndicator color={Colors.Theme_color} size={'large'} />
         ) : (

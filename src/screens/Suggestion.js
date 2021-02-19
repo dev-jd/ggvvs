@@ -70,28 +70,28 @@ export default class App extends Component {
      
     })
 
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
+    // NetInfo.isConnected.addEventListener(
+    //   'connectionChange',
+    //   this._handleConnectivityChange
+    // )
+    // NetInfo.isConnected.fetch().done(isConnected => {
+    //   if (isConnected == true) {
+    //     this.setState({ connection_Status: true })
         this.apiCalling()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
+      // } else {
+      //   this.setState({ connection_Status: false })
+      // }
+    // })
   }
 
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      this.apiCalling()
-    } else {
-      this.setState({ connection_Status: false })
-    }
-  }
+  // _handleConnectivityChange = isConnected => {
+  //   if (isConnected == true) {
+  //     this.setState({ connection_Status: true })
+  //     this.apiCalling()
+  //   } else {
+  //     this.setState({ connection_Status: false })
+  //   }
+  // }
 
   async apiCalling() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
@@ -128,7 +128,7 @@ export default class App extends Component {
     formdata.append('createdBy', this.state.member_id)
 
     console.log('suggesion form data', formdata)
-    if (this.state.connection_Status) {
+    // if (this.state.connection_Status) {
       axois
         .post(base_url + 'suggection_add', formdata)
         .then(response => {
@@ -145,9 +145,9 @@ export default class App extends Component {
           this.setState({ _isLoading: false })
           console.log('suggection_add err', err)
         })
-    } else {
-      Toast.show('no internet connection')
-    }
+    // } else {
+    //   Toast.show('no internet connection')
+    // }
   }
 
   render() {
