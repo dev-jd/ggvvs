@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   Dimensions
 } from 'react-native'
-import { Content, Card, CardItem, Thumbnail, Left, Body, Toast } from 'native-base'
+import { Content, Card, CardItem, Thumbnail, Left, Body, Toast, Right, Form, Item, Label, Input } from 'native-base'
 import IconFeather from 'react-native-vector-icons/Feather'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -32,6 +32,7 @@ import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import RNFetchBlob from 'rn-fetch-blob'
 import Share from 'react-native-share'
+import Modal from 'react-native-modal'
 
 import {
   IGNORED_TAGS,
@@ -41,7 +42,7 @@ import {
 import AppImages from '../Theme/image'
 import { Helper } from '../Helper/Helper'
 import SimpleToast from 'react-native-simple-toast'
-import { validationempty } from '../Theme/Const'
+import { showToast, validationempty } from '../Theme/Const'
 import realm from 'realm';
 
 const config = {
@@ -86,7 +87,8 @@ export default class App extends Component {
       postad1: {},
       postad2: {},
       postadimageUrl: '',
-      postAdsArray: [],isProfessional:false
+      postAdsArray: [], isProfessional: false, menuVisibleList1: [], visibleModal: null, report_reason: '',
+      blockedPostId: '', buttonLoding: false, bottomLoading: false, pageNo: 1, totalPage: null
     }
   }
 
@@ -133,8 +135,6 @@ export default class App extends Component {
     axois
       .post(base_url + 'profile_data', formdata)
       .then(async (res) => {
-        // console.log('profile_data res---->', res.data.member_details)
-        // console.log('profile_data res---->', res.data.package_details.status)
         this.setState({ isLoding: false })
         if (res.data.status === true) {
           this.setState({
@@ -144,10 +144,10 @@ export default class App extends Component {
           })
 
           console.log('package id ---->', res.data.is_matrimony_search)
-          await AsyncStorage.setItem('isMatrimonySearch', res.data.is_matrimony_search+ '')
+          await AsyncStorage.setItem('isMatrimonySearch', res.data.is_matrimony_search + '')
 
-          if(validationempty(res.data.professional_info)){
-            this.setState({isProfessional:true})
+          if (validationempty(res.data.professional_info)) {
+            this.setState({ isProfessional: true })
           }
           if (validationempty(res.data.package_details.package_id) && res.data.package_details.status !== 'Expired') {
 
@@ -175,7 +175,10 @@ export default class App extends Component {
     //     date: 'date',
     //     created_id: 'int',
     //     like_count: 'int',
-    //     like_unlike: 'int?'
+    //     like_unlike: 'int?',
+    //     member_name: 'string?',
+    //     member_pic: 'string?',
+    //     p_audio: 'string?'
     //   }
     // }
 
@@ -202,15 +205,15 @@ export default class App extends Component {
     //   let postlist = realm.objects('post').filtered('date < $0', check_pre_month)
     //   console.log('check the previce month ', postlist)
 
-    //   if (postlist.length > 0) {
-    //     realm.write(() => {
-    //       realm.delete(realm.objects('post').filtered('date < $0', check_pre_month))
-    //     })
-    //   }
+    //   // if (postlist.length > 0) {
+    //   //   realm.write(() => {
+    //   //     realm.delete(realm.objects('post').filtered('date < $0', check_pre_month))
+    //   //   })
+    //   // }
 
     // }
 
-    // console.log("total total_length ---> ",total_length)
+    // console.log("total total_length ---> ", total_length)
     var formdata = new FormData()
 
     // if (total_length > 0) {
@@ -218,13 +221,15 @@ export default class App extends Component {
     //   formdata.append('member_id', this.state.member_id)
     //   formdata.append('type', this.state.member_type)
     //   formdata.append('p_id', date_check)
+    //   formdata.append('page', this.state.pageNo)
 
     // } else {
 
-    formdata.append('samaj_id', this.state.samaj_id)
-    formdata.append('member_id', this.state.member_id)
-    formdata.append('type', this.state.member_type)
-    formdata.append('p_id', '0')
+      formdata.append('samaj_id', this.state.samaj_id)
+      formdata.append('member_id', this.state.member_id)
+      formdata.append('type', this.state.member_type)
+      formdata.append('p_id', '0')
+      formdata.append('page', this.state.pageNo)
 
     // }
 
@@ -239,19 +244,22 @@ export default class App extends Component {
           // console.log('post list responce', res.data.data)
           if (res.data.data.length > 0) {
             this.setState({
-              postData: res.data.data,
+              postData: [...this.state.postData, ...res.data.data],
               postDataURL: res.data.URL,
               m_URL: res.data.M_URL,
-              audioUrl: res.data.Audio
-              // postDataView: res.data.data
+              audioUrl: res.data.Audio,
+              totalPage: res.data.total_page,
+              bottomLoading: false,
+              postDataView: res.data.data
             })
+            console.log('check post data',postDataView)
             // realm write data
             // realm.write(() => {
             //   res.data.data.forEach(element => {
             //     let result = realm
             //       .objects('post')
             //       .filtered('id = ' + element.id)
-
+                
             //     if (result.length === 0) {
             //       realm.create('post', {
             //         id: element.id,
@@ -262,7 +270,10 @@ export default class App extends Component {
             //         date: Moment(element.date).format('YYYY-MM-DD'),
             //         created_id: element.created_id,
             //         like_count: element.like_count,
-            //         like_unlike: element.like_unlike
+            //         like_unlike: element.like_unlike,
+            //         member_name: element.member_name,
+            //         member_pic: element.member_pic,
+            //         p_audio: element.p_audio
             //       })
 
             //       var postDataView = realm.objects(post).sorted('id', true);
@@ -279,6 +290,8 @@ export default class App extends Component {
             //   })
             // })
           }
+        }else{
+          this.setState({bottomLoading:false})
         }
       })
       .catch(err => {
@@ -398,6 +411,24 @@ export default class App extends Component {
       .catch(err => console.log(err));
   }
 
+
+  async reportApi() {
+    this.setState({ buttonLoding: true })
+    var formData = new FormData()
+    formData.append('member_id', this.state.member_id)
+    formData.append('post_id', this.state.blockedPostId)
+    formData.append('message', this.state.report_reason)
+    console.log('check the formdata', formData)
+
+    var response = await Helper.POST('reportToAdmin', formData)
+    console.log('reportToAdmin api response', response)
+    showToast(response.message)
+    if (response.success) {
+      this.setState({ visibleModal: null, report_reason: '', blockedPostId: '', buttonLoding: false })
+      // this.apiCalling()
+    }
+  }
+
   async onLogout() {
     await AsyncStorage.removeItem('member_id', '')
     await AsyncStorage.removeItem('member_samaj_id', '')
@@ -406,6 +437,267 @@ export default class App extends Component {
       this.props.navigation.replace('Login')
     }
   }
+
+  postRendeItem = ({ item, index }) => {
+    return (
+      <Content>
+        {/*  ad in post */}
+        {index === 2 ? <View>
+          <Card>
+            {this.state.postAdsArray.length > 0 ?
+              <TouchableOpacity
+                style={{ padding: '2%', height: 90 }}
+                onPress={() =>
+                  this.props.navigation.navigate('AdDetails', {
+                    itemData: this.state.postAdsArray[0],
+                    img_url: this.state.postadimageUrl + '/'
+                  })
+                }
+              >
+                {this.state.postAdsArray[0].sa_image === null || this.state.postAdsArray[0].sa_image === undefined || this.state.postAdsArray[0].sa_image === '' ?
+                  <Image
+                    source={AppImages.logo}
+                    style={{ height: 70 }}
+                    resizeMode='contain'
+                  /> : <Image
+                    source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[0].sa_image }}
+                    style={{ height: 70 }}
+                    resizeMode='contain'
+                  />}
+              </TouchableOpacity>
+              : <Image
+                source={AppImages.logo}
+                style={{ height: 70 }}
+                resizeMode='contain'
+              />}
+          </Card>
+        </View> : null}
+        <View>
+          {index === 4 ? <View>
+            <Card>
+              {this.state.postAdsArray.length > 0 ?
+                <TouchableOpacity
+                  style={{ padding: '2%', height: 90 }}
+                  onPress={() =>
+                    this.props.navigation.navigate('AdDetails', {
+                      itemData: this.state.postAdsArray[1],
+                      img_url: this.state.postadimageUrl + '/'
+                    })
+                  }
+                >
+                  {checkempty(this.state.postAdsArray[1].sa_image) ?
+                    <Image
+                      source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[1].sa_image }}
+                      style={{ height: 70 }}
+                      resizeMode='contain'
+                    /> : <Image
+                      source={AppImages.logo}
+                      style={{ height: 70 }}
+                      resizeMode='contain'
+                    />}
+                </TouchableOpacity>
+                : <Image
+                  source={AppImages.logo}
+                  style={{ height: 70 }}
+                  resizeMode='contain'
+                />}
+            </Card>
+          </View> : null}
+        </View>
+        {/* post item */}
+        <Card>
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate('PostDetails', {
+                postData: item,
+                imgUrl: this.state.postDataURL,
+                m_URL: this.state.m_URL,
+                audioUrl: this.state.audioUrl
+              })
+            }
+          >
+            <CardItem>
+              <Left>
+                <Thumbnail
+                  source={
+                    item.member_pic === null
+                      ? images.logo
+                      : { uri: this.state.m_URL + item.member_pic }
+                  }
+                  style={{
+                    backgroundColor: Colors.divider,
+                    height: 50,
+                    width: 50
+                  }}
+                />
+                <Body>
+                  <Text style={Style.Textstyle}>
+                    {item.member_name}
+                  </Text>
+                  <Text style={Style.Textstyle} note>
+                    {Moment(item.date).format('DD-MM-YYYY')}
+                  </Text>
+                </Body>
+              </Left>
+
+            </CardItem>
+            <View style={{ flexDirection: 'column' }}>
+
+              {item.post_image === null ||
+                item.post_image === '' ||
+                item.post_image === undefined ? null : (
+                  <Image
+                    source={{
+                      uri: this.state.postDataURL + item.post_image
+                    }}
+                    style={{ height: 200, flex: 1 }}
+                    resizeMode='contain'
+                    resizeMethod='resize'
+                  />
+                )}
+            </View>
+          </TouchableOpacity>
+          <View style={{ padding: '2%' }}>
+            <HTML
+              html={item.description}
+              imagesMaxWidth={Dimensions.get('window').width}
+              baseFontStyle={{
+                fontSize: 14,
+                fontFamily: CustomeFonts.medium,
+                color: Colors.black
+              }}
+            />
+          </View>
+          {item.p_audio === null ||
+            item.p_audio === '' ||
+            item.p_audio === undefined ? null : (
+              <TouchableOpacity
+                transparent
+                style={{
+                  paddingHorizontal: '4%',
+                  flexDirection: 'row',
+                  justifyContent: 'center'
+                }}
+                onPress={() =>
+                  this.props.navigation.navigate('PlayAudio', {
+                    id: item.id,
+                    title: item.p_audio,
+                    audioUrl: this.state.audioUrl
+                  })
+                }
+              >
+                <Text style={[Style.Textstyle]} uppercase={false}>
+                  {item.p_audio}
+                </Text>
+                <Icon
+                  name='music'
+                  size={20}
+                  style={{ alignSelf: 'center' }}
+                />
+              </TouchableOpacity>
+            )}
+          <CardItem>
+            <View style={[Style.flexView, { flex: 1 }]}>
+              <TouchableOpacity
+                transparent
+                style={[Style.flexView, { width: '20%' }]}
+                onPress={() => this.addLike(item.id)}
+              >
+                {item.like_unlike === 1 ? (
+                  <Icon
+                    color={Colors.Theme_color}
+                    name='thumbs-up'
+                    size={20}
+                    style={{ alignSelf: 'center' }}
+                  />
+                ) : (
+                    <Icon
+                      name='thumbs-up'
+                      size={20}
+                      style={{ alignSelf: 'center' }}
+                    />
+                  )}
+
+                <Text
+                  style={[
+                    Style.Textstyle,
+                    { alignSelf: 'center', marginLeft: 3, paddingHorizontal: 5 }
+                  ]}
+                  uppercase={false}
+                >
+                  {item.like_count} Likes
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                transparent
+                style={{
+                  paddingHorizontal: '3%', flexDirection: 'row', marginHorizontal: 5
+                }}
+                onPress={() => this.onShare(item)}
+              >
+                <IconFeather
+                  color={Colors.Theme_color}
+                  name='share-2'
+                  size={20}
+                  style={{ alignSelf: 'center', }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={Style.flexView2} onPress={() => {
+                console.log('click more', index)
+                let { menuVisibleList1 } = this.state
+                menuVisibleList1[index] = true
+                this.setState({
+                  menuVisibleList1,
+                  visibleModal: 'SlowModal',
+                  blockedPostId: item.id
+                })
+              }}>
+                <IconFeather name='alert-octagon' size={20} color={Colors.Theme_color} style={{
+                  paddingHorizontal: '3%',
+                  flexDirection: 'row',
+                }}
+                />
+                <Text style={[Style.SubTextstyle, { width: '50%' }]}>Report</Text>
+              </TouchableOpacity>
+            </View>
+          </CardItem>
+        </Card>
+      </Content>
+
+    )
+  }
+  renderFooter = () => {
+    if (this.state.totalPage === this.state.pageNo) {
+      return (
+        <View>
+
+        </View>
+      )
+    } else {
+      var page = this.state.pageNo + 1
+      console.log('check the page no', page)
+      // console.log('check the page no',page)
+      return (
+        //Footer View with Load More button
+        <View style={Style.footer}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={async () => {
+              await this.setState({ pageNo: page, bottomLoading: true })
+              this.getPostList(page)
+            }}
+            style={Style.Buttonback}>
+
+            {this.state.bottomLoading ? (
+              <ActivityIndicator
+                color="white"
+                style={{ marginLeft: 8 }} />
+            ) : <Text style={Style.Textmainstyle}>Load More</Text>}
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
 
   render() {
     // console.log('render call -->', this.state.postData.length)
@@ -419,6 +711,7 @@ export default class App extends Component {
         <NavigationEvents
           onWillFocus={payload => this.getPostList()}
         />
+        {/* header */}
         <View
           style={{
             flex: 0.5,
@@ -460,57 +753,50 @@ export default class App extends Component {
             color={Colors.white}
             onPress={() => this.props.navigation.navigate('Notification')}
           />
-          {/* <Icon
-              style={{ flex: 1, paddingHorizontal: '1%' }}
-              name='sign-out'
-              size={25}
-              color={Colors.white}
-              onPress={() => this.onLogout()}
-            /> */}
+
         </View>
         {/* banner  */}
-        {this.state.isAdLoading ?
-          <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          >
-            <ActivityIndicator size='large' color={Colors.Theme_color} />
-          </View>
-          :
-          <View style={{ height: 70, justifyContent: 'center' }}>
-            <Swiper
-              style={{ justifyContent: 'center', alignItems: 'center' }}
-              autoplayTimeout={2.5}
-              autoplay={true}
-              key={this.state.ad_data.size}
-              showsPagination={false}
+        <View>
+          {this.state.isAdLoading ?
+            <View
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
             >
-              {this.state.ad_data.map((item, index) => {
-                // console.log(
-                //   'check item image ',
-                //   this.state.adimgUrl + item.sa_image
-                // )
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() =>
-                      this.props.navigation.navigate('AdDetails', {
-                        itemData: item,
-                        img_url: this.state.adimgUrl
-                      })
-                    }
-                  >
-                    <Image
-                      source={{ uri: this.state.adimgUrl + item.sa_image }}
-                      style={{ width: '100%', height: '100%' }}
-                      resizeMode='contain'
-                      resizeMethod='resize'
-                    />
-                  </TouchableOpacity>
-                )
-              })}
-            </Swiper>
-          </View>
-        }
+              <ActivityIndicator size='large' color={Colors.Theme_color} />
+            </View>
+            :
+            <View style={{ height: 70, justifyContent: 'center' }}>
+              <Swiper
+                style={{ justifyContent: 'center', alignItems: 'center' }}
+                autoplayTimeout={2.5}
+                autoplay={true}
+                key={this.state.ad_data.length}
+                showsPagination={false}
+              >
+                {this.state.ad_data.map((item, index) => {
+
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        this.props.navigation.navigate('AdDetails', {
+                          itemData: item,
+                          img_url: this.state.adimgUrl
+                        })
+                      }
+                    >
+                      <Image
+                        source={{ uri: this.state.adimgUrl + item.sa_image }}
+                        style={{ width: '100%', height: '100%' }}
+                        resizeMode='contain'
+                        resizeMethod='resize'
+                      />
+                    </TouchableOpacity>
+                  )
+                })}
+              </Swiper>
+            </View>
+          }
+        </View>
 
         <View style={{ flex: 7 }}>
           {this.state.isLoading ?
@@ -522,225 +808,15 @@ export default class App extends Component {
             </View>
             :
             <View
-              style={{
-                flex: 2,
-                backgroundColor: Colors.divider,
-                padding: '1%'
-              }}
+              style={{ flex: 2, backgroundColor: Colors.divider, padding: '1%' }}
             >
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {this.state.postData.map((item, index) => (
-                  <Content>
-                    {index === 2 ? <View>
-                      <Card>
-                        {this.state.postAdsArray.length > 0 ?
-                          <TouchableOpacity
-                            style={{ padding: '2%', height: 90 }}
-                            onPress={() =>
-                              this.props.navigation.navigate('AdDetails', {
-                                itemData: this.state.postAdsArray[0],
-                                img_url: this.state.postadimageUrl + '/'
-                              })
-                            }
-                          >
-                            {this.state.postAdsArray[0].sa_image === null || this.state.postAdsArray[0].sa_image === undefined || this.state.postAdsArray[0].sa_image === '' ?
-                              <Image
-                                source={AppImages.logo}
-                                style={{ height: 70 }}
-                                resizeMode='contain'
-                              /> : <Image
-                                source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[0].sa_image }}
-                                style={{ height: 70 }}
-                                resizeMode='contain'
-                              />}
-                          </TouchableOpacity>
-                          : <Image
-                            source={AppImages.logo}
-                            style={{ height: 70 }}
-                            resizeMode='contain'
-                          />}
-                      </Card>
-                    </View> : null}
-                    <View>
-                      {index === 4 ? <View>
-                        <Card>
-                          {this.state.postAdsArray.length > 0 ?
-                            <TouchableOpacity
-                              style={{ padding: '2%', height: 90 }}
-                              onPress={() =>
-                                this.props.navigation.navigate('AdDetails', {
-                                  itemData: this.state.postAdsArray[1],
-                                  img_url: this.state.postadimageUrl + '/'
-                                })
-                              }
-                            >
-                              {checkempty(this.state.postAdsArray[1].sa_image) ?
-                                <Image
-                                  source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[1].sa_image }}
-                                  style={{ height: 70 }}
-                                  resizeMode='contain'
-                                /> : <Image
-                                  source={AppImages.logo}
-                                  style={{ height: 70 }}
-                                  resizeMode='contain'
-                                />}
-                            </TouchableOpacity>
-                            : <Image
-                              source={AppImages.logo}
-                              style={{ height: 70 }}
-                              resizeMode='contain'
-                            />}
-                        </Card>
-                      </View> : null}
-                    </View>
-                    <Card>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.props.navigation.navigate('PostDetails', {
-                            postData: item,
-                            imgUrl: this.state.postDataURL,
-                            m_URL: this.state.m_URL,
-                            audioUrl: this.state.audioUrl
-                          })
-                        }
-
-                      >
-                        <CardItem>
-                          <Left>
-                            <Thumbnail
-                              source={
-                                item.member_pic === null
-                                  ? images.logo
-                                  : { uri: this.state.m_URL + item.member_pic }
-                              }
-                              style={{
-                                backgroundColor: Colors.divider,
-                                height: 50,
-                                width: 50
-                              }}
-                            />
-                            <Body>
-                              <Text style={Style.Textstyle}>
-                                {item.member_name}
-                              </Text>
-                              <Text style={Style.Textstyle} note>
-                                {Moment(item.date).format('DD-MM-YYYY')}
-                              </Text>
-                            </Body>
-                          </Left>
-                        </CardItem>
-                        <View style={{ flexDirection: 'column' }}>
-
-                          {item.post_image === null ||
-                            item.post_image === '' ||
-                            item.post_image === undefined ? null : (
-                              <Image
-                                source={{
-                                  uri: this.state.postDataURL + item.post_image
-                                }}
-                                style={{ height: 200, flex: 1 }}
-                                resizeMode='contain'
-                                resizeMethod='resize'
-                              />
-                            )}
-                        </View>
-                      </TouchableOpacity>
-                      <View style={{ padding: '2%' }}>
-                        <HTML
-                          html={item.description}
-                          imagesMaxWidth={Dimensions.get('window').width}
-                          baseFontStyle={{
-                            fontSize: 14,
-                            fontFamily: CustomeFonts.medium,
-                            color: Colors.black
-                          }}
-                        />
-                      </View>
-                      {item.p_audio === null ||
-                        item.p_audio === '' ||
-                        item.p_audio === undefined ? null : (
-                          <TouchableOpacity
-                            transparent
-                            style={{
-                              paddingHorizontal: '4%',
-                              flexDirection: 'row',
-                              justifyContent: 'center'
-                            }}
-                            onPress={() =>
-                              this.props.navigation.navigate('PlayAudio', {
-                                id: item.id,
-                                title: item.p_audio,
-                                audioUrl: this.state.audioUrl
-                              })
-                            }
-                          >
-                            <Text style={[Style.Textstyle]} uppercase={false}>
-                              {item.p_audio}
-                            </Text>
-                            <Icon
-                              name='music'
-                              size={20}
-                              style={{ alignSelf: 'center' }}
-                            />
-                          </TouchableOpacity>
-                        )}
-                      <CardItem>
-                        <View style={{ flexDirection: 'row', flex: 1 }}>
-                          <TouchableOpacity
-                            transparent
-                            style={{
-                              flex: 0.2,
-                              flexDirection: 'row',
-                              justifyContent: 'center', alignItems: 'center'
-                            }}
-                            onPress={() => this.addLike(item.id)}
-                          >
-                            {item.like_unlike === 1 ? (
-                              <Icon
-                                color={Colors.Theme_color}
-                                name='thumbs-up'
-                                size={20}
-                                style={{ alignSelf: 'center' }}
-                              />
-                            ) : (
-                                <Icon
-                                  name='thumbs-up'
-                                  size={20}
-                                  style={{ alignSelf: 'center' }}
-                                />
-                              )}
-
-                            <Text
-                              style={[
-                                Style.Textstyle,
-                                { alignSelf: 'center', marginLeft: 3, paddingHorizontal: 5 }
-                              ]}
-                              uppercase={false}
-                            >
-                              {item.like_count} Likes
-                              </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            transparent
-                            style={{
-                              flex: 0.3,
-                              flexDirection: 'row',
-                            }}
-                            onPress={() => this.onShare(item)}
-                          >
-                            <IconFeather
-                              color={Colors.Theme_color}
-                              name='share-2'
-                              size={20}
-                              style={{ alignSelf: 'center' }}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </CardItem>
-                    </Card>
-                  </Content>
-                ))}
-              </ScrollView>
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={this.state.postData}
+                renderItem={item => this.postRendeItem(item)}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={this.renderFooter}
+              />
             </View>
           }
           <View
@@ -973,35 +1049,35 @@ export default class App extends Component {
                   </TouchableOpacity>
                 </View>
 
-              
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('Employment', {
-                          banner_image: this.state.banner_data.length>0?this.state.banner_data.bn_employment:null,
-                          banner_url:this.state.banner_paths.bn_employment + '/',
-                          isProfessional:this.state.isProfessional
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.Employment}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Employment
+
+                <View style={[Style.dashcard, { marginTop: 10 }]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.navigate('Employment', {
+                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_employment : null,
+                        banner_url: this.state.banner_paths.bn_employment + '/',
+                        isProfessional: this.state.isProfessional
+                      })
+                    }
+                  >
+                    <View style={{ alignItems: 'center' }}>
+                      <Image
+                        resizeMode='cover'
+                        style={Style.dashimage}
+                        source={images.Employment}
+                      />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text
+                        numberOfLines={2}
+                        ellipsizeMode='tail'
+                        style={Style.dashtext}
+                      >
+                        Employment
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
                 <View style={[Style.dashcard, { marginTop: 10 }]}>
                   <TouchableOpacity
                     onPress={() =>
@@ -1187,7 +1263,60 @@ export default class App extends Component {
             </ScrollView>
           </View>
         </View>
-
+        <Modal
+          isVisible={this.state.visibleModal === 'SlowModal'}
+          onSwipeComplete={() => this.setState({ visibleModal: null, report_reason: '' })}
+          // swipeDirection={['down']}
+          // style={{justifyContent: 'flex-end', margin: 0}}
+          onBackdropPress={() => this.setState({ visibleModal: null, report_reason: '' })}
+          onBackButtonPress={() => this.setState({ visibleModal: null, report_reason: '' })}>
+          <View style={{ backgroundColor: 'white', padding: '3%' }}>
+            <Text style={Style.Textmainstyle}>Why You Reporting This Post?</Text>
+            <Form>
+              <Item floatingLabel>
+                <Label
+                  style={[
+                    Style.Textstyle,
+                    {
+                      color: Colors.inactiveTabColor,
+                      fontFamily: CustomeFonts.medium,
+                    },
+                  ]}>
+                  Write Reason
+                </Label>
+                <Input
+                  floatingLabel={true}
+                  underline={true}
+                  placeholder='report'
+                  multiline={true}
+                  numberOfLines={3}
+                  style={Style.Textstyle}
+                  onChangeText={value => this.setState({ report_reason: value })}
+                  value={this.state.report_reason}></Input>
+              </Item>
+            </Form>
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '100%',
+                paddingHorizontal: '2%',
+                paddingVertical: '4%',
+              }}>
+              <TouchableOpacity
+                style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                onPress={() => this.reportApi()}>
+                {this.state.buttonLoding ?
+                  <ActivityIndicator size={'small'} color={Colors.white} /> :
+                  <Text style={Style.buttonText}>Report</Text>}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[Style.Buttonback, { width: '48%', margin: '1%' }]}
+                onPress={() => this.setState({ visibleModal: null, report_reason: '' })}>
+                <Text style={Style.buttonText}>Cancle</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     )
 

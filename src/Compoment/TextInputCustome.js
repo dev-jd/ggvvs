@@ -38,4 +38,3 @@ export default class TextInputCustome extends Component {
         );
     }
 }
-paddingVertical:'2%'

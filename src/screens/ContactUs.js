@@ -25,6 +25,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import { Content, Card, CardItem, Thumbnail, Left, Body } from 'native-base'
+import { validationempty } from '../Theme/Const'
 
 const config = {
   WebViewComponent: WebView
@@ -146,15 +147,15 @@ class ContactUs extends Component {
           <Text style={[Style.Textmainstyle, { color: Colors.black }]}>
             {item.sbm_name}
           </Text>
-          <Text style={[Style.Textstyle]}>{item.sbm_address}</Text>
+          <Text style={[Style.Textstyle]}>{item.address}</Text>
           <Text style={[Style.Textstyle]}>
-            {item.sbm_city} - {item.sbm_pin}
+            {item.city} - {item.pincode}
           </Text>
           <Text style={[Style.Textstyle]}>
-            {item.sbm_state} {item.sbm_country}
+            {item.state} {item.country}
           </Text>
-          <Text style={[Style.Textmainstyle]}>Phone No.: {item.sbm_phone}</Text>
-          <Text style={[Style.Textmainstyle]}>Email: {item.sbm_email}</Text>
+          <Text style={[Style.Textmainstyle]}>Phone No.: {item.mobile}</Text>
+          <Text style={[Style.Textmainstyle]}>Email: {item.email}</Text>
         </View>
         {/* <Icon name="ios-arrow-forward" size={14} style={{ margin: 5, alignSelf: 'center' }} /> */}
       </View>
@@ -171,13 +172,14 @@ class ContactUs extends Component {
           <ActivityIndicator size='large' color={Colors.Theme_color} />
         </View>
       )
-    } if (this.state.contact_address.length === 0) {
-      return (
-        <View style={{ justifyContent: 'center', alignItems: "center", height: '100%' }}>
-          <Text style={Style.Textmainstyle}>No Data Found</Text>
-        </View>)
+    }
+    // } if (this.state.contact_address) {
+    //   return (
+    //     <View style={{ justifyContent: 'center', alignItems: "center", height: '100%' }}>
+    //       <Text style={Style.Textmainstyle}>No Data Found</Text>
+    //     </View>)
 
-    } else {
+    // } else {
       return (
         <SafeAreaView style={{ justifyContent: 'center', margin: '2%' }}>
           <StatusBar
@@ -187,7 +189,7 @@ class ContactUs extends Component {
 
           <Card>
             <View style={{padding: '2%',}}>
-              <Text style={Style.title}>Address:</Text>
+              <Text style={[Style.title,{paddingVertical:'2%'}]}>Address:</Text>
               <Text style={[Style.Textstyle]}>{contact_address.address}</Text>
               <Text style={[Style.Textstyle]}>
                 district {contact_address.district}
@@ -201,7 +203,7 @@ class ContactUs extends Component {
               <Text style={[Style.Textstyle]}>
                 {contact_address.country}
               </Text>
-              <Text style={Style.title}>Contact Details:</Text>
+              <Text style={[Style.title,{paddingVertical:'2%'}]}>Contact Details:</Text>
               <Text style={[Style.Textmainstyle]}>Phone No.: {contact_address.mobile}</Text>
               <Text style={[Style.Textmainstyle]}>Email: {contact_address.email}</Text>
             </View>
@@ -222,7 +224,7 @@ class ContactUs extends Component {
           /> */}
         </SafeAreaView>
       )
-    }
+    // }
   }
 }
 export default ContactUs

@@ -18,7 +18,7 @@ import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
-import { showToast } from '../../Theme/Const'
+import { showToast, validationempty } from '../../Theme/Const'
 import { Helper } from '../../Helper/Helper'
 
 const options = {
@@ -344,7 +344,10 @@ class ViewOtherPersionalDetails extends Component {
   }
   async postApiCall() {
     var aniversary
-    if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
+    console.log('check the gender',this.state.gendertatus)
+    if (this.state.maritalstatus === null || this.state.maritalstatus === undefined || this.state.maritalstatus === '' || this.state.maritalstatus === 'null') {
+      Toast.show('Select Matital Status')
+    } else if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
       this.apiCallPost()
     } else {
       if (
@@ -352,7 +355,9 @@ class ViewOtherPersionalDetails extends Component {
         this.state.anniversary === '' ||
         this.state.anniversary === undefined
       ) {
-        Toast.show('Select Anniversary')
+        Toast.show('Select Anniversary')  
+      } else if (this.state.gendertatus === null || this.state.gendertatus === undefined || this.state.gendertatus === '' || this.state.gendertatus === 'null') {
+        showToast('Select gender')
       } else {
         this.apiCallPost()
       }
@@ -1548,7 +1553,7 @@ class ViewOtherPersionalDetails extends Component {
                     })
                   ]}
                 >
-                 Profile Photo{' '}
+                  Profile Photo{' '}
                 </Text>
                 {/* <Text>{this.state.photoImage}</Text> */}
                 <View

@@ -77,8 +77,6 @@ const isNetworkAvailable = async () => {
 const showToast = (msg) => {
     if (msg) {
         Toast.show(msg, 3000)
-    } else {
-        Toast.show('Default Toast', 3000)
     }
 
 }
@@ -95,8 +93,8 @@ const validationBlank = (value, msg) => {
 }
 const validationempty = (value) => {
     if (value === '') {
-    } else if (value === undefined) {
     } else if (value === null) {
+    } else if (value === undefined) {
     } else if (value.length < 1) {
     } else if (value === 'Null') {
     } else if (value === 'None') {

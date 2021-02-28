@@ -280,7 +280,7 @@ export default class LookinForMatrimony extends Component {
 
     this.setState({
       name: response.member_details.member_name,
-      dob: moment(response.member_details.member_birth_date).format(''),
+      dob: moment(response.member_details.member_birth_date,"YYYY-MM-DD", true).format("DD-MM-YYYY"),
       fathername: response.member_details.member_father,
       mothername: response.member_details.member_mother,
       nativeplace: response.other_information.member_native_place,
@@ -826,7 +826,8 @@ export default class LookinForMatrimony extends Component {
                         ? 'Select date'
                         : this.state.dob
                     }
-                    format='YYYY-MM-DD'
+                    format='DD-MM-YYYY'
+                    editable={false}
                     confirmBtnText='Confirm'
                     cancelBtnText='Cancel'
                     customStyles={{

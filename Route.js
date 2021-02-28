@@ -88,6 +88,7 @@ import TermsConditions from './src/screens/TermsConditions';
 import JobDetails from './src/screens/Employeement/JobDetails';
 import EmployeeDetails from './src/screens/Employeement/EmployeeDetails';
 import ProviderJobPostList from './src/screens/Employeement/ProviderJobPostList';
+import ProfileComplsary from './src/screens/ProfileComplsary';
 
 const matrimoneyNavi = createMaterialTopTabNavigator({
     MatrimonyList: {
@@ -478,6 +479,9 @@ const Stack_Navi = createStackNavigator(
         },
         ProviderJobPostList: {
             screen: ProviderJobPostList,
+        },
+        ProfileComplsary: {
+            screen: ProfileComplsary,
         },
     },
 )

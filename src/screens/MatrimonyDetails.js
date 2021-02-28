@@ -264,7 +264,7 @@ class MatrimonyDetails extends Component {
               {/* <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Personal Details</Text> */}
               <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Birth Date </Label>
-                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '50%' }]}>{Moment(item_details.member_birth_date).format('DD-MM-YYYY')}</Label>
+                <Label style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.regular, width: '50%' }]}>{Moment(item_details.birth_date).format('DD-MM-YYYY')}</Label>
               </View>
               <View style={[Style.flexView, { paddingVertical: '2%' }]}>
                 <Label style={[Style.Textmainstyle, { color: Colors.Theme_color, fontFamily: CustomeFonts.medium, width: '50%' }]}>Birth-Time</Label>

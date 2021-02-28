@@ -170,8 +170,10 @@ class Login extends Component {
         formdata.append('member_mobile', this.state.code + this.state.mobile)
       }
       formdata.append('member_samaj_code', this.state.password)
-      formdata.append('device_token', this.state.deviceId)
-      formdata.append('member_player_id', this.state.playerId)
+      formdata.append('device_token', '')
+      // formdata.append('device_token', this.state.deviceId)
+      formdata.append('member_player_id','')
+      // formdata.append('member_player_id', this.state.playerId)
       console.log('check the login formdaya', formdata)
 
       //this.props.navigation.navigate('Otp',{email:this.state.email,mobile:this.state.code + this.state.mobile,
@@ -182,13 +184,14 @@ class Login extends Component {
       this.setState({
         _isLoading: false
       })
+      showToast(response.message)
       if (response.status === true) {
         SimpleToast.show("Login successfully")
 
         this.props.navigation.replace('Otp', {
           email: this.state.email, mobile: this.state.code + this.state.mobile,
           password: this.state.password, deviceId: this.state.deviceId, playerId: this.state.playerId,
-          indiaOrNot: this.state.indiaOrNot
+          indiaOrNot: this.state.indiaOrNot,memberId:response.data.member_id + ''
         })
 
         // AsyncStorage.setItem('member_id', response.data.member_id + '')
@@ -276,7 +279,7 @@ class Login extends Component {
                       />
 
                       <TextInput
-                        style={[Style.body, { width: '80%' }]}
+                        style={[Style.Textstyle, { width: '80%' }]}
                         placeholder='Email'
                         onChangeText={text => this.setState({ email: text })}
                         value={this.state.email}
@@ -301,7 +304,7 @@ class Login extends Component {
                         </TouchableOpacity>
 
                         <TextInput
-                          style={[Style.body, { width: '80%' }]}
+                          style={[Style.Textstyle, { width: '80%' }]}
                           placeholder='Mobile number'
                           onChangeText={text => this.setState({ mobile: text })}
                           value={this.state.mobile}

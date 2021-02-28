@@ -122,7 +122,7 @@ class AdDetails extends Component {
                 width: '100%',
                 marginBottom: 10
               }}
-              resizeMode='stretch'
+              resizeMode='contain'
             />
 
             <View style={{ padding: 10 }}>

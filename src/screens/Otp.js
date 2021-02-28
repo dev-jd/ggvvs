@@ -27,6 +27,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import BackgroundTimer from 'react-native-background-timer';
+import { validationempty } from '../Theme/Const'
 
 const RESEND_OTP_TIME_LIMIT = 300; // 30 secs
 
@@ -85,7 +86,7 @@ class Otp extends Component {
       clearInterval(this.state.resendOtpTimerInterval);
     }
 
-    BackgroundTimer.runBackgroundTimer(() => { 
+    BackgroundTimer.runBackgroundTimer(() => {
       //code that will be called every 3 seconds 
       //this.timer = setInterval(this.countDown, 1000)
       if (this.state.resendButtonDisabledTime <= 0) {
@@ -120,13 +121,13 @@ class Otp extends Component {
     var playerId = await this.props.navigation.getParam('playerId')
     var indiaOrNot = await this.props.navigation.getParam('indiaOrNot')
 
-      if(email === "contacttobhavin@yahoo.com"){
-        var randomNumber = 4475
-      }else{
-        var randomNumber = Math.floor(1000 + Math.random() * 1000) + 1
-      }
-    
-    
+    if (email === "contacttobhavin@yahoo.com") {
+      var randomNumber = 4475
+    } else {
+      var randomNumber = Math.floor(1000 + Math.random() * 1000) + 1
+    }
+
+
     console.log('randome Number ---->', randomNumber)
     console.log('indiaOrNot ---->', indiaOrNot)
     await this.setState({
@@ -147,21 +148,12 @@ class Otp extends Component {
     formData.append('member_samaj_code', password)
     console.log('formdata otp --->', formData)
 
-    // axois.post(base_url + 'login_otp', formData)
-    //   .then(res => {
-    //     Toast.show("OTP send Sucessfully")
-    //     console.log("Otp res--->", res.data)
-    //   })
-    //   .catch(err => {
-    //     console.log("err--->", err)
-    //   })
-
     var response = await Helper.POST('otp', formData)
 
     this.setState({ resendButtonDisabledTime: RESEND_OTP_TIME_LIMIT })
     this.startResendOtpTimer();
     console.log('check Responce otp-- > ', response)
-    await Toast.show('OTP send Sucessfully')
+    await Toast.show(response.message)
   }
 
   _onChangeText = _one => {
@@ -271,11 +263,33 @@ class Otp extends Component {
         //   memberId: response.data.member_id
         // })
         this.props.navigation.replace('Dashboard')
+        // this.profileApiCall(response.data.member_samaj_id, response.data.member_id, response.data.type_id)
       }
       // this.props.navigation.replace('Dashboard')
     } else {
       console.log('false')
       Toast.show('Invalid Code')
+    }
+  }
+
+ async profileApiCall(samaj_id, member_id, member_type) {
+    var formdata = new FormData()
+    formdata.append('samaj_id', samaj_id)
+    formdata.append('member_id', member_id)
+    formdata.append('type', member_type)
+
+    console.log('check formdata profile -->11 ', formdata)
+
+    var response = await Helper.POST('profile_data', formdata)
+    console.log('profile response',response)
+    if (response.status) {
+      if (validationempty(response.member_details.member_birth_date) && validationempty(response.member_details.member_marital_status) &&
+        validationempty(response.other_information.member_address) && validationempty(response.other_information.member_gender_id) && validationempty(response.other_information.member_eq_id) &&
+        validationempty(response.member_details.member_photo)) {
+        this.props.navigation.replace('Dashboard')
+      } else {
+        this.props.navigation.replace('ProfileComplsary')
+      }
     }
   }
 
