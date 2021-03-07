@@ -45,29 +45,29 @@ class VideoView extends Component {
     this.setState({
       samaj_id: samaj_id
     })
+    this.getPhotosList()
 
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
-        this.getPhotosList()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
+    // NetInfo.isConnected.addEventListener(
+    //   'connectionChange',
+    //   this._handleConnectivityChange
+    // )
+    // NetInfo.isConnected.fetch().done(isConnected => {
+    //   if (isConnected == true) {
+    //     this.setState({ connection_Status: true })
+    //   } else {
+    //     this.setState({ connection_Status: false })
+    //   }
+    // })
   }
 
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      this.getPhotosList()
-    } else {
-      this.setState({ connection_Status: false })
-    }
-  }
+  // _handleConnectivityChange = isConnected => {
+  //   if (isConnected == true) {
+  //     this.setState({ connection_Status: true })
+  //     this.getPhotosList()
+  //   } else {
+  //     this.setState({ connection_Status: false })
+  //   }
+  // }
 
   getPhotosList() {
     var itemdata = this.props.navigation.getParam('itemdata')

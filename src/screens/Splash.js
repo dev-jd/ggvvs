@@ -14,6 +14,8 @@ import DeviceInfo from 'react-native-device-info'
 import Colors from '../Theme/Colors'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
+import { Helper } from '../Helper/Helper'
+import { validationempty } from '../Theme/Const'
 
 
 export default class App extends Component {
@@ -42,30 +44,31 @@ export default class App extends Component {
     })
 
       if (this.state.connection_Status == true) {
-        setTimeout(() => {
-          // this.props.navigation.replace("Login")
+      //   setTimeout(() => {
+      //     // this.props.navigation.replace("Login")
 
-          if (
-            this.state.member_id === '' ||
-            this.state.member_id === null ||
-            this.state.member_id === undefined
-          ) {
-            this.props.navigation.replace('Login')
-          } else {
-            this.props.navigation.replace('Dashboard')
-            this.getApi()
-          }
-        }, 2000)
-      } else {
-        if (
-          this.state.member_id === '' ||
-          this.state.member_id === null ||
-          this.state.member_id === undefined
-        ) {
-          this.props.navigation.replace('Login')
-        } else {
-          this.props.navigation.replace('Dashboard')
-        }
+      //     if (
+      //       this.state.member_id === '' ||
+      //       this.state.member_id === null ||
+      //       this.state.member_id === undefined
+      //     ) {
+      //       this.props.navigation.replace('Login')
+      //     } else {
+      //       this.props.navigation.replace('Dashboard')
+      //       this.getApi()
+      //     }
+      //   }, 2000)
+      // } else {
+      //   if (
+      //     this.state.member_id === '' ||
+      //     this.state.member_id === null ||
+      //     this.state.member_id === undefined
+      //   ) {
+      //     this.props.navigation.replace('Login')
+      //   } else {
+      //     this.props.navigation.replace('Dashboard')
+      //   }
+      this.getApi()
       }
   }
 
@@ -80,7 +83,8 @@ export default class App extends Component {
       .then(res => {
 
         if (res.data.data[0].device_token === id) {
-          this.props.navigation.replace('Dashboard')
+          this.profileApiCall()
+          // this.props.navigation.replace('Dashboard')
         } else {
           this.logout()
         }
@@ -90,7 +94,27 @@ export default class App extends Component {
         this.logout()
       })
   }
+  async profileApiCall() {
+    var formdata = new FormData()
+    formdata.append('samaj_id', this.state.samaj_id)
+    formdata.append('member_id', this.state.member_id)
+    formdata.append('type', this.state.member_type)
 
+    // console.log('check formdata profile -->11 ', formdata)
+
+    var response = await Helper.POST('profile_data', formdata)
+    // console.log('profile response',response)
+    if (response.status) {
+      if (validationempty(response.member_details.member_birth_date) && validationempty(response.member_details.member_marital_status) &&
+        validationempty(response.other_information.member_address) && validationempty(response.other_information.member_gender_id) && validationempty(response.other_information.member_eq_id) &&
+        validationempty(response.member_details.member_photo)) {
+        this.props.navigation.replace('Dashboard')
+        // this.props.navigation.replace('ProfileComplsary')
+      } else {
+        this.props.navigation.replace('ProfileComplsary')
+      }
+    }
+  }
   async logout() {
     await AsyncStorage.removeItem('member_id', '')
     await AsyncStorage.removeItem('member_samaj_id', '')

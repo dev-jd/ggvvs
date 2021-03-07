@@ -179,12 +179,12 @@ const topTabNaviTree = createMaterialTopTabNavigator({
         },
 
     },
-    FamilyTreeRequest: {
-        screen: FamilyTreeRequest,
-        navigationOptions: {
-            title: 'Family Photos',
-        }
-    },
+    // FamilyTreeRequest: {
+    //     screen: FamilyTreeRequest,
+    //     navigationOptions: {
+    //         title: 'Family Photos',
+    //     }
+    // },
 }, {
     initialRouteName: 'FamilyTreeView',
     tabBarOptions: {

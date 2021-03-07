@@ -163,7 +163,9 @@ class AddFamilyMember extends Component {
     console.log("addFamily", this.state.relation)
     console.log("addFamily", this.state.countrytatus)
 
-    if (this.state.relation === '' || this.state.relation === null || this.state.relation === undefined || this.state.relation === '0') {
+    if (this.state.memberrelationstatus === '' || this.state.memberrelationstatus === null || this.state.memberrelationstatus === undefined || this.state.memberrelationstatus === '0') {
+      Toast.show("Select Relation To Member")
+     }else if (this.state.relation === '' || this.state.relation === null || this.state.relation === undefined || this.state.relation === '0') {
       Toast.show("Select Relation")
     } else if (this.state.countrytatus === '' || this.state.countrytatus === null || this.state.countrytatus === undefined || this.state.countrytatus === '0') {
       Toast.show("Select Country")
@@ -303,7 +305,7 @@ class AddFamilyMember extends Component {
               <Text
                 style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
               >
-                Member Relation To Member
+                Member Relation To Member <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
               </Text>
               <Picker
                 selectedValue={this.state.memberrelationstatus}
@@ -338,7 +340,7 @@ class AddFamilyMember extends Component {
               <Text
                 style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
               >
-                Relation
+                Relation <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
               </Text>
               <Picker
                 selectedValue={this.state.relation}
@@ -373,7 +375,7 @@ class AddFamilyMember extends Component {
               <Text
                 style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
               >
-                Country
+                Country <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
               </Text>
               <Picker
                 selectedValue={this.state.countrytatus}
@@ -406,7 +408,7 @@ class AddFamilyMember extends Component {
               <Text
                 style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
               >
-                State
+                State <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
               </Text>
 
               <Picker
@@ -441,7 +443,7 @@ class AddFamilyMember extends Component {
               <Text
                 style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
               >
-                City
+                City <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
               </Text>
               <Picker
                 selectedValue={this.state.citytatus}
@@ -466,7 +468,7 @@ class AddFamilyMember extends Component {
                 ))}
               </Picker>
             </View>
-            <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Name</Text>
+            <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Name <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Text>
             <Input
               style={[Style.Textstyle, { borderBottomWidth: 1 }]}
               placeholder={'Name'}
@@ -538,7 +540,7 @@ class AddFamilyMember extends Component {
             <View
               style={[Style.flexView, { paddingVertical: '2%' }]}
             >
-              <Text style={[Style.Textmainstyle, { width: '50%', color: Colors.black }]}> Date Of Birth </Text>
+              <Text style={[Style.Textmainstyle, { width: '50%', color: Colors.black }]}> Date Of Birth <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Text>
               <View
                 style={{
                   flex: 1,

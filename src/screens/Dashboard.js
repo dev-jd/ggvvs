@@ -43,11 +43,31 @@ import AppImages from '../Theme/image'
 import { Helper } from '../Helper/Helper'
 import SimpleToast from 'react-native-simple-toast'
 import { showToast, validationempty } from '../Theme/Const'
-import realm from 'realm';
+import Realm from 'realm';
 
 const config = {
   WebViewComponent: WebView
 }
+class post { }
+post.schema = {
+  name: 'post',
+  properties: {
+    id: { type: 'int', default: 0 },
+    post_image: 'string?',
+    description: 'string',
+    samaj_id: 'int',
+    status: 'int',
+    date: 'date',
+    created_id: 'int',
+    like_count: 'int',
+    like_unlike: 'int?',
+    member_name: 'string?',
+    member_pic: 'string?',
+    p_audio: 'string?'
+  }
+}
+let realm = new Realm({ schema: [post] })
+
 
 
 export default class App extends Component {
@@ -162,68 +182,51 @@ export default class App extends Component {
       })
   }
   async getPostList() {
-    // //post
-    // class post { }
-    // post.schema = {
-    //   name: 'post',
-    //   properties: {
-    //     id: { type: 'int', default: 0 },
-    //     post_image: 'string?',
-    //     description: 'string',
-    //     samaj_id: 'int',
-    //     status: 'int',
-    //     date: 'date',
-    //     created_id: 'int',
-    //     like_count: 'int',
-    //     like_unlike: 'int?',
-    //     member_name: 'string?',
-    //     member_pic: 'string?',
-    //     p_audio: 'string?'
-    //   }
-    // }
+    //post
 
     // let realm = new Realm({ schema: [post] })
-    // let total_length = realm.objects(post).length
-    // let postDate, date_check
+    let total_length = realm.objects(post).length
+    let postDate, date_check
 
-    // if (total_length > 0) {
+    if (total_length > 0) {
+      console.log("check the date --> ", date_check)
 
-    //   postDate = realm.objects('post')[total_length - 1]
-    //   console.log("check the date 1--> ", realm.objects('post')[total_length - 1])
+      postDate = realm.objects('post')[total_length - 1]
+      console.log("check the date 1--> ", realm.objects('post')[total_length - 1])
 
-    //   date_check = postDate.id
-    //   console.log("check the date --> ", date_check)
+      date_check = postDate.id
+      console.log("check the date --> ", date_check)
+      
+      // to delete ago month data
+      var date1 = new Date() //Current Date
+      var today_date = Moment(date1, 'YYYY-MM-DD').format('YYYY-MM-DD')
 
-    //   // to delete ago month data
-    //   var date1 = new Date() //Current Date
-    //   var today_date = Moment(date1, 'YYYY-MM-DD').format('YYYY-MM-DD')
+      var check_pre_month = Moment(date1, 'YYYY-MM-DD')
+        .add(-1, 'months')
+        .format('YYYY-MM-DD')
+      console.log('check the previce month ', check_pre_month + " today's date  --> ", today_date)
+      let postlist = realm.objects('post').filtered('date < $0', check_pre_month)
+      console.log('check the previce month ', postlist)
 
-    //   var check_pre_month = Moment(date1, 'YYYY-MM-DD')
-    //     .add(-1, 'months')
-    //     .format('YYYY-MM-DD')
-    //   console.log('check the previce month ', check_pre_month + " today's date  --> ", today_date)
-    //   let postlist = realm.objects('post').filtered('date < $0', check_pre_month)
-    //   console.log('check the previce month ', postlist)
+      // if (postlist.length > 0) {
+      //   realm.write(() => {
+      //     realm.delete(realm.objects('post').filtered('date < $0', check_pre_month))
+      //   })
+      // }
 
-    //   // if (postlist.length > 0) {
-    //   //   realm.write(() => {
-    //   //     realm.delete(realm.objects('post').filtered('date < $0', check_pre_month))
-    //   //   })
-    //   // }
-
-    // }
+    }
 
     // console.log("total total_length ---> ", total_length)
     var formdata = new FormData()
 
-    // if (total_length > 0) {
-    //   formdata.append('samaj_id', this.state.samaj_id)
-    //   formdata.append('member_id', this.state.member_id)
-    //   formdata.append('type', this.state.member_type)
-    //   formdata.append('p_id', date_check)
-    //   formdata.append('page', this.state.pageNo)
+    if (total_length > 0) {
+      formdata.append('samaj_id', this.state.samaj_id)
+      formdata.append('member_id', this.state.member_id)
+      formdata.append('type', this.state.member_type)
+      formdata.append('p_id', date_check)
+      formdata.append('page', this.state.pageNo)
 
-    // } else {
+    } else {
 
       formdata.append('samaj_id', this.state.samaj_id)
       formdata.append('member_id', this.state.member_id)
@@ -231,7 +234,7 @@ export default class App extends Component {
       formdata.append('p_id', '0')
       formdata.append('page', this.state.pageNo)
 
-    // }
+    }
 
     console.log('post list formdata ===> 2', formdata)
     axois
@@ -252,46 +255,46 @@ export default class App extends Component {
               bottomLoading: false,
               postDataView: res.data.data
             })
-            console.log('check post data',postDataView)
             // realm write data
-            // realm.write(() => {
-            //   res.data.data.forEach(element => {
-            //     let result = realm
-            //       .objects('post')
-            //       .filtered('id = ' + element.id)
-                
-            //     if (result.length === 0) {
-            //       realm.create('post', {
-            //         id: element.id,
-            //         post_image: element.post_image,
-            //         description: element.description,
-            //         samaj_id: element.samaj_id,
-            //         status: element.status,
-            //         date: Moment(element.date).format('YYYY-MM-DD'),
-            //         created_id: element.created_id,
-            //         like_count: element.like_count,
-            //         like_unlike: element.like_unlike,
-            //         member_name: element.member_name,
-            //         member_pic: element.member_pic,
-            //         p_audio: element.p_audio
-            //       })
+            realm.write(() => {
+              res.data.data.forEach(element => {
+                let result = realm
+                  .objects('post')
+                  .filtered('id = ' + element.id)
+                  console.log('result.length', result.length)
+                if (result.length === 0) {
+                  console.log('check post data', this.state.postDataView)
+                  realm.create('post', {
+                    id: element.id,
+                    post_image: element.post_image,
+                    description: element.description,
+                    samaj_id: element.samaj_id,
+                    status: element.status,
+                    date: Moment(element.date).format('YYYY-MM-DD'),
+                    created_id: element.created_id,
+                    like_count: element.like_count,
+                    like_unlike: element.like_unlike,
+                    member_name: element.member_name,
+                    member_pic: element.member_pic,
+                    p_audio: element.p_audio
+                  })
 
-            //       var postDataView = realm.objects(post).sorted('id', true);
-            //       if (postDataView.length > 0) {
-            //         this.setState({
-            //           postData: postDataView
-            //         })
-            //         console.log("data from state insert -- > ", this.state.postData.length)
-            //       }
+                  var postDataView = realm.objects(post).sorted('id', false);
+                  if (postDataView.length > 0) {
+                    this.setState({
+                      postData: postDataView
+                    })
+                    console.log("data from state insert -- > ", this.state.postData.length)
+                  }
 
-            //     } else {
-            //       console.log("again")
-            //     }
-            //   })
-            // })
+                } else {
+                  console.log("again")
+                }
+              })
+            })
           }
-        }else{
-          this.setState({bottomLoading:false})
+        } else {
+          this.setState({ bottomLoading: false })
         }
       })
       .catch(err => {
@@ -301,15 +304,15 @@ export default class App extends Component {
         console.log('error post view11', err)
       })
 
-    // var postDataView = realm.objects(post).sorted('id', true);
-    // // console.log('post data', postDataView)
-    // if (postDataView.length > 0) {
-    //   this.setState({
-    //     postData: postDataView
-    //   })
+    var postDataView = realm.objects(post).sorted('id', true);
+    // console.log('post data', postDataView)
+    if (postDataView.length > 0) {
+      this.setState({
+        postData: postDataView
+      })
 
-    //   console.log("data from state -- > ", this.state.postData.length)
-    // }
+      console.log("data from state -- > ", this.state.postData.length)
+    }
   }
 
   async adget() {
@@ -371,15 +374,34 @@ export default class App extends Component {
     formData.append('post_id', id)
     formData.append('member_id', this.state.member_id)
 
-    axois
-      .post(base_url + 'post/like', formData)
-      .then(res => {
-        console.log('like res ==>', res.data)
+    var res = await Helper.POST('post/like', formData)
+    console.log('check response', res)
+    if (res.status) {
 
-        this.getPostList()
-      })
-      .catch(err => console.log('error add like', err))
+      var responce = await Helper.POST('local_like', formData)
+      console.log('responce', responce)
+      realm.write(() => {
+        var ID = id - 1;
+        let result = realm.objects('post')
+          .filtered('id = ' + id)
+        console.log('result liike', result)
 
+        if (result.length > 0) {
+          result[0].created_id = responce.data[0].created_id
+          result[0].like_count = responce.data[0].like_count
+          result[0].like_unlike = responce.data[0].like_unlike
+        }
+
+        // created_id: element.created_id,
+        // like_count: element.like_count,
+        // like_unlike: element.like_unlike,
+
+
+      });
+
+      // this.getPostList()
+
+    }
     this.setState({ isLoading: false })
   }
 
@@ -815,7 +837,7 @@ export default class App extends Component {
                 data={this.state.postData}
                 renderItem={item => this.postRendeItem(item)}
                 keyExtractor={(item, index) => index.toString()}
-                ListFooterComponent={this.renderFooter}
+              // ListFooterComponent={this.renderFooter}
               />
             </View>
           }
@@ -1231,7 +1253,7 @@ export default class App extends Component {
                         ellipsizeMode='tail'
                         style={[Style.dashtext, { textAlign: 'center' }]}
                       >
-                        Suggestion
+                        Feedback
                         </Text>
                     </View>
                   </TouchableOpacity>

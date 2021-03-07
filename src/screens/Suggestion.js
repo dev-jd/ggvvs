@@ -134,8 +134,8 @@ export default class App extends Component {
         .then(response => {
           console.log('suggection_add Response---->', response.data)
           this.setState({ _isLoading: false })
+          Toast.show(response.data.message)
           if (response.data.success === true) {
-            Toast.show(response.data.message)
             this.props.navigation.replace('Dashboard')
           } else {
             Toast.show(response.data.message)

@@ -244,7 +244,7 @@ export default class ViewProfessionalDetails extends Component {
     async validation() {
         if (validationBlank(this.state.businesstype, 'Select Business Type') && validationBlank(this.state.countrytatus, 'Select Country') && validationBlank(this.state.state, 'Select State') &&
             validationBlank(this.state.city, 'Select City') && validationBlank(this.state.cmpName, 'Enter Company Name') && validationBlank(this.state.cmpPhone, 'Enter Company Number') &&
-            validationBlank(this.state.email, 'Enter Company Email') && validationBlank(this.state.p_whatsapp, 'Enter Company Whatsapp Number')) {
+            validationBlank(this.state.email, 'Enter Company Email') && validationBlank(this.state.designation,'Enter Your Designation')&& validationBlank(this.state.cmpAddress,'Enter Company Address') && validationBlank(this.state.p_whatsapp, 'Enter Company Whatsapp Number')) {
             this.editData()
         }
     }
@@ -396,8 +396,8 @@ export default class ViewProfessionalDetails extends Component {
                                                 { width: '45%', color: Colors.black }
                                             ]}
                                         >
-                                            Business Type
-                                         </Text>
+                                            Business Type <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
+                                        </Text>
                                         <Picker
                                             selectedValue={this.state.businesstype}
                                             onValueChange={(itemValue, itemIndex) => {
@@ -464,7 +464,7 @@ export default class ViewProfessionalDetails extends Component {
                                         <Text
                                             style={[Style.Textmainstyle, { width: '45%' }]}
                                         >
-                                            Country
+                                            Country <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
                                         </Text>
                                         <Picker
                                             selectedValue={this.state.countrytatus}
@@ -498,7 +498,7 @@ export default class ViewProfessionalDetails extends Component {
                                         <Text
                                             style={[Style.Textmainstyle, { width: '45%' }]}
                                         >
-                                            State
+                                            State <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
                                         </Text>
 
                                         <Picker
@@ -534,7 +534,7 @@ export default class ViewProfessionalDetails extends Component {
                                         <Text
                                             style={[Style.Textmainstyle, { width: '45%' }]}
                                         >
-                                            City
+                                            City <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
                                         </Text>
                                         <Picker
                                             selectedValue={this.state.citytatus}
@@ -562,7 +562,7 @@ export default class ViewProfessionalDetails extends Component {
                                     <Form>
                                         <Item stackedLabel>
                                             <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                                Company Name</Label>
+                                                Company Name <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Label>
                                             <Input style={Style.Textstyle}
                                                 multiline={false}
                                                 onChangeText={(value) => this.setState({ cmpName: value })}
@@ -575,7 +575,7 @@ export default class ViewProfessionalDetails extends Component {
                                     <Form>
                                         <Item stackedLabel>
                                             <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                                Company Phone</Label>
+                                                Company Phone <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Label>
                                             <Input style={Style.Textstyle}
                                                 multiline={false}
                                                 keyboardType='numeric'
@@ -590,7 +590,7 @@ export default class ViewProfessionalDetails extends Component {
                                     <Form>
                                         <Item stackedLabel>
                                             <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                                Email</Label>
+                                                Email <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Label>
                                             <Input style={Style.Textstyle}
                                                 multiline={false}
                                                 onChangeText={(value) => this.setState({ email: value })}
@@ -614,7 +614,7 @@ export default class ViewProfessionalDetails extends Component {
                                     <Form>
                                         <Item stackedLabel>
                                             <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                                Designation</Label>
+                                                Designation <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Label>
                                             <Input style={Style.Textstyle}
                                                 multiline={false}
                                                 onChangeText={(value) => this.setState({ designation: value })}
@@ -627,7 +627,7 @@ export default class ViewProfessionalDetails extends Component {
                                     <Form>
                                         <Item stackedLabel>
                                             <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                                Company Address</Label>
+                                                Company Address <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Label>
                                             <Input style={Style.Textstyle}
                                                 multiline={true}
                                                 numberOfLines={3}
@@ -684,30 +684,8 @@ export default class ViewProfessionalDetails extends Component {
                                     <Form>
                                         <Item stackedLabel>
                                             <Label style={[Style.Textstyle, style = { color: Colors.black, fontFamily: CustomeFonts.medium }]}>
-                                                Whatsapp</Label>
-                                            {/* <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-                                              <View style={{width:'50%'}}>
-                                                <Picker
-                                                    selectedValue={this.state.phonecode}
-                                                    onValueChange={(item) => this.setState({phonecode:item})}
-                                                    mode={'dialog'}
-                                                    style={{
-                                                        flex: 1,
-                                                        width: '100%',
-                                                        fontFamily: CustomeFonts.reguar,
-                                                        color: Colors.black
-                                                    }}
-                                                >
-                                                    <Picker.Item label='Select Code' value='0' />
-                                                    {this.state.Country.map((item, key) => (
-                                                        <Picker.Item
-                                                            label={item.mobile_code + '   ' + item.country_name}
-                                                            value={item.mobile_code}
-                                                            key={key}
-                                                        />
-                                                    ))}
-                                                </Picker>
-                                                </View> */}
+                                                Whatsapp <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Label>
+                                         
                                             <Input style={[Style.Textstyle, { width: '100%' }]}
                                                 multiline={false}
                                                 onChangeText={(value) => this.setState({ p_whatsapp: value })}
@@ -769,7 +747,7 @@ export default class ViewProfessionalDetails extends Component {
                                             ]}
                                         >
                                             Company Logo
-                                </Text>
+                                         </Text>
                                         <View
                                             style={{ flexDirection: 'row', marginTop: 5, width: '100%' }}
                                         >

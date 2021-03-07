@@ -16,6 +16,7 @@ import { Thumbnail } from 'react-native-thumbnail-video'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
+import { youtube_parser } from '../Theme/Const'
 
 const data = [
   {
@@ -45,44 +46,46 @@ export default class Videos extends PureComponent {
     this.setState({
       samaj_id: samaj_id
     })
+    this.getPhotosList()
 
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this._handleConnectivityChange
-    )
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (isConnected == true) {
-        this.setState({ connection_Status: true })
-        this.getPhotosList()
-      } else {
-        this.setState({ connection_Status: false })
-      }
-    })
+    // NetInfo.isConnected.addEventListener(
+    //   'connectionChange',
+    //   this._handleConnectivityChange
+    // )
+    // NetInfo.isConnected.fetch().done(isConnected => {
+    //   if (isConnected == true) {
+    //     this.setState({ connection_Status: true })
+    //   } else {
+    //     this.setState({ connection_Status: false })
+    //   }
+    // })
   }
 
-  _handleConnectivityChange = isConnected => {
-    if (isConnected == true) {
-      this.setState({ connection_Status: true })
-      this.getPhotosList()
-    } else {
-      this.setState({ connection_Status: false })
-    }
-  }
+
 
   async getPhotosList() {
     axois
       .get(base_url + 'mediaList?samaj_id=' + this.state.samaj_id)
       .then(res => {
         console.log('Media list res ===> ', res.data)
-        this.setState({
-          URL: res.data.URL,
-          videoData: res.data.mediaMasters_video[0].media_videos.split(',')
-        })  
+      
         if (res.data.status === true) {
+          var videoArray = []
+
+          for (let index = 0; index < res.data.mediaMasters_video.length; index++) {
+            const element = res.data.mediaMasters_video[index].media_videos;
+            console.log('element',element)
+            var response = youtube_parser(element)
+         
+            console.log('response',response)
+            videoArray.push('https://www.youtube.com/watch?v='+response)
+          }
           this.setState({
-            // eventData: res.data.data,
+            URL: res.data.URL,
+            videoData:videoArray,
             isLoading: false
-          })
+          })  
+         
         }
       })
       .catch(err => {

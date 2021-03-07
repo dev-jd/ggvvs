@@ -14,6 +14,7 @@ import { base_url, checkempty } from '../Static'
 import axois from 'axios'
 import HTML from 'react-native-render-html'
 import { Helper } from '../Helper/Helper';
+import { validationempty } from '../Theme/Const';
 
 
 export default class App extends Component {
@@ -98,7 +99,7 @@ export default class App extends Component {
         base_url + 'business_details_view?samaj_id=' + this.state.samaj_id
       )
       .then(res => {
-        console.log('business_details_view res---->', res.data.data)
+        // console.log('business_details_view res---->', res.data.data)
         this.setState({ isLoding: false })
         if (res.data.status === true) {
           this.setState({
@@ -134,7 +135,10 @@ export default class App extends Component {
   }
 
   categoryRendeItem = ({ item, index }) => {
-     //console.log('item find ---> ', item)
+    // console.log('item find ---> ', item.business_type)
+    // var buztype = {}
+    // buztype = validationempty(item.business_type)
+    // console.log('item find ---> ', buztype.bm_type)
     return (
       <TouchableOpacity
         onPress={() =>
@@ -149,6 +153,11 @@ export default class App extends Component {
             { flex: 1, flexDirection: 'column' }
           ]}
         >
+          {/* <Image
+            resizeMode='stretch'
+            source={{ uri: this.state.imageUrlMember + item.member_photo }}
+            style={{ height: 80, width: 80, alignSelf: 'center' }}
+          /> */}
           <View
             style={{
               flex: 1,
@@ -197,15 +206,10 @@ export default class App extends Component {
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
               {item.member_co_designation}
             </Text>
-            {/* <HTML
-            style={[Style.Textstyle, { flex: 6, }]}
-              html={item.member_co_designation}
-              imagesMaxWidth={Dimensions.get('window').width}
-              baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium ,color:Colors.black}}
-            /> */}
+
           </View>
 
-          <View
+          {/* <View
             style={{
               flex: 1,
               flexDirection: 'row',
@@ -220,9 +224,9 @@ export default class App extends Component {
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
               {checkempty(item.member_co_phone) ? item.member_co_phone : '-'}
             </Text>
-          </View>
+          </View> */}
 
-          <View
+          {/* <View
             style={{
               flex: 1,
               width: '100%',
@@ -234,16 +238,11 @@ export default class App extends Component {
             <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
               Address
             </Text>
-            {/* <HTML
-            style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}
-              html={item.member_co_add}
-              imagesMaxWidth={Dimensions.get('window').width}
-              baseFontStyle={{ fontSize: 14, fontFamily: CustomeFonts.medium ,color:Colors.black}}
-            /> */}
+
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
               {checkempty(item.member_co_add) ? item.member_co_add : '-'}
             </Text>
-          </View>
+          </View> */}
           <View
             style={{
               flex: 1,
@@ -254,10 +253,29 @@ export default class App extends Component {
             }}
           >
             <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
-             Business Type
+              Business Type
             </Text>
+
             <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-              {item.bm_type}
+              {item.business_type === null ? '-' : item.business_type.bm_type}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'center',
+              marginTop: 5
+            }}
+          >
+            <Text style={[Style.Textstyle, { flex: 4, color: Colors.black }]}>
+              Business Category
+            </Text>
+
+            <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
+              {item.business_category === null ? '-' : item.business_category}
             </Text>
           </View>
         </View>
@@ -279,13 +297,13 @@ export default class App extends Component {
         ) : (
             <View>
               <View
-                 style={{
+                style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  paddingHorizontal:'2%',
-                  height:'7%',
-                 
+                  paddingHorizontal: '2%',
+                  height: '7%',
+
                 }}
               >
                 <Text
@@ -319,11 +337,11 @@ export default class App extends Component {
                 </Picker>
               </View>
               <FlatList
-                style={{ paddingHorizontal: '2%',height:'92%' }}
+                style={{ paddingHorizontal: '2%', height: '92%' }}
                 showsVerticalScrollIndicator={false}
                 data={this.state.data_list}
                 renderItem={item => this.categoryRendeItem(item)}
-                ListEmptyComponent={<View style={{justifyContent:'center',alignItems:'center'}}>
+                ListEmptyComponent={<View style={{ justifyContent: 'center', alignItems: 'center' }}>
                   <Text style={Style.title}>No Data Available</Text>
                 </View>}
               />

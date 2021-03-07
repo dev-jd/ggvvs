@@ -36,7 +36,7 @@ export default class CompanyDetails extends Component {
     constructor() {
         super()
         this.state = {
-            data_list: [],
+            data_list: {},
             item_details: {},
             isLoding: false,
             samaj_id: '',
@@ -55,17 +55,24 @@ export default class CompanyDetails extends Component {
         })
 
         var CompanyDetail = await this.props.navigation.getParam('companyData')
-        this.setState({
+        await this.setState({
             data_list: CompanyDetail,
             isLoding: false
         })
-        console.log("companyData ==>", this.state.data_list)
 
     }
 
     render() {
         const { item } = this.state.data_list
-        console.log("companyData 111 ==>", this.state.data_list)
+        var type
+        console.log("companyData 111 ==>", this.state.data_list.business_type)
+        console.log("companyData 222 ==>", this.state.data_list)
+        if (this.state.data_list.business_type === null ||this.state.data_list.business_type === undefined ) {
+            type = '-'
+        } else {
+            type = this.state.data_list.business_type.bm_type
+        }
+
         return (
             <SafeAreaView style={Style.cointainer1}>
                 <StatusBar
@@ -164,7 +171,6 @@ export default class CompanyDetails extends Component {
                                         <View
                                             style={{
                                                 width: '30%',
-
                                             }}
                                         >
                                             <Text style={[Style.Textmainstyle, { color: Colors.Theme_color }]}>Phone</Text>
@@ -185,18 +191,18 @@ export default class CompanyDetails extends Component {
 
                                     </View>
 
-                                    {/* <View
-                                        style={{
-                                            width: '100%',
-                                            justifyContent: 'center',
-                                            marginVertical: 5
-                                        }}
-                                    >
+                                    <View style={{width: '100%',justifyContent: 'center',marginVertical: 5}}>
                                         <Text style={[Style.Textmainstyle, { color: Colors.Theme_color }]}>Business Type </Text>
                                         <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
-                                            {checkempty(this.state.data_list.bm_type) ? this.state.data_list.bm_type : '-'}
+                                            {type}
                                         </Text>
-                                    </View> */}
+                                    </View>
+                                    <View style={{width: '100%',justifyContent: 'center',marginVertical: 5}}>
+                                        <Text style={[Style.Textmainstyle, { color: Colors.Theme_color }]}>Business Category </Text>
+                                        <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left' }]}>
+                                            {this.state.data_list.business_category}
+                                        </Text>
+                                    </View>
                                     <View style={{ flexDirection: 'row', paddingVertical: '1%', justifyContent: 'center', alignItems: 'center' }}>
                                         <View style={{ width: '30%', padding: '2%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
                                             <TouchableOpacity style={{ flex: 1, }} onPress={() => {
@@ -244,9 +250,9 @@ export default class CompanyDetails extends Component {
                                         </View>
                                     </View>
 
-                                    <View style={{  flexDirection: 'row', paddingVertical: '1%', marginVertical: 5, justifyContent: 'center', alignItems: 'center' }}>
+                                    <View style={{ flexDirection: 'row', paddingVertical: '1%', marginVertical: 5, justifyContent: 'center', alignItems: 'center' }}>
 
-                                        <View style={{ width: '22%',  padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
+                                        <View style={{ width: '22%', padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
                                             <TouchableOpacity style={{ flex: 1, }} onPress={() => {
                                                 if (validationempty(this.state.data_list.p_facebook)) {
                                                     Linking.openURL(this.state.data_list.p_facebook)
@@ -261,7 +267,7 @@ export default class CompanyDetails extends Component {
                                                 <IconEntypo name='share' size={20} color={Colors.Theme_color} />
                                             </TouchableOpacity>
                                         </View>
-                                        <View style={{ width: '22%',  padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
+                                        <View style={{ width: '22%', padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
                                             <TouchableOpacity style={{ flex: 1, }} onPress={() => {
                                                 if (validationempty(this.state.data_list.p_instagram)) {
                                                     Linking.openURL(this.state.data_list.p_instagram)
@@ -275,7 +281,7 @@ export default class CompanyDetails extends Component {
                                                 <IconEntypo name='share' size={20} color={Colors.Theme_color} />
                                             </TouchableOpacity>
                                         </View>
-                                        <View style={{ width: '22%',  padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
+                                        <View style={{ width: '22%', padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
                                             <TouchableOpacity style={{ flex: 1, }} onPress={() => {
                                                 if (validationempty(this.state.data_list.p_linkedin)) {
                                                     Linking.openURL(this.state.data_list.p_linkedin)
@@ -289,7 +295,7 @@ export default class CompanyDetails extends Component {
                                                 <IconEntypo name='share' size={20} color={Colors.Theme_color} />
                                             </TouchableOpacity>
                                         </View>
-                                        <View style={{ width: '22%',  padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
+                                        <View style={{ width: '22%', padding: '1%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '2%' }}>
                                             <TouchableOpacity style={{ flex: 1, }} onPress={() => {
                                                 if (validationempty(this.state.data_list.p_twitter)) {
                                                     Linking.openURL(this.state.data_list.p_twitter)

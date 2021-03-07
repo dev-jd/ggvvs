@@ -344,7 +344,7 @@ class ViewOtherPersionalDetails extends Component {
   }
   async postApiCall() {
     var aniversary
-    console.log('check the gender',this.state.gendertatus)
+    console.log('check the gender', this.state.gendertatus)
     if (this.state.maritalstatus === null || this.state.maritalstatus === undefined || this.state.maritalstatus === '' || this.state.maritalstatus === 'null') {
       Toast.show('Select Matital Status')
     } else if (this.state.maritalstatus === 'Never Married' || this.state.maritalstatus === 'Divorcee') {
@@ -355,7 +355,7 @@ class ViewOtherPersionalDetails extends Component {
         this.state.anniversary === '' ||
         this.state.anniversary === undefined
       ) {
-        Toast.show('Select Anniversary')  
+        Toast.show('Select Anniversary')
       } else if (this.state.gendertatus === null || this.state.gendertatus === undefined || this.state.gendertatus === '' || this.state.gendertatus === 'null') {
         showToast('Select gender')
       } else {
@@ -705,8 +705,8 @@ class ViewOtherPersionalDetails extends Component {
                     { width: '45%', color: Colors.black }
                   ]}
                 >
-                  Marital Status*
-              </Text>
+                  Marital Status <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
+                </Text>
                 <Picker
                   selectedValue={this.state.maritalstatus}
                   onValueChange={(itemValue, itemIndex) =>
@@ -801,8 +801,8 @@ class ViewOtherPersionalDetails extends Component {
                     { width: '45%', color: Colors.black }
                   ]}
                 >
-                  Date Of Birth*
-              </Text>
+                  Date Of Birth <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
+                </Text>
                 <View
                   style={{
                     flex: 1,
@@ -902,8 +902,8 @@ class ViewOtherPersionalDetails extends Component {
                       })
                     ]}
                   >
-                    Address
-                </Label>
+                    Address <Text style={[Style.Textmainstyle, { color: 'red' }]}>*</Text>
+                  </Label>
                   <Input
                     style={Style.Textstyle}
                     multiline={true}
@@ -958,8 +958,8 @@ class ViewOtherPersionalDetails extends Component {
                     { width: '45%', color: Colors.black }
                   ]}
                 >
-                  Cast
-              </Text>
+                  Cast <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
+                </Text>
                 <Picker
                   selectedValue={this.state.casttatus}
                   onValueChange={(itemValue, itemIndex) => {
@@ -1188,8 +1188,8 @@ class ViewOtherPersionalDetails extends Component {
                     { width: '45%', color: Colors.black }
                   ]}
                 >
-                  Gender
-              </Text>
+                  Gender <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
+                </Text>
                 <Picker
                   selectedValue={this.state.gendertatus}
                   onValueChange={(itemValue, itemIndex) =>
@@ -1308,10 +1308,10 @@ class ViewOtherPersionalDetails extends Component {
                   <Label
                     style={[
                       Style.Textstyle,
-                      (style = {
+                      {
                         color: Colors.black,
                         fontFamily: CustomeFonts.medium
-                      })
+                      }
                     ]}
                   >
                     Education
@@ -1329,10 +1329,10 @@ class ViewOtherPersionalDetails extends Component {
                   <Label
                     style={[
                       Style.Textstyle,
-                      (style = {
+                      {
                         color: Colors.black,
                         fontFamily: CustomeFonts.medium
-                      })
+                      }
                     ]}
                   >
                     Profession

@@ -53,28 +53,11 @@ export default class PhotoGallary extends Component {
                 this.getPhotosList()
             } 
 
-        setTimeout(() => {
+        // setTimeout(() => {
             const data = []
             
-            this.state.imageData.map((item, index) => {
-                console.log('imagegal',this.state.URL + "/"  + item)
-                Image.getSize(this.state.URL +  "/"+ item, (width, height) => {
-                    data.push({
-                        uri: this.state.URL + "/"  + item,
-                        width: width,
-                        borderRadius: 6,
-                        elevation: 2,
-                        backgroundColor : Colors.white,
-                         height: height
-                    })
-                })
-            })
-
-            this.setState({
-                MasonryList: data,
-                isLoading: false,
-            })
-        }, 3000)
+          
+        // }, 3000)
     }
 
 
@@ -83,10 +66,30 @@ export default class PhotoGallary extends Component {
             .then(res => {
                 console.log("Media list res ===> ", res.data)
                 if (res.data.status === true) {
-                    this.setState({
+                    var data=[]
+                    data = res.data.data,                   
+                     this.setState({
                         URL: res.data.URL,
-                        imageData: res.data.data[0].media_photos.split(","),
+                        imageData: res.data.data,
                         // isLoading: false,
+                    })
+                   data.map((item, index) => {
+                        console.log('imagegal',res.data.URL + "/"  + item.media_photos)
+                        Image.getSize(res.data.URL +  "/"+ item.media_photos, (width, height) => {
+                            data.push({
+                                uri: res.data.URL + "/"  + item.media_photos,
+                                width: width,
+                                borderRadius: 6,
+                                elevation: 2,
+                                backgroundColor : Colors.white,
+                                 height: height
+                            })
+                        })
+                    })
+        
+                    this.setState({
+                        MasonryList: data,
+                        isLoading: false,
                     })
                 }
             })
