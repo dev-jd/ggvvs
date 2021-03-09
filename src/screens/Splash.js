@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react'
 import {
   StatusBar,
@@ -111,6 +112,7 @@ export default class App extends Component {
         this.props.navigation.replace('Dashboard')
         // this.props.navigation.replace('ProfileComplsary')
       } else {
+        // this.props.navigation.replace('Dashboard')
         this.props.navigation.replace('ProfileComplsary')
       }
     }

@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import Icon from 'react-native-vector-icons/Ionicons'
+import IconFeather from 'react-native-vector-icons/Feather'
 import CustomeFonts from '../Theme/CustomeFonts'
 import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
@@ -30,6 +31,8 @@ import { base_url } from '../Static'
 import Moment from 'moment'
 import AppImages from '../Theme/image'
 import Toast from 'react-native-simple-toast'
+import Modal from 'react-native-modal'
+import { Helper } from '../Helper/Helper';
 
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -59,6 +62,26 @@ export default class App extends Component {
       main_member_data: [],
       family_data: [],
       dataSource: [],
+      visibleModelSelection: null,
+      memberArray: [], samaj_id: '',
+      memberRelation: [
+        {
+          id: 1,
+          title: 'Self',
+          value: 'self'
+        },
+        {
+          id: 2,
+          title: 'Son',
+          value: 'son'
+        },
+        {
+          id: 3,
+          title: 'Daughter',
+          value: 'daughter'
+        },
+      ],
+      relationType: '', familyMemberId: '', member_id: ''
     }
   }
 
@@ -155,6 +178,25 @@ export default class App extends Component {
     //   })
   }
 
+  async getFamilyMembers(relationType) {
+    if (relationType !== 'self') {
+      var formData = new FormData()
+      formData.append('member_id', this.state.member_id)
+      formData.append('relation', relationType)
+      var response = await Helper.POST('getFamilyMember', formData)
+      console.log('check the data of family members', response)
+      this.setState({ memberArray: response.data, })
+    }
+  }
+
+  async goToMatrimonyForm() {
+    if (this.state.relationType === 'self') {
+      this.props.navigation.navigate('LookinForMatrimony', { memberId: this.state.member_id,relationType:this.state.relationType })
+    } else {
+      this.props.navigation.navigate('LookinForMatrimony', { memberId: this.state.familyMemberId,relationType:this.state.relationType })
+    }
+  }
+
   render() {
     const { banner_img, banner_url } = this.state
 
@@ -197,7 +239,7 @@ export default class App extends Component {
                         { flex: 1, alignSelf: 'center', color: Colors.white }
                       ]}
                     >
-                      Search Gender
+                      Select Gender
                 </Text>
                     <Picker
                       selectedValue={this.state.gender}
@@ -311,17 +353,18 @@ export default class App extends Component {
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('LookinForMatrimony')}
+                    onPress={() => this.setState({ visibleModelSelection: 'bottom' })}
+                    // onPress={() => this.props.navigation.navigate('LookinForMatrimony')}
                     style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
                   >
-                    <Text style={Style.buttonText}>My Matrimony Profile</Text>
+                    <Text style={Style.buttonText}>Matrimony Profile</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </ScrollView>
           </View>
-          <TouchableOpacity style={{position:'absolute',bottom:0,alignItems:'center',left:0,right:0}}
-          onPress={()=> this.props.navigation.navigate('TermsConditions')}>
+          <TouchableOpacity style={{ position: 'absolute', bottom: 0, alignItems: 'center', left: 0, right: 0 }}
+            onPress={() => this.props.navigation.navigate('TermsConditions')}>
             <Text
               style={[
                 Style.Textmainstyle,
@@ -332,6 +375,99 @@ export default class App extends Component {
           </TouchableOpacity>
 
         </ImageBackground>
+        <Modal
+          isVisible={this.state.visibleModelSelection === 'bottom'}
+          swipeDirection={['down']}
+          style={{ justifyContent: 'center', padding: 5 }}
+        >
+          <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModelSelection: null })}>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>General Questionnaire</Text>
+              <IconFeather name='x' type='feather' onPress={() => this.setState({ visibleModelSelection: null })} />
+            </TouchableOpacity>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{ paddingVertical: '3%', }}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text
+                    style={[
+                      Style.Textstyle,
+                      { flex: 1, alignSelf: 'center', color: Colors.white }
+                    ]}
+                  >
+                    Select Relation
+                </Text>
+                  <Picker
+                    selectedValue={this.state.relationType}
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({ relationType: itemValue })
+                      this.getFamilyMembers(itemValue)
+                    }}
+                    mode={'dialog'}
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      fontFamily: CustomeFonts.reguar,
+                      color: Colors.white
+                    }}
+                  >
+                    <Picker.Item label='Select Relation' value='0' />
+                    {this.state.memberRelation.map((item, key) => (
+                      <Picker.Item
+                        label={item.title}
+                        value={item.value}
+                        key={key}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text
+                    style={[
+                      Style.Textstyle,
+                      { flex: 1, alignSelf: 'center', color: Colors.white }
+                    ]}
+                  >
+                    Select Member
+                </Text>
+                  <Picker
+                    selectedValue={this.state.familyMemberId}
+                    onValueChange={(itemValue, itemIndex) => {
+                      this.setState({ familyMemberId: itemValue })
+                     
+                    }}
+                    mode={'dialog'}
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      fontFamily: CustomeFonts.reguar,
+                      color: Colors.white
+                    }}
+                  >
+                    <Picker.Item label='Select Member' value='0' />
+                    {this.state.memberArray.map((item, key) => (
+                      <Picker.Item
+                        label={item.name}
+                        value={item.id}
+                        key={key}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+                <TouchableOpacity
+                  // onPress={() => this.setState({ visibleModelSelection: 'bottom' })}
+                  onPress={() => {
+                    this.setState({ visibleModelSelection: null })
+                    this.goToMatrimonyForm()
+                  }}
+                  style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
+                >
+                  <Text style={Style.buttonText}>Matrimony Profile</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </Modal>
       </SafeAreaView>
     )
   }

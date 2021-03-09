@@ -83,22 +83,24 @@ export default class LookinForMatrimony extends Component {
       visibleModalPersonal: null, visibleModalFamily: null, visibleModalEducation: null, visibleModalSpritual: null, visibleModalGeneral: null, visibleModalComm: null,
       visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null,
       signal: '', termsConditionsData: '', subCastArray: [], subcast: '', fatherNo: '', motherNo: '',
-      lat: 0.0, long: 0.0, location: ''
+      lat: 0.0, long: 0.0, location: '', relationType: ''
     }
   }
   async componentDidMount() {
     const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-    const membedId = await AsyncStorage.getItem('member_id')
-    const member_type = await AsyncStorage.getItem('type')
+    // const membedId = await AsyncStorage.getItem('member_id')
+    // const member_type = await AsyncStorage.getItem('type')
     const isTermsAccept = await AsyncStorage.getItem('isTermsAccept')
+    var membedId = await this.props.navigation.getParam('memberId')
+    var relationType = await this.props.navigation.getParam('relationType')
 
     console.log('samaj id ', samaj_id)
     console.log('membedId ', membedId)
-    console.log('member_type ', member_type)
+    console.log('relationType ', relationType)
     this.setState({
       samaj_id: samaj_id,
       member_id: membedId,
-      member_type: member_type
+      // member_type: member_type
     })
 
     await NetInfo.addEventListener(state => {
@@ -166,6 +168,7 @@ export default class LookinForMatrimony extends Component {
   }
   async apiCalling() {
 
+    console.log('check social media url', 'socialLink?samaj_id=' + this.state.samaj_id + '&member_id=' + this.state.member_id)
     var socialresponse = await Helper.GET('socialLink?samaj_id=' + this.state.samaj_id + '&member_id=' + this.state.member_id)
     this.setState({
       fbuser: socialresponse.data[0].member_fb,
@@ -175,97 +178,113 @@ export default class LookinForMatrimony extends Component {
       twitter: socialresponse.data[0].member_twitter,
       signal: socialresponse.data[0].member_signal,
     })
-    var formdata = new FormData()
-    formdata.append('samaj_id', this.state.samaj_id)
-    formdata.append('member_id', this.state.member_id)
-    formdata.append('type', this.state.member_type)
 
-    // var response = { matrimony: null }
-    var response = await Helper.POST('profile_data', formdata)
-    // console.log('check the response -- > ', response)
-    if (validationempty(response.package_details)) {
-      this.setState({
-        packageId: response.package_details.package_id,
-        packageDetails: response.package_details
-      })
-    }
+    var response = await Helper.GET('memberProfile/' + this.state.member_id)
+    console.log('check the response matrimony', response)
+    // var formdata = new FormData()
+    // formdata.append('samaj_id', this.state.samaj_id)
+    // formdata.append('member_id', this.state.member_id)
+    // formdata.append('type', this.state.member_type)
 
-    if (validationempty(response.matrimony.id)) {
+    // // var response = { matrimony: null }
+    // var response = await Helper.POST('profile_data', formdata)
+    // // console.log('check the response -- > ', response)
+    // if (validationempty(response.package_details)) {
+    this.setState({
+      packageId: response.data.package_id,
+      packageDetails: {
+        "package_id": response.data.package_id,
+        "package_name": response.data.package_name,
+        "price": response.data.price,
+        "renewal_price": response.data.renewal_price,
+        "days": response.data.days,
+        "description": response.data.description,
+        "is_trial": response.data.is_trial,
+        "transaction_id": response.data.transaction_id,
+        "start_date": response.data.start_date,
+        "end_date": response.data.end_date,
+        "amount": response.data.amount,
+        "status": response.data.status,
+      }
+    })
+    // }
+
+    if (validationempty(response.data.matrimony.id)) {
       this.setState({
         // using matrimoney personal
         isActive: true,
-        matrimonyId: response.matrimony.id + '',
-        profiletagline: response.matrimony.profile_tag_line,
-        personaldesc: response.matrimony.person_description,
-        birthPlace: response.matrimony.mm_birth_place,
-        btime: response.matrimony.mm_birth_time,
-        heightfFeet: response.matrimony.mm_height + '',
-        heightInch: response.matrimony.mm_height_inch + '',
-        weight: response.matrimony.mm_weight,
-        skinColor: response.matrimony.mm_color,
-        kundliImage: response.matrimony.mm_kundali,
+        matrimonyId: response.data.matrimony.id + '',
+        profiletagline: response.data.matrimony.profile_tag_line,
+        personaldesc: response.data.matrimony.person_description,
+        birthPlace: response.data.matrimony.mm_birth_place,
+        btime: response.data.matrimony.mm_birth_time,
+        heightfFeet: response.data.matrimony.mm_height + '',
+        heightInch: response.data.matrimony.mm_height_inch + '',
+        weight: response.data.matrimony.mm_weight,
+        skinColor: response.data.matrimony.mm_color,
+        kundliImage: response.data.matrimony.mm_kundali,
 
         // family details
-        fatherProfession: response.matrimony.father_profession,
-        motherprofession: response.matrimony.mother_profession,
-        otherfamilydetails: response.matrimony.family_other_details,
-        familydesc: response.matrimony.family_details,
+        fatherProfession: response.data.matrimony.father_profession,
+        motherprofession: response.data.matrimony.mother_profession,
+        otherfamilydetails: response.data.matrimony.family_other_details,
+        familydesc: response.data.matrimony.family_details,
 
         // proffessional
-        income: response.matrimony.mm_income,
-        profession: response.matrimony.profession,
-        professiondesc: response.matrimony.profession_details,
+        income: response.data.matrimony.mm_income,
+        profession: response.data.matrimony.profession,
+        professiondesc: response.data.matrimony.profession_details,
 
         // lifestyle
-        lifestylechoice: response.matrimony.lifestyle_choice,
-        expectation: response.matrimony.mm_expectations,
+        lifestylechoice: response.data.matrimony.lifestyle_choice,
+        expectation: response.data.matrimony.mm_expectations,
 
         // education
-        educationdesc: response.matrimony.mm_education,
+        educationdesc: response.data.matrimony.mm_education,
 
         // speritual
-        religion: response.matrimony.sp_path,
-        positivePoint: response.matrimony.positive_point,
-        negativePoint: response.matrimony.negative_point,
+        religion: response.data.matrimony.sp_path,
+        positivePoint: response.data.matrimony.positive_point,
+        negativePoint: response.data.matrimony.negative_point,
 
         // general inq
-        lookfornri: response.matrimony.looking_for_nri + '',
-        takedrink: response.matrimony.mm_drink + '',
-        smoke: response.matrimony.mm_smoke + '',
-        nonveg: response.matrimony.mm_nonveg + '',
-        eggs: response.matrimony.mm_egg + '',
+        lookfornri: response.data.matrimony.looking_for_nri + '',
+        takedrink: response.data.matrimony.mm_drink + '',
+        smoke: response.data.matrimony.mm_smoke + '',
+        nonveg: response.data.matrimony.mm_nonveg + '',
+        eggs: response.data.matrimony.mm_egg + '',
         // photos
-        member1image: response.matrimony.member_photo_1,
-        member2image: response.matrimony.member_photo_2,
-        member3image: response.matrimony.member_photo_3,
-        member4image: response.matrimony.member_photo_4,
-        member5image: response.matrimony.member_photo_5,
+        member1image: response.data.matrimony.member_photo_1,
+        member2image: response.data.matrimony.member_photo_2,
+        member3image: response.data.matrimony.member_photo_3,
+        member4image: response.data.matrimony.member_photo_4,
+        member5image: response.data.matrimony.member_photo_5,
 
       })
       var isManglik, kundliBelive, isPustimarg, approvedMatrimony, contacttoParents
-      if (response.matrimony.mm_manglik === '1') {
+      if (response.data.matrimony.mm_manglik === '1') {
         isManglik = true
       } else {
         isManglik = false
       }
-      if (response.matrimony.dont_believe_in_kundali === '1') {
+      if (response.data.matrimony.dont_believe_in_kundali === '1') {
         kundliBelive = true
       } else {
         kundliBelive = false
       }
-      if (response.matrimony.pustimarg === 1) {
+      if (response.data.matrimony.pustimarg === 1) {
         isPustimarg = true
       } else {
         isPustimarg = false
 
       }
 
-      if (response.matrimony.me_approved === 1) {
+      if (response.data.matrimony.me_approved === 1) {
         approvedMatrimony = true
       } else {
         approvedMatrimony = false
       }
-      if (response.matrimony.is_parent_mobile_only === 1) {
+      if (response.data.matrimony.is_parent_mobile_only === 1) {
         contacttoParents = true
       } else {
         contacttoParents = false
@@ -279,28 +298,29 @@ export default class LookinForMatrimony extends Component {
     }
 
     this.setState({
-      name: response.member_details.member_name,
-      dob: moment(response.member_details.member_birth_date,"YYYY-MM-DD", true).format("DD-MM-YYYY"),
-      fathername: response.member_details.member_father,
-      mothername: response.member_details.member_mother,
-      nativeplace: response.other_information.member_native_place,
-      email: response.other_information.member_email,
-      country: response.other_information.member_country_id,
-      state: response.other_information.member_state_id,
-      city: response.other_information.member_city_id,
-      address: response.other_information.member_address,
-      education: response.other_information.member_eq_id,
-      mobile: '+' + response.member_details.member_mobile,
-      img_url: response.member_kundli,
-      img_url_profile: response.matrimony_photo,
-      casttatus: parseInt(response.member_details.member_cast_id),
-      subcast: response.member_details.member_sub_cast,
-      fatherNo: response.member_details.father_mobile,
-      motherNo: response.member_details.mother_mobile,
+      name: response.data.name,
+      dob: moment(response.data.member_birth_date, "YYYY-MM-DD", true).format("DD-MM-YYYY"),
+      fathername: response.data.father_name,
+      mothername: response.data.mother_name,
+      nativeplace: response.data.native_place,
+      email: response.data.member_email,
+      country: response.data.country_id,
+      state: response.data.state_id,
+      city: response.data.city_id,
+      address: response.data.address,
+      education: response.data.education,
+      mobile: '+' + response.data.member_mobile,
+      img_url: response.data.kundali_url,
+      img_url_profile: response.data.matrimony_url,
+
+      casttatus: parseInt(response.data.member_cast_id),
+      subcast: response.data.member_sub_cast,
+      fatherNo: response.data.father_mobile_no,
+      motherNo: response.data.mother_mobile_no,
     })
-    this.stateApiCall(response.other_information.member_country_id)
-    this.cityApiCall(response.other_information.member_state_id)
-    // this.subCast(response.member_details.member_cast_id)
+    this.stateApiCall(response.data.country_id)
+    this.cityApiCall(response.data.state_id)
+    this.subCast(response.data.member_cast_id)
   }
 
   async CapturePhoto(type) {
@@ -361,7 +381,7 @@ export default class LookinForMatrimony extends Component {
   }
 
   async editData() {
-    var { kundliImage, matrimonyId, birthPlace, skinColor, btime, casttatus, subcast, profiletagline, isManglik, personaldesc, heightfFeet, heightInch, weight, member_id, samaj_id, idSelect } = this.state
+    var { kundliImage, matrimonyId, birthPlace, skinColor, btime, casttatus, subcast, profiletagline,relationType, isManglik, personaldesc, heightfFeet, heightInch, weight, member_id, samaj_id, idSelect } = this.state
 
     if (validationBlank(kundliImage, 'Select Kundli First') && validationBlank(casttatus, 'select your cast') && validationBlank(subcast, 'select your sub-cast')) {
 
@@ -379,6 +399,7 @@ export default class LookinForMatrimony extends Component {
 
       this.setState({ isLoding: true })
       const formdata = new FormData()
+      formdata.append('for_type', relationType)
       formdata.append('mm_samaj_id', samaj_id)
       formdata.append('mm_member_id', member_id)
       formdata.append('profile_tag_line', profiletagline)
@@ -696,7 +717,7 @@ export default class LookinForMatrimony extends Component {
       membedId, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, twitter, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
       member1image, matrimonyId, member2image, member3image, heightDroupDown, member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5,
       fatherNo, motherNo, subcast, member_id } = this.state
-
+    console.log('check package details', packageDetails)
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar backgroundColor={Colors.Theme_color} barStyle='light-content' />
@@ -1329,7 +1350,7 @@ export default class LookinForMatrimony extends Component {
                 </View>
               </View>
               <TextInputCustome title='Address' value={address} changetext={(address) => this.setState({ address })} maxLength={50} multiline={true} numberOfLines={3} keyboardType={'default'} editable={true} />
-              <View style={{ paddingVertical: 10 }}>
+              {/* <View style={{ paddingVertical: 10 }}>
                 <GooglePlacesAutocomplete
                   ref={(instance) => { this.GooglePlacesRef = instance }}
                   clearButtonMode={'always'}
@@ -1400,6 +1421,7 @@ export default class LookinForMatrimony extends Component {
                 />
 
               </View>
+        */}
               <TextInputCustome title='Facebook Profile' value={fbuser} changetext={(fbuser) => this.setState({ fbuser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Instagram Profile' value={instauser} changetext={(instauser) => this.setState({ instauser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Linkedin Profile' value={linkedin} changetext={(linkedin) => this.setState({ linkedin })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />

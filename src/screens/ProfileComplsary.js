@@ -18,7 +18,7 @@ import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
-import { showToast } from '../Theme/Const'
+import { showToast, validationempty } from '../Theme/Const'
 import { Helper } from '../Helper/Helper'
 
 const options = {
@@ -80,7 +80,7 @@ export default class ProfileComplsary extends Component {
             dob: '',
             address: '',
             education: '',
-            samaj_id:'',member_type:'',member_id:''
+            samaj_id: '', member_type: '', member_id: '', picUrl: '', email: '', email2: ''
         };
     }
 
@@ -89,10 +89,32 @@ export default class ProfileComplsary extends Component {
         const member_id = await AsyncStorage.getItem('member_id')
         const member_type = await AsyncStorage.getItem('type')
         this.setState({
-            samaj_id,member_id,member_type
+            samaj_id, member_id, member_type
         })
 
         this.genderApi()
+        this.getProfile()
+    }
+    async getProfile() {
+        var formdata = new FormData()
+        formdata.append('samaj_id', this.state.samaj_id)
+        formdata.append('member_id', this.state.member_id)
+        formdata.append('type', this.state.member_type)
+
+        console.log('check formdata profile -->11 ', formdata)
+        var res = await Helper.POST('profile_data', formdata)
+
+        this.setState({
+            maritalstatus: res.member_details.member_marital_status,
+            dob: Moment(res.member_details.member_birth_date, "YYYY-MM-DD", true).format("DD-MM-YYYY"),
+            gendertatus: res.other_information.member_gender_id,
+            address: res.other_information.member_address,
+            education: res.other_information.member_eq_id,
+            photoImage: res.member_details.member_photo,
+            picUrl: res.member_photo,
+            email: res.other_information.member_email,
+            email2: res.other_information.member_email,
+        })
     }
 
     genderApi = async () => {
@@ -171,7 +193,7 @@ export default class ProfileComplsary extends Component {
             showToast('Enter Address')
         } else if (this.state.education === null || this.state.education === undefined || this.state.education === '' || this.state.education === 'null') {
             showToast('Enter Education')
-        } else if (this.state.photoPath === null || this.state.photoPath === undefined || this.state.photoPath === '' || this.state.photoPath === 'null') {
+        } else if (this.state.photoImage === null || this.state.photoImage === undefined || this.state.photoImage === '' || this.state.photoImage === 'null') {
             showToast('Select Ptofile Pic First')
         }
         else {
@@ -179,7 +201,7 @@ export default class ProfileComplsary extends Component {
         }
     }
 
-   async apiCallPost() {
+    async apiCallPost() {
 
         var formdata = new FormData()
         formdata.append('member_marital_status', this.state.maritalstatus)
@@ -189,15 +211,25 @@ export default class ProfileComplsary extends Component {
         formdata.append('member_id', this.state.member_id)
         formdata.append('member_samaj_id', this.state.samaj_id)
         formdata.append('type', this.state.member_type)
-        formdata.append('member_photo', {
-            uri: 'file://' + this.state.photoPath,
-            name: this.state.photoFileName,
-            type: this.state.photoType
-        })
+        formdata.append('member_eq_id', this.state.education)
+        formdata.append('member_email', this.state.email)
+        if (validationempty(this.state.photoPath)) {
+            formdata.append('member_photo', {
+                uri: 'file://' + this.state.photoPath,
+                name: this.state.photoFileName,
+                type: this.state.photoType
+            })
+        } else {
+            formdata.append('member_photo', this.state.photoImage)
+        }
 
         console.log('formdata -->', formdata)
-        var response = await Helper.POSTFILE('member_details_edit',formdata)
-        console.log('profile response',response)
+        var response = await Helper.POSTFILE('member_details_edit', formdata)
+        console.log('profile response', response)
+        showToast(response.message)
+        if (response.success) {
+            this.props.navigation.navigate('Dashboard')
+        }
     }
     render() {
         return (
@@ -239,7 +271,7 @@ export default class ProfileComplsary extends Component {
                                 >
                                     Date Of Birth <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
                                 </Text>
-                                <View style={{flex: 1,width: '50%',fontFamily: CustomeFonts.reguar,color: Colors.black}}></View>
+                                <View style={{ flex: 1, width: '50%', fontFamily: CustomeFonts.reguar, color: Colors.black }}></View>
                                 <DatePicker
                                     style={{ width: 170 }}
                                     date={this.state.dob}
@@ -338,6 +370,36 @@ export default class ProfileComplsary extends Component {
                                     ></Input>
                                 </Item>
                             </View>
+                            <View>
+                                <Item stackedLabel>
+                                    <Label
+                                        style={[
+                                            Style.Textstyle,
+                                            {
+                                                color: Colors.black,
+                                                fontFamily: CustomeFonts.medium
+                                            }
+                                        ]}
+                                    >
+                                        Email <Text style={[Style.Textmainstyle, { color: 'red' }]}>*</Text>
+                                    </Label>
+                                    {this.state.email2 === '' ||
+                                        this.state.email2 === null || this.state.email2 === 'null' ||
+                                        this.state.email2 === undefined ? (
+
+                                            <Input
+                                                style={Style.Textstyle}
+                                                multiline={false}
+                                                keyboardType={'email-address'}
+                                                // numberOfLines={3}
+                                                onChangeText={value => this.setState({ email: value })}
+                                                value={this.state.email}
+                                            ></Input>
+                                        ) : (
+                                            <Text style={Style.Textstyle}>{this.state.email}</Text>
+                                        )}
+                                </Item>
+                            </View>
                             <View
                                 style={{
                                     justifyContent: 'center',
@@ -375,7 +437,7 @@ export default class ProfileComplsary extends Component {
                                                     this.state.photoImage === null || this.state.photoImage === 'null' ||
                                                     this.state.photoImage === undefined
                                                     ? AppImages.placeHolder
-                                                    : this.state.photoImage.includes('http') ? { uri: this.state.photoImage } : this.state.photoSelect ? { uri: this.state.photoImage } : { uri: this.state.profile_pic_url + this.state.photoImage }
+                                                    : this.state.photoImage.includes('http') ? { uri: this.state.photoImage } : this.state.photoSelect ? { uri: this.state.photoImage } : { uri: this.state.picUrl + this.state.photoImage }
                                             }
                                             style={{ height: 100, width: 150, marginLeft: 20 }}
                                             resizeMode='stretch'

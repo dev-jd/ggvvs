@@ -63,7 +63,10 @@ post.schema = {
     like_unlike: 'int?',
     member_name: 'string?',
     member_pic: 'string?',
-    p_audio: 'string?'
+    p_audio: 'string?',
+    URL: 'string?',
+    Audio: 'string?',
+    M_URL: 'string?'
   }
 }
 let realm = new Realm({ schema: [post] })
@@ -152,51 +155,44 @@ export default class App extends Component {
     formdata.append('type', this.state.member_type)
 
     console.log('check formdata profile -->11 ', formdata)
-    axois
-      .post(base_url + 'profile_data', formdata)
-      .then(async (res) => {
-        this.setState({ isLoding: false })
-        if (res.data.status === true) {
-          this.setState({
-            samaajname: res.data.member_details.samajname,
-            samaajlogo: res.data.member_details.samajlogo,
-            logourl: res.data.samaj_logo,
-          })
-
-          console.log('package id ---->', res.data.is_matrimony_search)
-          await AsyncStorage.setItem('isMatrimonySearch', res.data.is_matrimony_search + '')
-
-          if (validationempty(res.data.professional_info)) {
-            this.setState({ isProfessional: true })
-          }
-          if (validationempty(res.data.package_details.package_id) && res.data.package_details.status !== 'Expired') {
-
-            await AsyncStorage.setItem('packageId', res.data.package_details.package_id + '')
-            await AsyncStorage.setItem('packageActive', res.data.package_details.status + '')
-          }
-        }
+    var res = await Helper.POST('profile_data', formdata)
+    this.setState({ isLoding: false })
+    if (res.status === true) {
+      this.setState({
+        samaajname: res.member_details.samajname,
+        samaajlogo: res.member_details.samajlogo,
+        logourl: res.samaj_logo,
       })
-      .catch(err => {
-        console.log('profile_data error', err)
-        this.setState({ isLoding: false })
-      })
+
+      console.log('package id ---->', res.is_matrimony_search)
+      await AsyncStorage.setItem('isMatrimonySearch', res.is_matrimony_search + '')
+
+      if (validationempty(res.professional_info)) {
+        this.setState({ isProfessional: true })
+      }
+      if (validationempty(res.package_details.package_id) && res.package_details.status !== 'Expired') {
+
+        await AsyncStorage.setItem('packageId', res.package_details.package_id + '')
+        await AsyncStorage.setItem('packageActive', res.package_details.status + '')
+      }
+    }
+
   }
   async getPostList() {
     //post
 
     // let realm = new Realm({ schema: [post] })
-    let total_length = realm.objects(post).length
+    let total_length = realm.objects(post).sorted('id', true).length
     let postDate, date_check
 
     if (total_length > 0) {
-      console.log("check the date --> ", date_check)
 
-      postDate = realm.objects('post')[total_length - 1]
+      postDate = realm.objects('post').sorted('id', false)[total_length - 1]
       console.log("check the date 1--> ", realm.objects('post')[total_length - 1])
 
       date_check = postDate.id
       console.log("check the date --> ", date_check)
-      
+
       // to delete ago month data
       var date1 = new Date() //Current Date
       var today_date = Moment(date1, 'YYYY-MM-DD').format('YYYY-MM-DD')
@@ -247,7 +243,7 @@ export default class App extends Component {
           // console.log('post list responce', res.data.data)
           if (res.data.data.length > 0) {
             this.setState({
-              postData: [...this.state.postData, ...res.data.data],
+              // postData: [...this.state.postData, ...res.data.data],
               postDataURL: res.data.URL,
               m_URL: res.data.M_URL,
               audioUrl: res.data.Audio,
@@ -261,7 +257,7 @@ export default class App extends Component {
                 let result = realm
                   .objects('post')
                   .filtered('id = ' + element.id)
-                  console.log('result.length', result.length)
+                console.log('result.length', result)
                 if (result.length === 0) {
                   console.log('check post data', this.state.postDataView)
                   realm.create('post', {
@@ -276,15 +272,20 @@ export default class App extends Component {
                     like_unlike: element.like_unlike,
                     member_name: element.member_name,
                     member_pic: element.member_pic,
-                    p_audio: element.p_audio
+                    p_audio: element.p_audio,
+                    URL: res.data.URL,
+                    Audio: res.data.Audio,
+                    M_URL: res.data.M_URL
                   })
 
-                  var postDataView = realm.objects(post).sorted('id', false);
+                  var postDataView = realm.objects(post).sorted('id', true);
+                  console.log('post data', postDataView)
+
                   if (postDataView.length > 0) {
                     this.setState({
                       postData: postDataView
                     })
-                    console.log("data from state insert -- > ", this.state.postData.length)
+                    console.log("data from state insert -- > ", this.state.postData)
                   }
 
                 } else {
@@ -305,13 +306,13 @@ export default class App extends Component {
       })
 
     var postDataView = realm.objects(post).sorted('id', true);
-    // console.log('post data', postDataView)
+    console.log('post data', postDataView)
     if (postDataView.length > 0) {
       this.setState({
         postData: postDataView
       })
 
-      console.log("data from state -- > ", this.state.postData.length)
+      console.log("data from state -- > ", this.state.postData)
     }
   }
 
@@ -532,9 +533,9 @@ export default class App extends Component {
             onPress={() =>
               this.props.navigation.navigate('PostDetails', {
                 postData: item,
-                imgUrl: this.state.postDataURL,
-                m_URL: this.state.m_URL,
-                audioUrl: this.state.audioUrl
+                imgUrl: item.URL,
+                m_URL: item.M_URL,
+                audioUrl: item.Audio
               })
             }
           >
@@ -544,7 +545,7 @@ export default class App extends Component {
                   source={
                     item.member_pic === null
                       ? images.logo
-                      : { uri: this.state.m_URL + item.member_pic }
+                      : { uri: item.M_URL + item.member_pic }
                   }
                   style={{
                     backgroundColor: Colors.divider,
@@ -570,7 +571,7 @@ export default class App extends Component {
                 item.post_image === undefined ? null : (
                   <Image
                     source={{
-                      uri: this.state.postDataURL + item.post_image
+                      uri: item.URL + item.post_image
                     }}
                     style={{ height: 200, flex: 1 }}
                     resizeMode='contain'
@@ -604,7 +605,7 @@ export default class App extends Component {
                   this.props.navigation.navigate('PlayAudio', {
                     id: item.id,
                     title: item.p_audio,
-                    audioUrl: this.state.audioUrl
+                    audioUrl: item.Audio
                   })
                 }
               >
@@ -706,7 +707,7 @@ export default class App extends Component {
             activeOpacity={0.9}
             onPress={async () => {
               await this.setState({ pageNo: page, bottomLoading: true })
-              this.getPostList(page)
+              // this.getPostList(page)
             }}
             style={Style.Buttonback}>
 
@@ -730,9 +731,9 @@ export default class App extends Component {
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
-        <NavigationEvents
+        {/* <NavigationEvents
           onWillFocus={payload => this.getPostList()}
-        />
+        /> */}
         {/* header */}
         <View
           style={{
@@ -774,6 +775,13 @@ export default class App extends Component {
             size={25}
             color={Colors.white}
             onPress={() => this.props.navigation.navigate('Notification')}
+          />
+          <Icon
+            style={{ flex: 1, paddingRight: '1%', marginLeft: '2%' }}
+            name='sign-out'
+            size={25}
+            color={Colors.white}
+            onPress={() => this.onLogout()}
           />
 
         </View>
