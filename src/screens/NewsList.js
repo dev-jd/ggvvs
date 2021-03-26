@@ -164,7 +164,7 @@ export default class App extends Component {
     return (
       <View>
         <View
-          style={[Style.cardback, (style = { flex: 1, flexDirection: 'row' })]}
+          style={[Style.cardback, { flex: 1, flexDirection: 'row' }]}
         >
           {item.sn_image === null ? (
             <Image

@@ -1,30 +1,17 @@
 import React, { Component } from 'react'
-import {
-  Text,
-  View,
-  StatusBar,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  ActivityIndicator,
-  SectionList,
-  SafeAreaView,
-  Dimensions
-} from 'react-native'
-import { Content, Card, CardItem, Thumbnail, Left, Body, Toast, Right, Form, Item, Label, Input } from 'native-base'
+import { Text, View, StatusBar, ScrollView, TouchableOpacity, Image, FlatList, ActivityIndicator, SafeAreaView, Dimensions } from 'react-native'
+import { Content, Card, CardItem, Thumbnail, Left, Body, Right, Form, Item, Label, Input } from 'native-base'
 import IconFeather from 'react-native-vector-icons/Feather'
-
+import IconOcticons from 'react-native-vector-icons/Octicons'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import IconIonicons from 'react-native-vector-icons/Ionicons'
 import Swiper from 'react-native-swiper'
-
 import CustomeFonts from '../Theme/CustomeFonts'
 import Colors from '../Theme/Colors'
 import Style from '../Theme/Style'
 import images from '../Theme/image'
 import axois from 'axios'
 import { base_url, base_url_1, checkempty, pic_url } from '../Static'
-import { NavigationEvents } from 'react-navigation'
 import Moment from 'moment'
 import HTML from 'react-native-render-html'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -33,17 +20,13 @@ import WebView from 'react-native-webview'
 import RNFetchBlob from 'rn-fetch-blob'
 import Share from 'react-native-share'
 import Modal from 'react-native-modal'
-
-import {
-  IGNORED_TAGS,
-  alterNode,
-  makeTableRendere
-} from 'react-native-render-html-table-bridge'
 import AppImages from '../Theme/image'
 import { Helper } from '../Helper/Helper'
 import SimpleToast from 'react-native-simple-toast'
 import { showToast, validationempty } from '../Theme/Const'
 import Realm from 'realm';
+import TextInputCustome from '../Compoment/TextInputCustome'
+import { Alert } from 'react-native'
 
 const config = {
   WebViewComponent: WebView
@@ -73,7 +56,7 @@ let realm = new Realm({ schema: [post] })
 
 
 
-export default class App extends Component {
+export default class Dashboard extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Dashboard',
@@ -88,30 +71,14 @@ export default class App extends Component {
   constructor() {
     super()
     this.state = {
-      postData: [],
-      postDataURL: '',
-      postDataView: [],
-      ad_data: [],
-      isLoading: true,
-      isAdLoading: false,
-      samaj_id: '',
-      connection_Status: true,
-      adimgUrl: '',
-      imgUrl: '',
-      member_id: '',
-      member_can_post: '',
-      banner_data: [],
-      member_type: '',
-      m_URL: '',
-      banner_paths: {},
-      audioUrl: '',
-      samaajname: '',
-      samaajlogo: '',
-      postad1: {},
-      postad2: {},
-      postadimageUrl: '',
-      postAdsArray: [], isProfessional: false, menuVisibleList1: [], visibleModal: null, report_reason: '',
-      blockedPostId: '', buttonLoding: false, bottomLoading: false, pageNo: 1, totalPage: null
+      postData: [], postDataURL: '', postDataView: [], ad_data: [], isLoading: true, isAdLoading: false, samaj_id: '', connection_Status: true, adimgUrl: '',
+      imgUrl: '', member_id: '',
+      member_can_post: '', banner_data: [], member_type: '', m_URL: '', banner_paths: {}, audioUrl: '', samaajname: '', samaajlogo: '', postad1: {},
+      postad2: {}, postadimageUrl: '', postAdsArray: [], isProfessional: false, menuVisibleList1: [], visibleModal: null, report_reason: '',
+      blockedPostId: '', buttonLoding: false, bottomLoading: false, pageNo: 1, totalPage: null,
+      matrimonyListArray: [], imageUrlMatrimony: '', imageUrlMember: '', businessListArray: [], businessImage: '', jobSeekerArray: [], cvUrl: '',
+      talentArray: [], talentUrl: '', member_profile_url: '', comments: '', visibleModalComment: null, postId: '', allCommentList: [], commentLoding: false,
+      propertyArray: [], propertyUrl: '', newsArray: [], newsUrl: '', eventArray: [], eventImageUrl: '',jobProviderArray:''
     }
   }
 
@@ -143,7 +110,13 @@ export default class App extends Component {
       this.setState({ connection_Status: true })
       this.getPostList()
       this.getProfile()
+      this.matrimonySearchApi()
       this.adget()
+      this.businessListApi()
+      this.jobSeekerApi()
+      this.talentApi()
+      this.propertyListApi()
+      this.newsListApi()
     }
   }
 
@@ -405,11 +378,25 @@ export default class App extends Component {
     }
     this.setState({ isLoading: false })
   }
+  likeTalentApiCall = async (postId, like) => {
+    var formData = new FormData()
+    formData.append('talent_master_id', postId)
+    formData.append('member_id', this.state.member_id)
 
-  onShare = async (details) => {
-    console.log('check details', details)
+    if (like === 1) {
+      var response = await Helper.POST('addLike', formData)
+      console.log('like talent response', response)
+      showToast(response.message)
+    } else {
+      var response = await Helper.POST('removeLike', formData)
+      console.log('like talent response', response)
+      showToast(response.message)
+    }
+  }
+  async onShare(image,id) {
+    console.log('check image', image)
     SimpleToast.show('Waiting for image download')
-    RNFetchBlob.fetch('GET', this.state.postDataURL + details.post_image)
+    RNFetchBlob.fetch('GET', image)
       .then(resp => {
         console.log('response : ', resp);
         console.log(resp.data);
@@ -418,9 +405,9 @@ export default class App extends Component {
 
         let shareOptions = {
           title: "GGVVS",
-          originalUrl: base_url_1 + 'post-detail/' + details.id,
+          originalUrl: base_url_1 + 'post-detail/' + id,
           url: 'data:image/png;base64,' + base64image,
-          message: base_url_1 + 'post-detail/' + details.id,
+          message: base_url_1 + 'post-detail/' + id,
         };
 
         Share.open(shareOptions)
@@ -433,8 +420,46 @@ export default class App extends Component {
       })
       .catch(err => console.log(err));
   }
+   onShareTalent =  async (item) =>{
+    console.log('check item', item)
+    SimpleToast.show('Waiting for image download')
+    let shareOptions = {
+      title: "GGVVS",
+      originalUrl: base_url_1 + 'talent-detail/' + id,
+      message: base_url_1 + 'talent-detail/' + id,
+    };
 
-
+    Share.open(shareOptions)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        err && console.log(err);
+      });
+  }
+  alertForDeleteComment = (commentId) =>{
+    Alert.alert(
+      'Delete',
+      'Are you sure you want to remove this comment?',
+      [
+        { text: 'Yes', onPress: () => this.deleteComment(commentId) },
+        {
+          text: 'No',
+          onPress: () => console.log('No Pressed'),
+          style: 'cancel'
+        }
+      ],
+      { cancelable: false }
+    )
+  }
+  deleteComment = async (commentId)=>{
+    var formData = new FormData()
+    formData.append('comment_id',commentId)
+    var response = await Helper.POST('removeComment',formData)
+    console.log('check your comment delete response ',response)
+    showToast(response.message)
+    this.setState({visibleModalComment:null})
+  }
   async reportApi() {
     this.setState({ buttonLoding: true })
     var formData = new FormData()
@@ -461,74 +486,98 @@ export default class App extends Component {
     }
   }
 
+  businessListApi = async () => {
+    var response = await Helper.GET('business_details_view?samaj_id=' + this.state.samaj_id)
+    if (response.data.length > 0) {
+      var arrayBizList = []
+      for (let index = 7; index < response.data.length; index++) {
+        const element = response.data[index];
+        if (index < 10) {
+          arrayBizList.push(element)
+        } else {
+          break
+        }
+      }
+      // console.log('business  dic response', arrayBizList)
+
+      this.setState({ businessListArray: arrayBizList, businessImage: response.url + '/' })
+    }
+
+  }
+
+  jobSeekerApi = async () => {
+    console.log('response responseSeeker')
+    var responseSeeker = await Helper.POST('jobSeekers')
+    console.log('response responseSeeker', responseSeeker.data)
+    var arraySeeker = []
+    for (let index = 0; index < responseSeeker.data.length; index++) {
+      const element = responseSeeker.data[index];
+      if (index < 10) {
+        arraySeeker.push(element)
+      } else {
+        break
+      }
+    }
+    this.setState({
+      jobSeekerArray: arraySeeker,
+      cvUrl: responseSeeker.url
+    })
+    var response = await Helper.POST('jobProviders')
+    // console.log('response', response.data)
+    var arrayBizList = []
+    for (let index = 0; index < response.data.length; index++) {
+      const element = response.data[index];
+      if (index < 4) {
+        arrayBizList.push(element)
+      } else {
+        break
+      }
+    }
+    this.setState({
+      jobProviderArray: arrayBizList,
+      // cvUrl: response.url
+    })
+
+  }
+  
+  talentApi = async () => {
+    var response = await Helper.GET('talent_list')
+    this.setState({ talentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url })
+  }
+  propertyListApi = async () => {
+    var response = await Helper.GET('member_properties')
+    // console.log('check the response property list ', response)
+    this.setState({ propertyArray: response.data, propertyUrl: response.url + '/' })
+  }
+  newsListApi = async () => {
+    // // event api call
+    var eventResponse = await Helper.GET('eventList?samaj_id=' + this.state.samaj_id)
+    // console.log('event response',eventResponse)
+    this.setState({ eventArray: eventResponse.data, eventImageUrl: eventResponse.path + '/' })
+
+  }
+  apiCallSendComment = async () => {
+    var formData = new FormData()
+    formData.append('talent_master_id', this.state.postId)
+    formData.append('member_id', this.state.member_id)
+    formData.append('comment', this.state.comments)
+    var responce = await Helper.POST('addComment', formData)
+    console.log('response comment add', responce)
+    this.setState({ visibleModalComment: null })
+    this.talentApi()
+  }
+
+  commentViewApi = async (postId) => {
+    this.setState({ commentLoding: true })
+    var response = await Helper.GET('commentList/' + postId)
+    console.log('check the response comment list', response)
+    this.setState({ allCommentList: response.data, commentLoding: false })
+  }
+
   postRendeItem = ({ item, index }) => {
     return (
-      <Content>
-        {/*  ad in post */}
-        {index === 2 ? <View>
-          <Card>
-            {this.state.postAdsArray.length > 0 ?
-              <TouchableOpacity
-                style={{ padding: '2%', height: 90 }}
-                onPress={() =>
-                  this.props.navigation.navigate('AdDetails', {
-                    itemData: this.state.postAdsArray[0],
-                    img_url: this.state.postadimageUrl + '/'
-                  })
-                }
-              >
-                {this.state.postAdsArray[0].sa_image === null || this.state.postAdsArray[0].sa_image === undefined || this.state.postAdsArray[0].sa_image === '' ?
-                  <Image
-                    source={AppImages.logo}
-                    style={{ height: 70 }}
-                    resizeMode='contain'
-                  /> : <Image
-                    source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[0].sa_image }}
-                    style={{ height: 70 }}
-                    resizeMode='contain'
-                  />}
-              </TouchableOpacity>
-              : <Image
-                source={AppImages.logo}
-                style={{ height: 70 }}
-                resizeMode='contain'
-              />}
-          </Card>
-        </View> : null}
-        <View>
-          {index === 4 ? <View>
-            <Card>
-              {this.state.postAdsArray.length > 0 ?
-                <TouchableOpacity
-                  style={{ padding: '2%', height: 90 }}
-                  onPress={() =>
-                    this.props.navigation.navigate('AdDetails', {
-                      itemData: this.state.postAdsArray[1],
-                      img_url: this.state.postadimageUrl + '/'
-                    })
-                  }
-                >
-                  {checkempty(this.state.postAdsArray[1].sa_image) ?
-                    <Image
-                      source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[1].sa_image }}
-                      style={{ height: 70 }}
-                      resizeMode='contain'
-                    /> : <Image
-                      source={AppImages.logo}
-                      style={{ height: 70 }}
-                      resizeMode='contain'
-                    />}
-                </TouchableOpacity>
-                : <Image
-                  source={AppImages.logo}
-                  style={{ height: 70 }}
-                  resizeMode='contain'
-                />}
-            </Card>
-          </View> : null}
-        </View>
-        {/* post item */}
-        <Card>
+      <View style={{ width: Dimensions.get('window').width * 0.68, marginHorizontal: 5,borderRadius:10 }}>
+        <Card style={{borderRadius:10}}>
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('PostDetails', {
@@ -538,8 +587,9 @@ export default class App extends Component {
                 audioUrl: item.Audio
               })
             }
+            style={{borderRadius:10}}
           >
-            <CardItem>
+            <CardItem style={{borderRadius:10}}>
               <Left>
                 <Thumbnail
                   source={
@@ -564,7 +614,7 @@ export default class App extends Component {
               </Left>
 
             </CardItem>
-            <View style={{ flexDirection: 'column' }}>
+            <View style={{ flexDirection: 'column',borderRadius:10 }}>
 
               {item.post_image === null ||
                 item.post_image === '' ||
@@ -580,17 +630,17 @@ export default class App extends Component {
                 )}
             </View>
           </TouchableOpacity>
-          <View style={{ padding: '2%' }}>
+          {/* <View style={{ padding: '2%' }}>
             <HTML
               html={item.description}
-              imagesMaxWidth={Dimensions.get('window').width}
+              imagesMaxWidth={Dimensions.get('window').width*0.5}
               baseFontStyle={{
                 fontSize: 14,
                 fontFamily: CustomeFonts.medium,
                 color: Colors.black
               }}
             />
-          </View>
+          </View> */}
           {item.p_audio === null ||
             item.p_audio === '' ||
             item.p_audio === undefined ? null : (
@@ -619,11 +669,11 @@ export default class App extends Component {
                 />
               </TouchableOpacity>
             )}
-          <CardItem>
+          <CardItem style={{borderRadius:10}}>
             <View style={[Style.flexView, { flex: 1 }]}>
               <TouchableOpacity
                 transparent
-                style={[Style.flexView, { width: '20%' }]}
+                style={[Style.flexView, { width: '30%' }]}
                 onPress={() => this.addLike(item.id)}
               >
                 {item.like_unlike === 1 ? (
@@ -654,9 +704,9 @@ export default class App extends Component {
               <TouchableOpacity
                 transparent
                 style={{
-                  paddingHorizontal: '3%', flexDirection: 'row', marginHorizontal: 5
+                  paddingHorizontal: '3%', flexDirection: 'row', marginHorizontal: 5, width: '15%'
                 }}
-                onPress={() => this.onShare(item)}
+                onPress={() => this.onShare(item.URL+item.post_image,item.id)}
               >
                 <IconFeather
                   color={Colors.Theme_color}
@@ -665,7 +715,7 @@ export default class App extends Component {
                   style={{ alignSelf: 'center', }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={Style.flexView2} onPress={() => {
+              <TouchableOpacity style={[Style.flexView2, { width: '45%' }]} onPress={() => {
                 console.log('click more', index)
                 let { menuVisibleList1 } = this.state
                 menuVisibleList1[index] = true
@@ -684,46 +734,292 @@ export default class App extends Component {
               </TouchableOpacity>
             </View>
           </CardItem>
-        </Card>
-      </Content>
 
+        </Card>
+      </View>
     )
   }
-  renderFooter = () => {
-    if (this.state.totalPage === this.state.pageNo) {
-      return (
+
+  matrimonySearchApi = async () => {
+    var formdata = new FormData()
+    formdata.append('gender_id', '1')
+    formdata.append('member_id', this.state.member_id)
+    formdata.append('f_age', 18)
+    formdata.append('t_age', 40)
+    formdata.append('looking_for_nri', '')
+    formdata.append('marital_status', '')
+    formdata.append('weight', '')
+    formdata.append('pustimarg_only', '')
+    formdata.append('is_smoking', '')
+    formdata.append('is_take_alcohol', '')
+    formdata.append('dont_believe_in_kundali', '')
+    formdata.append('height', '')
+    var response = await Helper.POST('matrimony_search', formdata)
+
+    var matrimonyArray = []
+    if (response.main_member_data.length > 0) {
+      matrimonyArray.push(response.main_member_data[0], response.main_member_data[3])
+    }
+    var formData = new FormData()
+    formData.append('gender_id', '2')
+    formData.append('member_id', this.state.member_id)
+    formData.append('f_age', 18)
+    formData.append('t_age', 40)
+    var responseMgirl = await Helper.POST('matrimony_search', formData)
+    if (responseMgirl.main_member_data.length > 0) {
+      matrimonyArray.push(responseMgirl.main_member_data[1], responseMgirl.main_member_data[0])
+    }
+
+    this.setState({
+      matrimonyListArray: matrimonyArray, imageUrlMember: response.profile_photo,
+      imageUrlMatrimony: response.matrimony_photo_url,
+    })
+  }
+
+  matrimonyRenderData = ({ item, index }) => {
+    return (
+      <TouchableOpacity style={[Style.cardback, {
+        marginHorizontal: 5, padding: '2%', backgroundColor: Colors.transparent, borderRadius: 10,
+        elevation: 0, borderWidth: 1, borderColor: Colors.inactiveTabColor
+      }]}>
         <View>
+          <TouchableOpacity style={{ paddingVertical: '5%' }} onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: this.state.imageUrlMember + item.member_photo })}>
 
+            {item.member_photo === null ? (
+              <Image
+                resizeMode='cover'
+                source={{
+                  uri:
+                    'https://pngimage.net/wp-content/uploads/2018/05/default-user-profile-image-png-2.png'
+                }}
+                style={{ height: 100, width: 100, alignSelf: 'center', borderRadius: 100 }}
+              />
+            ) : (
+                <Image
+                  resizeMode='cover'
+                  source={{ uri: this.state.imageUrlMember + item.member_photo }}
+                  style={{ height: 100, width: 100, alignSelf: 'center', borderRadius: 100 }}
+                />
+              )}
+          </TouchableOpacity>
+          <Text style={[Style.Textmainstyle, { textAlign: 'center', marginVertical: '2%' }]}>{item.name}</Text>
         </View>
-      )
-    } else {
-      var page = this.state.pageNo + 1
-      console.log('check the page no', page)
-      // console.log('check the page no',page)
-      return (
-        //Footer View with Load More button
-        <View style={Style.footer}>
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={async () => {
-              await this.setState({ pageNo: page, bottomLoading: true })
-              // this.getPostList(page)
-            }}
-            style={Style.Buttonback}>
+      </TouchableOpacity>
+    )
+  }
+  businessListRender = ({ item, index }) => {
+    return (
+      <TouchableOpacity style={[Style.cardback, Style.flexView, {
+        borderRadius: 10, flexDirection: index % 2 == 0 ? 'row' : 'row-reverse',
+        backgroundColor: index % 2 == 0 ? Colors.white : Colors.lightThem
+      }]}
+        onPress={() => this.props.navigation.navigate('CompanyDetails', {
+          companyData: item,
+        })}>
+        <Image
+          resizeMode='cover'
+          source={validationempty(item.business_logo) ? { uri: this.state.businessImage + item.business_logo } : AppImages.logo}
+          style={{ height: 70, width: 70, alignSelf: 'center', borderRadius: 100, borderWidth: 1 }}
+        />
+        <View style={{ flex: 6 }}>
+          <Text style={[Style.Textmainstyle, { flex: 6, textAlign: 'left', paddingHorizontal: '3%' }]}>{item.member_co_name}</Text>
+          <Text style={[Style.Textstyle, { flex: 6, textAlign: 'left', paddingHorizontal: '3%' }]}>{item.member_name}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+  jobSeekerRender = ({ item, index }) => {
+    return (
+      <TouchableOpacity style={[Style.cardback, { width: Dimensions.get('window').width * 0.95,borderRadius:10,marginHorizontal:5 }]} 
+      onPress={() => this.props.navigation.navigate('EmployeeDetails', { item, title: item.post_name })}>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Member name</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_name}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Mobile no</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_mobile}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Email</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_email}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Working As</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.keywords}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+  jobProviderRender = ({ item, index }) => {
+    return (
+      <TouchableOpacity style={[Style.cardback, { width: Dimensions.get('window').width * 0.95,borderRadius:10,marginHorizontal:5 }]} onPress={() => this.props.navigation.navigate('JobDetails', { item, title: item.post_name })}>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Member name</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_name}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Mobile no</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_mobile}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Email</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_email}</Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
+          <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Working As</Text>
+          <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.keywords}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+  talentRender = ({ item, index }) => {
+    var vlinks = item.video_link
+    return (
+      <View style={[Style.cardback, { marginHorizontal: 5, width: Dimensions.get('window').width * 0.95,borderRadius:10 }]}>
+        <CardItem>
+          <Left>
+            <Thumbnail
+              source={
+                item.member_profile === null
+                  ? images.logo
+                  : { uri: this.state.member_profile_url + '/' + item.member_profile }
+              }
+              style={{
+                backgroundColor: Colors.divider,
+                height: 50,
+                width: 50
+              }}
+            />
+            <Body>
+              <Text style={Style.Textstyle}>
+                {item.member}
+              </Text>
+            </Body>
+          </Left>
 
-            {this.state.bottomLoading ? (
-              <ActivityIndicator
-                color="white"
-                style={{ marginLeft: 8 }} />
-            ) : <Text style={Style.Textmainstyle}>Load More</Text>}
+        </CardItem>
+        <View>
+          <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>{item.title}</Text>
+          <Text style={[Style.Textmainstyle]}>{item.description}</Text>
+          <Text style={[Style.Textstyle]}>Checkout Videos and Photos</Text>
+        </View>
+        <View style={[Style.flexView, { flex: 1, paddingHorizontal: '2%', marginVertical: '2%' }]}>
+          <TouchableOpacity
+            transparent
+            style={[Style.flexView, { width: '40%' }]}
+            onPress={() => this.likeTalentApiCall(item.id, item.is_like)}
+          >
+            {item.is_like === 1 ? (
+              <Icon
+                color={Colors.Theme_color}
+                type='font-awesome'
+                name='thumbs-up'
+                size={20}
+                style={{ alignSelf: 'center' }}
+              />
+            ) : (
+                <Icon
+                  name='thumbs-up'
+                  type='font-awesome'
+                  size={20}
+                  style={{ alignSelf: 'center' }}
+                />
+              )}
+
+            <Text
+              style={[
+                Style.Textstyle,
+                { alignSelf: 'center', marginLeft: 3, paddingHorizontal: 5 }
+              ]}
+              uppercase={false}
+            >
+              {item.likes_count} Likes
+                </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[Style.flexView2, { width: '40%' }]} onPress={() => {
+            console.log('click more', index)
+            let { menuVisibleList1 } = this.state
+            menuVisibleList1[index] = true
+            this.setState({
+              menuVisibleList1,
+              visibleModalComment: 'Bottom',
+              postId: item.id
+            })
+            this.commentViewApi(item.id)
+          }}>
+            <IconOcticons
+              name='comment' size={20}
+            // style={{
+            //   paddingHorizontal: '3%',
+            //   flexDirection: 'row',
+            // }}
+            />
+            <Text style={[Style.SubTextstyle, { width: '100%', paddingHorizontal: '1%' }]}>{item.comments_count} Comments</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            transparent
+            style={{
+              width: '20%'
+            }}
+            onPress={() => this.onShareTalent(item)}
+          >
+            <IconFeather
+              type='feather'
+              name='share-2'
+              size={20}
+              style={{ alignSelf: 'center', }}
+            />
           </TouchableOpacity>
         </View>
-      );
-    }
-  };
+      </View>
+    )
+  }
+  propertyRender = ({ item, index }) => {
+    return (
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('PropertyDetailsView',{title:item.name,item,propertyUrl:this.state.propertyUrl})} style={[Style.cardback, { margin: 5, width: Dimensions.get('window').width * 0.45 ,borderRadius:10}]}>
+        <View>
+          <Image source={{ uri: this.state.propertyUrl + item.photo_1 }} style={{ height: 150, flex: 1, width: '100%' }}
+            resizeMode='contain'
+          />
+          <CardItem>
+
+            <Body>
+              <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>
+                {item.name}
+              </Text>
+
+            </Body>
+
+          </CardItem>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+  eventRender = ({ item, index }) => {
+    return (
+      <TouchableOpacity style={[Style.cardback, {
+        borderRadius: 10, flexDirection: index % 2 == 0 ? 'column' : 'column-reverse',
+        backgroundColor: index % 2 == 0 ? Colors.white : Colors.lightThem
+      }]}
+        onPress={() => this.props.navigation.navigate('EventDetail', { eventDetails: item[0].id })}>
+
+        <View style={[Style.centerView, { flex: 6 }]}>
+          <Text style={[Style.Textmainstyle, { textAlign: 'left', paddingHorizontal: '3%' , color: Colors.Theme_color,}]}>{item[0].em_name}</Text>
+        </View>
+        <View style={{ marginLeft: 10, flex: 1, flexDirection: 'row', justifyContent: 'center', }}>
+          <IconIonicons name="ios-calendar"   size={24} style={{ marginLeft: 10, marginRight: 10, alignSelf: 'center', color: Colors.Theme_color }} />
+          <Text style={[Style.Textstyle, { alignSelf: 'center' }]}>
+            Event Date : {item[0].em_event_date}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
 
   render() {
     // console.log('render call -->', this.state.postData.length)
+    var { comments } = this.state
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -786,7 +1082,25 @@ export default class App extends Component {
 
         </View>
         {/* banner  */}
-        <View>
+      
+
+        <View style={{ flex: 7 }}>
+
+          {this.state.isLoading ?
+
+            <View
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            >
+              <ActivityIndicator size='large' color={Colors.Theme_color} />
+            </View>
+            :
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={{
+                height: Math.round(Dimensions.get('window').height) - 80
+              }}
+            >
+                <View>
           {this.state.isAdLoading ?
             <View
               style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
@@ -827,472 +1141,296 @@ export default class App extends Component {
             </View>
           }
         </View>
+              <View
+                style={{ flex: 2, backgroundColor: Colors.divider, padding: '1%' }}
+              >
+                <TouchableOpacity style={[Style.flexView, { padding: '2%', }]} >
+                {/* onPress={() => this.props.navigation.navigate('AllPost')}> */}
+                  <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Posts</Text>
+                  <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                  <IconFeather
+                    color={Colors.Theme_color}
+                    type='font-awesome'
+                    name='chevron-right'
+                    size={20}
+                  />
+                </TouchableOpacity>
+                <FlatList
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                  data={this.state.postData}
+                  renderItem={item => this.postRendeItem(item)}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+              {/* matrimony */}
+              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('Matrimony')}>
+                <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Matrimony</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                <IconFeather
+                  color={Colors.Theme_color}
+                  type='font-awesome'
+                  name='chevron-right'
+                  size={20}
+                />
+              </TouchableOpacity>
 
-        <View style={{ flex: 7 }}>
-          {this.state.isLoading ?
-
-            <View
-              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-            >
-              <ActivityIndicator size='large' color={Colors.Theme_color} />
-            </View>
-            :
-            <View
-              style={{ flex: 2, backgroundColor: Colors.divider, padding: '1%' }}
-            >
               <FlatList
+                horizontal={false}
                 showsVerticalScrollIndicator={false}
-                data={this.state.postData}
-                renderItem={item => this.postRendeItem(item)}
+                data={this.state.matrimonyListArray}
+                numColumns={2}
+                renderItem={(item, index) => this.matrimonyRenderData(item, index)}
                 keyExtractor={(item, index) => index.toString()}
-              // ListFooterComponent={this.renderFooter}
+              />
+              {/* ad 2 */}
+              <Card>
+                {this.state.postAdsArray.length > 0 ?
+                  <TouchableOpacity
+                    style={{ padding: '2%', height: 90 }}
+                    onPress={() =>
+                      this.props.navigation.navigate('AdDetails', {
+                        itemData: this.state.postAdsArray[0],
+                        img_url: this.state.postadimageUrl + '/'
+                      })
+                    }
+                  >
+                    {this.state.postAdsArray[0].sa_image === null || this.state.postAdsArray[0].sa_image === undefined || this.state.postAdsArray[0].sa_image === '' ?
+                      <Image
+                        source={AppImages.logo}
+                        style={{ height: 70 }}
+                        resizeMode='contain'
+                      /> : <Image
+                        source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[0].sa_image }}
+                        style={{ height: 70 }}
+                        resizeMode='contain'
+                      />}
+                  </TouchableOpacity>
+                  : <Image
+                    source={AppImages.logo}
+                    style={{ height: 70 }}
+                    resizeMode='contain'
+                  />}
+              </Card>
+              {/* business dictory */}
+              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('BusinessInfo')}>
+                <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Business Directory</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                <IconFeather
+                  color={Colors.Theme_color}
+                  type='font-awesome'
+                  name='chevron-right'
+                  size={20}
+                />
+              </TouchableOpacity>
+
+              <FlatList
+                horizontal={false}
+                showsVerticalScrollIndicator={false}
+                style={{ padding: '2%', }}
+                data={this.state.businessListArray}
+                numColumns={1}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+                renderItem={(item, index) => this.businessListRender(item, index)}
+                keyExtractor={(item, index) => index.toString()}
+              />
+              {/* employee */}
+              <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1,paddingHorizontal: '2%', }]}>Employment</Text>
+              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('JobProvider')}>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 1.5 }]}>Job Seeker (Candidates)</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 0.5 }]}>View All</Text>
+                <IconFeather
+                  color={Colors.Theme_color}
+                  type='font-awesome'
+                  name='chevron-right'
+                  size={20}
+                />
+              </TouchableOpacity>
+              <FlatList
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                style={{ padding: '2%', }}
+                data={this.state.jobSeekerArray}
+                renderItem={item => this.jobSeekerRender(item)}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('Jobseeker')}>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 1.5 }]}>Job Provider (Companies)</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 0.5 }]}>View All</Text>
+                <IconFeather
+                  color={Colors.Theme_color}
+                  type='font-awesome'
+                  name='chevron-right'
+                  size={20}
+                />
+              </TouchableOpacity>
+              <FlatList
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                style={{ padding: '2%', }}
+                data={this.state.jobProviderArray}
+                renderItem={item => this.jobProviderRender(item)}
+                keyExtractor={(item, index) => index.toString()}
+              />
+              {/* ads 2 */}
+              <Card>
+                {this.state.postAdsArray.length > 0 ?
+                  <TouchableOpacity
+                    style={{ padding: '2%', height: 90 }}
+                    onPress={() =>
+                      this.props.navigation.navigate('AdDetails', {
+                        itemData: this.state.postAdsArray[1],
+                        img_url: this.state.postadimageUrl + '/'
+                      })
+                    }
+                  >
+                    {checkempty(this.state.postAdsArray[1].sa_image) ?
+                      <Image
+                        source={{ uri: this.state.postadimageUrl + '/' + this.state.postAdsArray[1].sa_image }}
+                        style={{ height: 70 }}
+                        resizeMode='contain'
+                      /> : <Image
+                        source={AppImages.logo}
+                        style={{ height: 70 }}
+                        resizeMode='contain'
+                      />}
+                  </TouchableOpacity>
+                  : <Image
+                    source={AppImages.logo}
+                    style={{ height: 70 }}
+                    resizeMode='contain'
+                  />}
+              </Card>
+              {/* talent */}
+              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('AllTaletnt', {
+                isProfessional: this.state.isProfessional
+              })}>
+                <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Talent Zone </Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                <IconFeather
+                  color={Colors.Theme_color}
+                  type='font-awesome'
+                  name='chevron-right'
+                  size={20}
+                />
+              </TouchableOpacity>
+              <FlatList
+                horizontal={true}
+                showsVerticalScrollIndicator={false}
+                style={{ padding: '2%', }}
+                data={this.state.talentArray}
+                renderItem={item => this.talentRender(item)}
+                keyExtractor={(item, index) => index.toString()}
+              />
+              {/* property */}
+              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('ViewAllproperty', {
+                isProfessional: this.state.isProfessional
+              })}>
+                <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Properties (Sell/Rent/Buy)</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                <IconFeather
+                  color={Colors.Theme_color}
+                  type='font-awesome'
+                  name='chevron-right'
+                  size={20}
+                />
+              </TouchableOpacity>
+              <FlatList
+                horizontal={true}
+                showsVerticalScrollIndicator={false}
+                style={{ padding: '2%', }}
+                data={this.state.propertyArray}
+                renderItem={item => this.propertyRender(item)}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            
+              {/* Events */}
+              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('EventLIst')}>
+                <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Events</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                <IconFeather
+                  color={Colors.Theme_color}
+                  type='font-awesome'
+                  name='chevron-right'
+                  size={20}
+                />
+              </TouchableOpacity>
+              <FlatList
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                style={{ padding: '2%', }}
+                data={this.state.eventArray}
+                renderItem={item => this.eventRender(item)}
+                keyExtractor={(item, index) => index.toString()}
+              />
+
+            </ScrollView>
+          }
+
+        </View>
+        <Modal
+          isVisible={this.state.visibleModalComment === 'Bottom'}
+          onSwipeComplete={() => this.setState({ visibleModalComment: null, report_reason: '' })}
+          swipeDirection={['down']}
+          style={{ justifyContent: 'flex-end', margin: 0 }}
+          onBackdropPress={() => this.setState({ visibleModalComment: null, report_reason: '' })}
+          onBackButtonPress={() => this.setState({ visibleModalComment: null, report_reason: '' })}>
+          <View style={{ backgroundColor: Colors.white, padding: '3%' }}>
+            <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Comments</Text>
+            {this.state.commentLoding ?
+              <ActivityIndicator size={'small'} color={Colors.Theme_color} /> :
+              <View>
+                {this.state.allCommentList.length > 0 ?
+                  <FlatList
+                    showsVerticalScrollIndicator={false}
+                    style={{ padding: '2%', }}
+                    data={this.state.allCommentList}
+                    renderItem={({ item, index }) => (
+                      <View style={[Style.centerView, { borderWidth: 1, marginVertical: 5, borderRadius: 10, borderColor: Colors.inactiveTabColor }]}>
+                        <CardItem style={{ borderWidth: 1, borderRadius: 10, borderColor: Colors.white }}>
+                          <Left>
+                            <Thumbnail
+                              source={
+                                item.member_profile === null
+                                  ? images.logo
+                                  : { uri: this.state.member_profile_url + '/' + item.member_profile }
+                              }
+                              style={{
+                                backgroundColor: Colors.divider,
+                                height: 30,
+                                width: 30
+                              }}
+                            />
+                            <Body>
+                              <Text style={Style.Textstyle}>
+                                {item.member_name}
+                              </Text>
+                              <Text style={[Style.Textstyle]}>{item.comment}</Text>
+                            </Body>
+                            {item.member_id === this.state.member_id?
+                            <Right>
+                              <IconFeather name='x' size={20} onPress={() => this.alertForDeleteComment(item.comment_id)}/>
+                            </Right>:null}
+                          </Left>
+                        </CardItem>
+                      </View>
+                    )}
+                    keyExtractor={(item, index) => index.toString()}
+                  /> : null}
+              </View>}
+            <View style={Style.flexView}>
+              <TextInputCustome style={{ width: '90%', elevation: 5 }} placeholder='Write Comments' value={comments} changetext={(comments) => this.setState({ comments })} maxLength={200} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+              <IconIonicons
+                name='send'
+                size={20}
+                style={{ alignSelf: 'center', }}
+                onPress={() => this.apiCallSendComment()}
               />
             </View>
-          }
-          <View
-            style={{
-              position: 'absolute',
-              right: 0,
-              backgroundColor: Colors.transparent,
-              padding: '1%'
-            }}
-          >
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={{
-                height: Math.round(Dimensions.get('window').height) - 70
-              }}
-            >
-              <View>
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('OurSamaj', {
-                        banner_url: this.state.banner_paths.bn_samaj + '/',
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_samaj : null
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='center'
-                        style={Style.dashimage}
-                        source={{ uri: this.state.logourl + this.state.samaajlogo }}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        We
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                {this.state.member_can_post === '1' ? (
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('Addnewpost')
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.add_user}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center', }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={[Style.dashtext, { textAlign: 'center' }]}
-                        >
-                          Create Post
-                          </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                ) : null}
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('MembersDetails', {
-                        banner_url: this.state.banner_paths.bn_member + '/',
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data
-                          .bn_registered_member : null
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.Family}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={[Style.dashtext, { textAlign: 'center' }]}
-                      >
-                        My Family
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('Matrimony', {
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_matrimony : null,
-                        banner_url: this.state.banner_paths.bn_matrimony + '/'
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.matromoney}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={[Style.dashtext, { textAlign: 'center' }]}
-                      >
-                        Matrimony
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                {/* 
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('WhishListView')
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.wishlist}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          WhishList
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View> */}
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('NewsList', {
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_news : null,
-                        banner_url: this.state.banner_paths.bn_news + '/'
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.news}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        News
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('CircularList', {
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_circular : null,
-                        banner_url: this.state.banner_paths.bn_circular + '/'
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.circular}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        Circulars
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('BusinessInfo')
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.businessinfo}
-                      />
-                    </View>
-
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={4}
-                        ellipsizeMode='tail'
-                        style={[Style.dashtext]}
-                      >
-                        Buz. Dir
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-
-
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('Employment', {
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_employment : null,
-                        banner_url: this.state.banner_paths.bn_employment + '/',
-                        isProfessional: this.state.isProfessional
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.Employment}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        Employment
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('EventLIst', {
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_event : null,
-                        banner_url: this.state.banner_paths.bn_event + '/'
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.events}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        Events
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('YojnaList', {
-                        banner_url: this.state.banner_paths.bn_member + '/',
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data
-                          .bn_registered_member : null
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.plan}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        Yojna
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('Gallery')}
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.gallery}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        Gallery
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                {/* 
-                  <View style={[Style.dashcard, { marginTop: 10 }]}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('PropertyList', {
-                          banner_image: this.state.banner_data.length>0?this.state.banner_data.bn_property:null,
-                          banner_url: this.state.banner_paths.bn_property + '/'
-                        })
-                      }
-                    >
-                      <View style={{ alignItems: 'center' }}>
-                        <Image
-                          resizeMode='cover'
-                          style={Style.dashimage}
-                          source={images.property}
-                        />
-                      </View>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text
-                          numberOfLines={2}
-                          ellipsizeMode='tail'
-                          style={Style.dashtext}
-                        >
-                          Property
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View> */}
-
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('Donor', {
-                        banner_image: this.state.banner_data.length > 0 ? this.state.banner_data.bn_donation : null,
-                        banner_url: this.state.banner_paths.bn_donation + '/'
-                      })
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.donors}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        Donors
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('Suggestion')
-                    }
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.suggestion}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={[Style.dashtext, { textAlign: 'center' }]}
-                      >
-                        Feedback
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={[Style.dashcard, { marginTop: 10 }]}>
-                  <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('Faq')}
-                  >
-                    <View style={{ alignItems: 'center' }}>
-                      <Image
-                        resizeMode='cover'
-                        style={Style.dashimage}
-                        source={images.faqs}
-                      />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
-                        style={Style.dashtext}
-                      >
-                        FAQ
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={{ height: 70 }} />
-            </ScrollView>
           </View>
-        </View>
+        </Modal>
         <Modal
           isVisible={this.state.visibleModal === 'SlowModal'}
           onSwipeComplete={() => this.setState({ visibleModal: null, report_reason: '' })}

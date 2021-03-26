@@ -7,7 +7,7 @@ const Colors={
     blackTp:'#00000085',
     divider : '#E8EBED',
     light_pink:'#faebf1',
-    lightThem:'#FDD8BF',
+    lightThem:'#F8D2AE',
 
     Theme_color:'#F58634',
     activeTabColor:'#F58634',

@@ -3,6 +3,9 @@ import Colors from './Colors'
 import CustomeFonts from './CustomeFonts'
 
 const styles = StyleSheet.create({
+    map: {
+        ...StyleSheet.absoluteFillObject,
+      },
     cointainer: {
         flex: 1,
         backgroundColor: Colors.white,
@@ -22,7 +25,7 @@ const styles = StyleSheet.create({
     },
 
     dashcard: {
-        width: 80,
+        width: Dimensions.get('window').width *0.29,
         padding: 4,
         margin: 5,
         borderRadius: 6,
@@ -35,14 +38,20 @@ const styles = StyleSheet.create({
         color: Colors.black,
         fontFamily: CustomeFonts.medium,
         fontSize: 14,
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingHorizontal: '2%',
+        paddingVertical: '5%',
 
     },
     dashimage: {
-        width: 35,
-        height: 35
+        width: 100,
+        height: 100
     },
 
+    Dashbordtitle: {
+        fontSize: 18, fontFamily: CustomeFonts.regular,
+        color: Colors.black,
+    },
     screenHeading: {
         fontSize: 20, fontFamily: CustomeFonts.regular,
         color: Colors.black,

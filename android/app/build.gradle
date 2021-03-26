@@ -94,6 +94,7 @@ project.ext.react = [
  */
 def enableSeparateBuildPerCPUArchitecture = false
 
+
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
@@ -134,8 +135,8 @@ android {
         applicationId "com.ggvvssamaaj"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "1.22"
+        versionCode 28
+        versionName "1.24"
         multiDexEnabled true
     }
     splits {

@@ -14,7 +14,7 @@ export default class TextInputCustome extends Component {
     }
 
     render() {
-        var {title,value,maxLength,multiline,keyboardType,editable,style,numberOfLines} =this.props
+        var {title,value,maxLength,multiline,keyboardType,editable,style,numberOfLines,placeholder} =this.props
         return (
             <View style={style?style:{width:'100%',paddingVertical:'2%'}}>
                 <Item stackedLabel>
@@ -30,6 +30,7 @@ export default class TextInputCustome extends Component {
                         value={value}
                         multiline={multiline}
                         editable={editable}
+                        placeholder={placeholder}
                         numberOfLines={numberOfLines}
                     ></Input>
                 </Item>

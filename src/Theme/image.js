@@ -21,6 +21,7 @@ const AppImages =
     about: require('../images/info.png'),
     placeHolder:require('../images/placeholder.png'),
     wishlist:require('../images/wishlist.png'),
+    telent:require('../images/telent1.png'),
     logo:require('../images/samaj.png'),
     uploadimage:require('../images/uploadimage.png'),
     back1:require('../images/back1.jpg'),

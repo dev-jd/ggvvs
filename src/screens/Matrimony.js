@@ -185,15 +185,17 @@ export default class App extends Component {
       formData.append('relation', relationType)
       var response = await Helper.POST('getFamilyMember', formData)
       console.log('check the data of family members', response)
-      this.setState({ memberArray: response.data, })
+      if (response.success) {
+        this.setState({ memberArray: response.data, })
+      } 
     }
   }
 
   async goToMatrimonyForm() {
     if (this.state.relationType === 'self') {
-      this.props.navigation.navigate('LookinForMatrimony', { memberId: this.state.member_id,relationType:this.state.relationType })
+      this.props.navigation.navigate('LookinForMatrimony', { memberId: this.state.member_id, relationType: this.state.relationType })
     } else {
-      this.props.navigation.navigate('LookinForMatrimony', { memberId: this.state.familyMemberId,relationType:this.state.relationType })
+      this.props.navigation.navigate('LookinForMatrimony', { memberId: this.state.familyMemberId, relationType: this.state.relationType })
     }
   }
 
@@ -382,7 +384,7 @@ export default class App extends Component {
         >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModelSelection: null })}>
-              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>General Questionnaire</Text>
+              <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>For Whom Your Creating Or Editing Metromani Profile</Text>
               <IconFeather name='x' type='feather' onPress={() => this.setState({ visibleModelSelection: null })} />
             </TouchableOpacity>
 
@@ -392,7 +394,7 @@ export default class App extends Component {
                   <Text
                     style={[
                       Style.Textstyle,
-                      { flex: 1, alignSelf: 'center', color: Colors.white }
+                      { flex: 1, alignSelf: 'center'}
                     ]}
                   >
                     Select Relation
@@ -408,7 +410,6 @@ export default class App extends Component {
                       flex: 1,
                       width: '100%',
                       fontFamily: CustomeFonts.reguar,
-                      color: Colors.white
                     }}
                   >
                     <Picker.Item label='Select Relation' value='0' />
@@ -421,11 +422,12 @@ export default class App extends Component {
                     ))}
                   </Picker>
                 </View>
+                {this.state.relationType === 'self'?null:
                 <View style={{ flexDirection: 'row' }}>
                   <Text
                     style={[
                       Style.Textstyle,
-                      { flex: 1, alignSelf: 'center', color: Colors.white }
+                      { flex: 1, alignSelf: 'center'}
                     ]}
                   >
                     Select Member
@@ -434,14 +436,13 @@ export default class App extends Component {
                     selectedValue={this.state.familyMemberId}
                     onValueChange={(itemValue, itemIndex) => {
                       this.setState({ familyMemberId: itemValue })
-                     
+
                     }}
                     mode={'dialog'}
                     style={{
                       flex: 1,
                       width: '100%',
                       fontFamily: CustomeFonts.reguar,
-                      color: Colors.white
                     }}
                   >
                     <Picker.Item label='Select Member' value='0' />
@@ -453,7 +454,7 @@ export default class App extends Component {
                       />
                     ))}
                   </Picker>
-                </View>
+                </View>}
                 <TouchableOpacity
                   // onPress={() => this.setState({ visibleModelSelection: 'bottom' })}
                   onPress={() => {
