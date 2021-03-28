@@ -150,42 +150,52 @@ export default class PropertyDetailsView extends Component {
                             <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Property Sub Typpe</Text>
                             <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.property_sub_type}</Text>
                             {/* <Text style={[Style.Textmainstyle, { paddingVertical: '2%',color: Colors.Theme_color  }]}>BHK</Text> */}
-                            <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Descriptions</Text>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.min_price} {propertyData.currency} to {propertyData.max_price} {propertyData.currency}</Text>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.bhk} BHK</Text>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.description}</Text>
-                            <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Address</Text>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.address}</Text>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>City - {propertyData.city}</Text>
                             <View style={Style.flexView}>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%',flex:1, }]}>State - {propertyData.state}</Text>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%',flex:1, }]}>Country - {propertyData.country}</Text>
-                          </View>
-                            <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.video_link}</Text>
+                                <View style={{flex:1}}>
+                                    <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Minimum Cost</Text>
+                                    <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.min_price} {propertyData.currency}</Text>
+                                </View>
+                                <View style={{flex:1}}>
+                                <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Maximum Cost</Text>
+                                <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.max_price} {propertyData.currency}</Text>
+                            </View>
+                        </View>
+                        <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Descriptions</Text>
+                        <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.bhk} BHK</Text>
+                        {/* <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.min_price} {propertyData.currency} to {propertyData.max_price} {propertyData.currency}</Text> */}
+                        <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.description}</Text>
+                        <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Address</Text>
+                        <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{propertyData.address}</Text>
+                        <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>City - {propertyData.city}</Text>
+                        <View style={Style.flexView}>
+                            <Text style={[Style.Textstyle, { paddingVertical: '2%', flex: 1, }]}>State - {propertyData.state}</Text>
+                            <Text style={[Style.Textstyle, { paddingVertical: '2%', flex: 1, }]}>Country - {propertyData.country}</Text>
+                        </View>
+                        <Text style={[Style.Textstyle, { paddingVertical: '2%' }]} onPress={() => Linking.openURL(propertyData.video_link)}>{propertyData.video_link}</Text>
 
-                            <View style={{ height: 200, width: '100%' }}>
-                                {validationempty(propertyData.latitude) && validationempty(propertyData.longitude) ?
-                                    <MapView
-                                        style={Style.map}
-                                        initialRegion={{
+                        <View style={{ height: 200, width: '100%' }}>
+                            {validationempty(propertyData.latitude) && validationempty(propertyData.longitude) ?
+                                <MapView
+                                    style={Style.map}
+                                    initialRegion={{
+                                        latitude: parseFloat(propertyData.latitude),
+                                        longitude: parseFloat(propertyData.longitude),
+                                        latitudeDelta: 0.0142,
+                                        longitudeDelta: 0.04505701357466064
+                                    }}
+                                >
+                                    <Marker
+                                        coordinate={{
                                             latitude: parseFloat(propertyData.latitude),
                                             longitude: parseFloat(propertyData.longitude),
-                                            latitudeDelta: 0.0142,
-                                            longitudeDelta: 0.04505701357466064
                                         }}
-                                    >
-                                        <Marker
-                                            coordinate={{
-                                                latitude: parseFloat(propertyData.latitude),
-                                                longitude: parseFloat(propertyData.longitude),
-                                            }}
-                                        />
-                                    </MapView> : null}
-                            </View>
+                                    />
+                                </MapView> : null}
+                        </View>
                         </View>
                     </ScrollView>
                 </View>
-            </SafeAreaView>
+            </SafeAreaView >
         );
     }
 }

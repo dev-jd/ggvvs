@@ -161,20 +161,20 @@ export default class EmployeeDetails extends Component {
               <View style={[Style.flexView, { paddingVertical: '1%' }]}>
                 <Text style={[Style.Tital18, { flex: 7, color: Colors.Theme_color }]}>{item.member_name}</Text>
               </View>
-              <View style={[Style.flexView, { paddingVertical: '1%' }]}>
-                <Text style={[Style.SubTextstyle, { flex: 1, textAlign: 'left' }]}> Location : {item.city}, {item.state}</Text>
+              <View style={{ paddingVertical: '1%' }}>
+                <Text style={[Style.Textstyle]}>{item.tagline}</Text>
               </View>
+              <Text style={[Style.Textstyle, { color: Colors.Theme_color }]}>Experience</Text>
+                <Text style={[Style.Textstyle, { flex: 1, textAlign: 'left' }]}>{item.experience} Years {item.experience_month} Months</Text>
 
-              <View style={{ paddingVertical: '1%' }}>
-                <Text style={[Style.Textstyle]}>{item.business_type}</Text>
-              </View>
-              <View style={{ paddingVertical: '1%' }}>
+              
+              {/* <View style={{ paddingVertical: '1%' }}>
                 <Text style={[Style.Textstyle]}>{item.business_category}</Text>
-              </View>
-              <View style={[Style.flexView, { paddingVertical: '1%' }]}>
+              </View> */}
+              {/* <View style={[Style.flexView, { paddingVertical: '1%' }]}>
                 <Text style={[Style.Textstyle, { flex: 5, }]}>Experiacne :  {item.experience}</Text>
                 <Text style={[Style.Textstyle, { flex: 5 }]}>Salary : {item.expected_salary}</Text>
-              </View>
+              </View> */}
               <View style={{ paddingVertical: '1%' }}>
                 <Text style={[Style.Textstyle, { color: Colors.Theme_color }]}>Number</Text>
                 <Text style={[Style.Textstyle]}>+{item.member_mobile}</Text>
@@ -183,10 +183,10 @@ export default class EmployeeDetails extends Component {
                 <Text style={[Style.Textstyle, { color: Colors.Theme_color }]}>Email</Text>
                 <Text style={[Style.Textstyle]}>{item.member_email}</Text>
               </View>
-              <View style={{ paddingVertical: '1%' }}>
+              {/* <View style={{ paddingVertical: '1%' }}>
                 <Text style={[Style.Textstyle, { color: Colors.Theme_color }]}>Address</Text>
-                <Text style={[Style.Textstyle]}>{item.location}</Text>
-              </View>
+                <Text style={[Style.Textstyle]}>{item.address}</Text>
+              </View> */}
 
               <View style={{ paddingVertical: '1%' }}>
                 <Text style={[Style.Textstyle, { color: Colors.Theme_color }]}>Qualification</Text>
