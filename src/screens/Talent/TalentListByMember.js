@@ -100,7 +100,7 @@ export default class TalentListByMember extends Component {
             var response = await Helper.POST('addLike', formData)
             console.log('like talent response', response)
             showToast(response.message)
-        }else{
+        } else {
             var response = await Helper.POST('removeLike', formData)
             console.log('like talent response', response)
             showToast(response.message)
@@ -141,21 +141,22 @@ export default class TalentListByMember extends Component {
         var vlinks = item.video_link
         return (
             <View style={[Style.cardback,]}>
-                <View style={Style.flexView2}>
-                    <Icon reverse name='x' size={10} type='feather' color={Colors.Theme_color}
-                        containerStyle={{
-                            color: Colors.red,
-                            right: 0,
-                            position: 'absolute',
-                            // marginRight: 10,
-                            // marginTop: 50,
-                            // marginLeft: 20,
-                            alignSelf: 'center',
-                            top: 0
-                        }}
-                        onPress={() => this._twoOptionAlertHandler(item.id)}
-                    />
-
+                <View>
+                    <View style={[Style.flexView,{paddingVertical:'2%'}]}>
+                        <Icon  name='edit' size={20} type='feather' color={Colors.white}
+                            containerStyle={{
+                                flex:0.5,
+                            }}
+                            onPress={() => this.props.navigation.navigate('AddTalent',{item,talent_photo_url:this.state.talent_photo_url})}
+                        />
+                        <View style={{flex:2.5}}/>
+                        <Icon  name='x' size={20} type='feather' color={Colors.white}
+                            containerStyle={{
+                                flex:0.5
+                            }}
+                            onPress={() => this._twoOptionAlertHandler(item.id)}
+                        />
+                    </View>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('TalentDetailsPage', {
                         item, title: item.title, talent_photo_url: this.state.talent_photo_url,
                         member_profile_url: this.state.member_profile_url
@@ -163,9 +164,9 @@ export default class TalentListByMember extends Component {
                         <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>{item.title}</Text>
                         <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{item.description}</Text>
                         {vlinks.length > 0 ?
-                            <TouchableOpacity style={{ margin: 2 }} onPress={() => Linking.openURL(vlinks[0].video_links.split('"')[1])}>
+                            <TouchableOpacity style={{ margin: 2 }} onPress={() => Linking.openURL(vlinks[0].link)}>
                                 <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Your Videos</Text>
-                                <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{vlinks.length > 0 ? vlinks[0].video_links.split('"')[1] : null}</Text>
+                                <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{vlinks.length > 0 ? vlinks[0].link : null}</Text>
                             </TouchableOpacity>
                             : null}
 
@@ -186,13 +187,13 @@ export default class TalentListByMember extends Component {
                                 style={{ alignSelf: 'center' }}
                             />
                         ) : (
-                                <Icon
-                                    name='thumbs-up'
-                                    type='font-awesome'
-                                    size={20}
-                                    style={{ alignSelf: 'center' }}
-                                />
-                            )}
+                            <Icon
+                                name='thumbs-up'
+                                type='font-awesome'
+                                size={20}
+                                style={{ alignSelf: 'center' }}
+                            />
+                        )}
 
                         <Text
                             style={[
@@ -267,15 +268,15 @@ export default class TalentListByMember extends Component {
                     {this.state.isLoding ? (
                         <ActivityIndicator color={Colors.Theme_color} size={'large'} />
                     ) : (
-                            <FlatList
-                                style={{ paddingVertical: '2%' }}
-                                showsVerticalScrollIndicator={false}
-                                data={this.state.telentArray}
-                                renderItem={item => this.categoryRendeItem(item)}
-                                keyExtractor={item => item.id}
-                                ListEmptyComponent={<NoData />}
-                            />
-                        )}
+                        <FlatList
+                            style={{ paddingVertical: '2%' }}
+                            showsVerticalScrollIndicator={false}
+                            data={this.state.telentArray}
+                            renderItem={item => this.categoryRendeItem(item)}
+                            keyExtractor={item => item.id}
+                            ListEmptyComponent={<NoData />}
+                        />
+                    )}
                     <Icon reverse name='plus' size={25} type='feather' color={Colors.Theme_color}
                         containerStyle={{
                             position: 'absolute', bottom: 10, right: 10

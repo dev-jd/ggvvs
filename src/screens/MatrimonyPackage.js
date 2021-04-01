@@ -31,7 +31,7 @@ export default class MatrimonyPackage extends Component {
 
     componentDidMount = async () => {
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-        const membedId = await AsyncStorage.getItem('member_id')
+        const membedId = await this.props.navigation.getParam('membedId')
         const member_type = await AsyncStorage.getItem('type')
         const matrimonyId = await this.props.navigation.getParam('matrimonyId')
         const name = await this.props.navigation.getParam('name')

@@ -78,7 +78,7 @@ export default class Dashboard extends Component {
       blockedPostId: '', buttonLoding: false, bottomLoading: false, pageNo: 1, totalPage: null,
       matrimonyListArray: [], imageUrlMatrimony: '', imageUrlMember: '', businessListArray: [], businessImage: '', jobSeekerArray: [], cvUrl: '',
       talentArray: [], talentUrl: '', member_profile_url: '', comments: '', visibleModalComment: null, postId: '', allCommentList: [], commentLoding: false,
-      propertyArray: [], propertyUrl: '', newsArray: [], newsUrl: '', eventArray: [], eventImageUrl: '',jobProviderArray:''
+      propertyArray: [], propertyUrl: '', newsArray: [], newsUrl: '', eventArray: [], eventImageUrl: '', jobProviderArray: ''
     }
   }
 
@@ -393,7 +393,7 @@ export default class Dashboard extends Component {
       showToast(response.message)
     }
   }
-  async onShare(image,id) {
+  async onShare(image, id) {
     console.log('check image', image)
     SimpleToast.show('Waiting for image download')
     RNFetchBlob.fetch('GET', image)
@@ -420,7 +420,7 @@ export default class Dashboard extends Component {
       })
       .catch(err => console.log(err));
   }
-   onShareTalent =  async (item) =>{
+  onShareTalent = async (item) => {
     console.log('check item', item)
     SimpleToast.show('Waiting for image download')
     let shareOptions = {
@@ -437,7 +437,7 @@ export default class Dashboard extends Component {
         err && console.log(err);
       });
   }
-  alertForDeleteComment = (commentId) =>{
+  alertForDeleteComment = (commentId) => {
     Alert.alert(
       'Delete',
       'Are you sure you want to remove this comment?',
@@ -452,13 +452,13 @@ export default class Dashboard extends Component {
       { cancelable: false }
     )
   }
-  deleteComment = async (commentId)=>{
+  deleteComment = async (commentId) => {
     var formData = new FormData()
-    formData.append('comment_id',commentId)
-    var response = await Helper.POST('removeComment',formData)
-    console.log('check your comment delete response ',response)
+    formData.append('comment_id', commentId)
+    var response = await Helper.POST('removeComment', formData)
+    console.log('check your comment delete response ', response)
     showToast(response.message)
-    this.setState({visibleModalComment:null})
+    this.setState({ visibleModalComment: null })
   }
   async reportApi() {
     this.setState({ buttonLoding: true })
@@ -539,7 +539,7 @@ export default class Dashboard extends Component {
     })
 
   }
-  
+
   talentApi = async () => {
     var response = await Helper.GET('talent_list')
     this.setState({ talentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url })
@@ -576,8 +576,8 @@ export default class Dashboard extends Component {
 
   postRendeItem = ({ item, index }) => {
     return (
-      <View style={{ width: Dimensions.get('window').width * 0.68, marginHorizontal: 5,borderRadius:10 }}>
-        <Card style={{borderRadius:10}}>
+      <View style={{ width: Dimensions.get('window').width * 0.68, marginHorizontal: 5, borderRadius: 10 }}>
+        <Card style={{ borderRadius: 10 }}>
           <TouchableOpacity
             onPress={() =>
               this.props.navigation.navigate('PostDetails', {
@@ -587,9 +587,9 @@ export default class Dashboard extends Component {
                 audioUrl: item.Audio
               })
             }
-            style={{borderRadius:10}}
+            style={{ borderRadius: 10 }}
           >
-            <CardItem style={{borderRadius:10}}>
+            <CardItem style={{ borderRadius: 10 }}>
               <Left>
                 <Thumbnail
                   source={
@@ -614,20 +614,20 @@ export default class Dashboard extends Component {
               </Left>
 
             </CardItem>
-            <View style={{ flexDirection: 'column',borderRadius:10 }}>
+            <View style={{ flexDirection: 'column', borderRadius: 10 }}>
 
               {item.post_image === null ||
                 item.post_image === '' ||
                 item.post_image === undefined ? null : (
-                  <Image
-                    source={{
-                      uri: item.URL + item.post_image
-                    }}
-                    style={{ height: 200, flex: 1 }}
-                    resizeMode='contain'
-                    resizeMethod='resize'
-                  />
-                )}
+                <Image
+                  source={{
+                    uri: item.URL + item.post_image
+                  }}
+                  style={{ height: 200, flex: 1 }}
+                  resizeMode='contain'
+                  resizeMethod='resize'
+                />
+              )}
             </View>
           </TouchableOpacity>
           {/* <View style={{ padding: '2%' }}>
@@ -644,32 +644,32 @@ export default class Dashboard extends Component {
           {item.p_audio === null ||
             item.p_audio === '' ||
             item.p_audio === undefined ? null : (
-              <TouchableOpacity
-                transparent
-                style={{
-                  paddingHorizontal: '4%',
-                  flexDirection: 'row',
-                  justifyContent: 'center'
-                }}
-                onPress={() =>
-                  this.props.navigation.navigate('PlayAudio', {
-                    id: item.id,
-                    title: item.p_audio,
-                    audioUrl: item.Audio
-                  })
-                }
-              >
-                <Text style={[Style.Textstyle]} uppercase={false}>
-                  {item.p_audio}
-                </Text>
-                <Icon
-                  name='music'
-                  size={20}
-                  style={{ alignSelf: 'center' }}
-                />
-              </TouchableOpacity>
-            )}
-          <CardItem style={{borderRadius:10}}>
+            <TouchableOpacity
+              transparent
+              style={{
+                paddingHorizontal: '4%',
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
+              onPress={() =>
+                this.props.navigation.navigate('PlayAudio', {
+                  id: item.id,
+                  title: item.p_audio,
+                  audioUrl: item.Audio
+                })
+              }
+            >
+              <Text style={[Style.Textstyle]} uppercase={false}>
+                {item.p_audio}
+              </Text>
+              <Icon
+                name='music'
+                size={20}
+                style={{ alignSelf: 'center' }}
+              />
+            </TouchableOpacity>
+          )}
+          <CardItem style={{ borderRadius: 10 }}>
             <View style={[Style.flexView, { flex: 1 }]}>
               <TouchableOpacity
                 transparent
@@ -684,12 +684,12 @@ export default class Dashboard extends Component {
                     style={{ alignSelf: 'center' }}
                   />
                 ) : (
-                    <Icon
-                      name='thumbs-up'
-                      size={20}
-                      style={{ alignSelf: 'center' }}
-                    />
-                  )}
+                  <Icon
+                    name='thumbs-up'
+                    size={20}
+                    style={{ alignSelf: 'center' }}
+                  />
+                )}
 
                 <Text
                   style={[
@@ -706,7 +706,7 @@ export default class Dashboard extends Component {
                 style={{
                   paddingHorizontal: '3%', flexDirection: 'row', marginHorizontal: 5, width: '15%'
                 }}
-                onPress={() => this.onShare(item.URL+item.post_image,item.id)}
+                onPress={() => this.onShare(item.URL + item.post_image, item.id)}
               >
                 <IconFeather
                   color={Colors.Theme_color}
@@ -795,12 +795,12 @@ export default class Dashboard extends Component {
                 style={{ height: 100, width: 100, alignSelf: 'center', borderRadius: 100 }}
               />
             ) : (
-                <Image
-                  resizeMode='cover'
-                  source={{ uri: this.state.imageUrlMember + item.member_photo }}
-                  style={{ height: 100, width: 100, alignSelf: 'center', borderRadius: 100 }}
-                />
-              )}
+              <Image
+                resizeMode='cover'
+                source={{ uri: this.state.imageUrlMember + item.member_photo }}
+                style={{ height: 100, width: 100, alignSelf: 'center', borderRadius: 100 }}
+              />
+            )}
           </TouchableOpacity>
           <Text style={[Style.Textmainstyle, { textAlign: 'center', marginVertical: '2%' }]}>{item.name}</Text>
         </View>
@@ -830,8 +830,8 @@ export default class Dashboard extends Component {
   }
   jobSeekerRender = ({ item, index }) => {
     return (
-      <TouchableOpacity style={[Style.cardback, { width: Dimensions.get('window').width * 0.95,borderRadius:10,marginHorizontal:5 }]} 
-      onPress={() => this.props.navigation.navigate('EmployeeDetails', { item, title: item.post_name })}>
+      <TouchableOpacity style={[Style.cardback, { width: Dimensions.get('window').width * 0.95, borderRadius: 10, marginHorizontal: 5 }]}
+        onPress={() => this.props.navigation.navigate('EmployeeDetails', { item, title: item.post_name })}>
         <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
           <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Member name</Text>
           <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_name}</Text>
@@ -853,7 +853,7 @@ export default class Dashboard extends Component {
   }
   jobProviderRender = ({ item, index }) => {
     return (
-      <TouchableOpacity style={[Style.cardback, { width: Dimensions.get('window').width * 0.95,borderRadius:10,marginHorizontal:5 }]} onPress={() => this.props.navigation.navigate('JobDetails', { item, title: item.post_name })}>
+      <TouchableOpacity style={[Style.cardback, { width: Dimensions.get('window').width * 0.95, borderRadius: 10, marginHorizontal: 5 }]} onPress={() => this.props.navigation.navigate('JobDetails', { item, title: item.post_name })}>
         <View style={{ flex: 1, flexDirection: 'row', width: '100%', justifyContent: 'center', marginTop: 5 }}>
           <Text style={[Style.Textstyle, { flex: 3.5, color: Colors.black }]}>Member name</Text>
           <Text style={[Style.Textstyle, { flex: 6.5, textAlign: 'left' }]}>{item.member_name}</Text>
@@ -876,7 +876,11 @@ export default class Dashboard extends Component {
   talentRender = ({ item, index }) => {
     var vlinks = item.video_link
     return (
-      <View style={[Style.cardback, { marginHorizontal: 5, width: Dimensions.get('window').width * 0.95,borderRadius:10 }]}>
+      <TouchableOpacity style={[Style.cardback, { marginHorizontal: 5, width: Dimensions.get('window').width * 0.95, borderRadius: 10 }]}
+        onPress={() => this.props.navigation.navigate('TalentDetailsPage', {
+          item, title: item.title, talent_photo_url: this.state.talentUrl,
+          member_profile_url: this.state.member_profile_url
+        })}>
         <CardItem>
           <Left>
             <Thumbnail
@@ -901,6 +905,9 @@ export default class Dashboard extends Component {
         </CardItem>
         <View>
           <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>{item.title}</Text>
+          <Image source={{ uri: this.state.talentUrl+'/' + item.photo_1 }} style={{ height: 150, flex: 1, width: '100%' }}
+            resizeMode='contain'
+          />
           <Text style={[Style.Textmainstyle]}>{item.description}</Text>
           <Text style={[Style.Textstyle]}>Checkout Videos and Photos</Text>
         </View>
@@ -919,13 +926,13 @@ export default class Dashboard extends Component {
                 style={{ alignSelf: 'center' }}
               />
             ) : (
-                <Icon
-                  name='thumbs-up'
-                  type='font-awesome'
-                  size={20}
-                  style={{ alignSelf: 'center' }}
-                />
-              )}
+              <Icon
+                name='thumbs-up'
+                type='font-awesome'
+                size={20}
+                style={{ alignSelf: 'center' }}
+              />
+            )}
 
             <Text
               style={[
@@ -973,26 +980,19 @@ export default class Dashboard extends Component {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
   propertyRender = ({ item, index }) => {
     return (
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('PropertyDetailsView',{title:item.name,item,propertyUrl:this.state.propertyUrl})} style={[Style.cardback, { margin: 5, width: Dimensions.get('window').width * 0.45 ,borderRadius:10}]}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('PropertyDetailsView', { title: item.name, item, propertyUrl: this.state.propertyUrl })} style={[Style.cardback, { margin: 5, width: Dimensions.get('window').width * 0.45, borderRadius: 10 }]}>
         <View>
           <Image source={{ uri: this.state.propertyUrl + item.photo_1 }} style={{ height: 150, flex: 1, width: '100%' }}
             resizeMode='contain'
           />
-          <CardItem>
-
-            <Body>
-              <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>
-                {item.name}
-              </Text>
-
-            </Body>
-
-          </CardItem>
+          <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, paddingBottom: '3%' }]} numberOfLines={2}>
+            {item.name}
+          </Text>
         </View>
       </TouchableOpacity>
     )
@@ -1006,10 +1006,10 @@ export default class Dashboard extends Component {
         onPress={() => this.props.navigation.navigate('EventDetail', { eventDetails: item[0].id })}>
 
         <View style={[Style.centerView, { flex: 6 }]}>
-          <Text style={[Style.Textmainstyle, { textAlign: 'left', paddingHorizontal: '3%' , color: Colors.Theme_color,}]}>{item[0].em_name}</Text>
+          <Text style={[Style.Textmainstyle, { textAlign: 'left', paddingHorizontal: '3%', color: Colors.Theme_color, }]}>{item[0].em_name}</Text>
         </View>
         <View style={{ marginLeft: 10, flex: 1, flexDirection: 'row', justifyContent: 'center', }}>
-          <IconIonicons name="ios-calendar"   size={24} style={{ marginLeft: 10, marginRight: 10, alignSelf: 'center', color: Colors.Theme_color }} />
+          <IconIonicons name="ios-calendar" size={24} style={{ marginLeft: 10, marginRight: 10, alignSelf: 'center', color: Colors.Theme_color }} />
           <Text style={[Style.Textstyle, { alignSelf: 'center' }]}>
             Event Date : {item[0].em_event_date}</Text>
         </View>
@@ -1082,7 +1082,7 @@ export default class Dashboard extends Component {
 
         </View>
         {/* banner  */}
-      
+
 
         <View style={{ flex: 7 }}>
 
@@ -1100,52 +1100,52 @@ export default class Dashboard extends Component {
                 height: Math.round(Dimensions.get('window').height) - 80
               }}
             >
-                <View>
-          {this.state.isAdLoading ?
-            <View
-              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-            >
-              <ActivityIndicator size='large' color={Colors.Theme_color} />
-            </View>
-            :
-            <View style={{ height: 70, justifyContent: 'center' }}>
-              <Swiper
-                style={{ justifyContent: 'center', alignItems: 'center' }}
-                autoplayTimeout={2.5}
-                autoplay={true}
-                key={this.state.ad_data.length}
-                showsPagination={false}
-              >
-                {this.state.ad_data.map((item, index) => {
-
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() =>
-                        this.props.navigation.navigate('AdDetails', {
-                          itemData: item,
-                          img_url: this.state.adimgUrl
-                        })
-                      }
+              <View>
+                {this.state.isAdLoading ?
+                  <View
+                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                  >
+                    <ActivityIndicator size='large' color={Colors.Theme_color} />
+                  </View>
+                  :
+                  <View style={{ height: 70, justifyContent: 'center' }}>
+                    <Swiper
+                      style={{ justifyContent: 'center', alignItems: 'center' }}
+                      autoplayTimeout={2.5}
+                      autoplay={true}
+                      key={this.state.ad_data.length}
+                      showsPagination={false}
                     >
-                      <Image
-                        source={{ uri: this.state.adimgUrl + item.sa_image }}
-                        style={{ width: '100%', height: '100%' }}
-                        resizeMode='contain'
-                        resizeMethod='resize'
-                      />
-                    </TouchableOpacity>
-                  )
-                })}
-              </Swiper>
-            </View>
-          }
-        </View>
+                      {this.state.ad_data.map((item, index) => {
+
+                        return (
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() =>
+                              this.props.navigation.navigate('AdDetails', {
+                                itemData: item,
+                                img_url: this.state.adimgUrl
+                              })
+                            }
+                          >
+                            <Image
+                              source={{ uri: this.state.adimgUrl + item.sa_image }}
+                              style={{ width: '100%', height: '100%' }}
+                              resizeMode='contain'
+                              resizeMethod='resize'
+                            />
+                          </TouchableOpacity>
+                        )
+                      })}
+                    </Swiper>
+                  </View>
+                }
+              </View>
               <View
                 style={{ flex: 2, backgroundColor: Colors.divider, padding: '1%' }}
               >
                 <TouchableOpacity style={[Style.flexView, { padding: '2%', }]} >
-                {/* onPress={() => this.props.navigation.navigate('AllPost')}> */}
+                  {/* onPress={() => this.props.navigation.navigate('AllPost')}> */}
                   <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Posts</Text>
                   <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
                   <IconFeather
@@ -1236,10 +1236,10 @@ export default class Dashboard extends Component {
                 keyExtractor={(item, index) => index.toString()}
               />
               {/* employee */}
-              <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1,paddingHorizontal: '2%', }]}>Employment</Text>
+              <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1, paddingHorizontal: '2%', }]}>Employment</Text>
               <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('JobProvider')}>
-                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 1.5 }]}>Job Seeker (Candidates)</Text>
-                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 0.5 }]}>View All</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%', flex: 1.5 }]}>Job Seeker (Candidates)</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%', flex: 0.5 }]}>View All</Text>
                 <IconFeather
                   color={Colors.Theme_color}
                   type='font-awesome'
@@ -1255,9 +1255,9 @@ export default class Dashboard extends Component {
                 renderItem={item => this.jobSeekerRender(item)}
                 keyExtractor={(item, index) => index.toString()}
               />
-            <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('Jobseeker')}>
-                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 1.5 }]}>Job Provider (Companies)</Text>
-                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%',flex: 0.5 }]}>View All</Text>
+              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('Jobseeker')}>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%', flex: 1.5 }]}>Job Provider (Companies)</Text>
+                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%', flex: 0.5 }]}>View All</Text>
                 <IconFeather
                   color={Colors.Theme_color}
                   type='font-awesome'
@@ -1344,9 +1344,9 @@ export default class Dashboard extends Component {
                 renderItem={item => this.propertyRender(item)}
                 keyExtractor={(item, index) => index.toString()}
               />
-            
+
               {/* Events */}
-              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('EventLIst')}>
+              {/* <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('EventLIst')}>
                 <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Events</Text>
                 <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
                 <IconFeather
@@ -1364,7 +1364,7 @@ export default class Dashboard extends Component {
                 data={this.state.eventArray}
                 renderItem={item => this.eventRender(item)}
                 keyExtractor={(item, index) => index.toString()}
-              />
+              /> */}
 
             </ScrollView>
           }
@@ -1409,10 +1409,10 @@ export default class Dashboard extends Component {
                               </Text>
                               <Text style={[Style.Textstyle]}>{item.comment}</Text>
                             </Body>
-                            {item.member_id === this.state.member_id?
-                            <Right>
-                              <IconFeather name='x' size={20} onPress={() => this.alertForDeleteComment(item.comment_id)}/>
-                            </Right>:null}
+                            {item.member_id === this.state.member_id ?
+                              <Right>
+                                <IconFeather name='x' size={20} onPress={() => this.alertForDeleteComment(item.comment_id)} />
+                              </Right> : null}
                           </Left>
                         </CardItem>
                       </View>

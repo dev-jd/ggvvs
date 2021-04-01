@@ -35,7 +35,7 @@ export default class AllTaletnt extends Component {
             isLoding: false,
             telentArray: [],
             samaj_id: '', member_id: '', member_type: '', member_name: '', member_profile_url: '',
-            postId: '', visibleModal: null, menuVisibleList1: [], comments: ''
+            postId: '', visibleModal: null, menuVisibleList1: [], comments: '',talent_photo_url:'',member_profile_url:''
         };
     }
     componentDidMount = async () => {
@@ -55,7 +55,8 @@ export default class AllTaletnt extends Component {
     apicallTalent = async () => {
         var response = await Helper.GET('talent_list')
         console.log('check the all talent', response)
-        this.setState({ telentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url })
+        this.setState({ telentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url,
+            talent_photo_url:response.url,member_profile_url: response.member_profile_url, })
     }
     apiCallSendComment = async () => {
         var formData = new FormData()
@@ -92,6 +93,7 @@ export default class AllTaletnt extends Component {
     }
     categoryRendeItem = ({ item, index }) => {
         var vlinks = item.video_link
+        console.log(item.video_link.length > 0)
         return (
             <View style={[Style.cardback,]}>
                 <View style={Style.flexView2}>
@@ -101,7 +103,7 @@ export default class AllTaletnt extends Component {
                     })}>
                         <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>{item.title}</Text>
                         <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{item.description}</Text>
-                        {vlinks.length > 0 ?
+                        {item.video_link.length > 0 ?
                             <TouchableOpacity style={{ margin: 2 }} onPress={() => Linking.openURL(vlinks[0].video_links.split('"')[1])}>
                                 <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Your Videos</Text>
                                 <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{vlinks.length > 0 ? vlinks[0].video_links.split('"')[1] : null}</Text>

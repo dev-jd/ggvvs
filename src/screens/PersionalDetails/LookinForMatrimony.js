@@ -205,11 +205,11 @@ export default class LookinForMatrimony extends Component {
     })
     // }
 
-    if (validationempty(response.data.matrimony.id)) {
+    if (validationempty(response.data.matrimony_id)) {
       this.setState({
         // using matrimoney personal
         isActive: true,
-        matrimonyId: response.data.matrimony.id + '',
+        matrimonyId: response.data.matrimony_id + '',
         profiletagline: response.data.matrimony.profile_tag_line,
         personaldesc: response.data.matrimony.person_description,
         birthPlace: response.data.matrimony.mm_birth_place,
@@ -430,7 +430,8 @@ export default class LookinForMatrimony extends Component {
       var response = await Helper.POSTFILE('matrimonyAdd', formdata)
       console.log('check the response', response)
       if (response.status) {
-        this.setState({ isLoding: false, visibleModalPersonal: null })
+        this.setState({ isLoding: false, visibleModalPersonal: null,matrimonyId:response.matrimony_id })
+        apiCalling()
         showToast(response.message)
       }
     }
@@ -746,7 +747,7 @@ export default class LookinForMatrimony extends Component {
                     style={[Style.Buttonback, { marginVertical: 10, width: '50%', alignSelf: 'center', backgroundColor: Colors.white }]}
                     onPress={() => {
                       if (validationempty(matrimonyId)) {
-                        this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile })
+                        this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile,membedId })
                       } else {
                         showToast('First add your personal details')
                       }

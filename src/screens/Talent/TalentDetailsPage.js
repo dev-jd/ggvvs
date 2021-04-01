@@ -94,10 +94,10 @@ export default class TalentDetailsPage extends Component {
         }
     }
     videoLinksRender = ({ item, index }) => {
-        console.log('video link',item.video_links.split('"')[1])
+        console.log('video link',item.link)
         return (
-            <TouchableOpacity style={{marginVertical:5}} onPress={() => Linking.openURL(item.video_links.split('"')[1])}>
-                <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{item.video_links.split('"')[1]}</Text>
+            <TouchableOpacity style={{marginVertical:5}} onPress={() => Linking.openURL(item.link)}>
+                <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{item.link}</Text>
             </TouchableOpacity>
         )
     }

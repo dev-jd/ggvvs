@@ -25,7 +25,7 @@ const options = {
     chooseFromLibraryButtonTitle: 'Choose From Gallery',
     quality: 1,
     maxWidth: 500,
-    maxHeight: 500, 
+    maxHeight: 500,
     noData: true,
     saveToPhotos: false
 }
@@ -50,7 +50,7 @@ export default class AddTalent extends Component {
             inputData: [],
             member1image: '', memberimage1: {}, member2image: '', memberimage2: {}, member3image: '', memberimage3: {}, member4image: '', memberimage4: {}, member5image: '', memberimage5: {},
             idSelectM1: false, idSelectM2: false, idSelectM3: false, idSelectM4: false, idSelectM5: false,
-           
+            details: {}, talent_photo_url: '', videoArray: [], videolinks: ''
         };
     }
 
@@ -59,18 +59,33 @@ export default class AddTalent extends Component {
         const membedId = await AsyncStorage.getItem('member_id')
         const member_type = await AsyncStorage.getItem('type')
         const member_name = await AsyncStorage.getItem('member_name')
-       
+        var details = await this.props.navigation.getParam('item')
+        var talent_photo_url = await this.props.navigation.getParam('talent_photo_url')
+        console.log('check the item', details)
+        console.log('  --  url  --> ' + talent_photo_url)
         this.setState({
             samaj_id: samaj_id,
             member_id: membedId,
-            member_type: member_type, member_name
+            member_type: member_type, member_name, details, talent_photo_url: talent_photo_url + '/'
         })
 
         this.apiCallTalentType()
-        this.addTextInput(this.state.textInput.length)
-   
+        // this.addTextInput(this.state.textInput.length)
+        this.dataSetup()
     }
-  
+    dataSetup = () => {
+        var { details } = this.state
+        if (details.video_link.length > 0) {
+            this.setState({ videolinks: details.video_link[0].link })
+        }
+
+        this.setState({
+            talentTypeValue: parseInt(details.type_id), title: details.title, description: details.description, member1image: details.photo_1, member2image: details.photo_2,
+            member3image: details.photo_3, member4image: details.photo_4, member5image: details.photo_5,
+            videoArray: details.video_link,
+        })
+
+    }
     apiCallTalentType = async () => {
         var response = await Helper.GET('talent_type')
         console.log('check the response talent', response)
@@ -113,6 +128,9 @@ export default class AddTalent extends Component {
                 }
             });
         }
+        console.log('addvalue ', text + '  ' + index)
+
+        console.log('dataArray ', dataArray)
         if (checkBool) {
             this.setState({
                 inputData: dataArray
@@ -124,6 +142,7 @@ export default class AddTalent extends Component {
                 inputData: dataArray
             });
         }
+
     }
 
     async CapturePhoto(type) {
@@ -184,25 +203,29 @@ export default class AddTalent extends Component {
     }
 
     validation = () => {
-        var { membedId, samaj_id, member_type, talentTypeValue, title, description } = this.state
+        var { membedId, samaj_id, member_type, talentTypeValue, title, description,memberimage1 } = this.state
         console.log('validation')
-        if (validationBlank(talentTypeValue, 'Select Talent Type') && validationBlank(title, 'Enter Title') && validationBlank(description, 'Enter DEscriptions')) {
+        if (validationBlank(talentTypeValue, 'Select Talent Type') && validationBlank(title, 'Enter Title') && validationBlank(description, 'Enter Descriptions') ) {
             this.apiCallTalentAdd()
         }
     }
     apiCallTalentAdd = async () => {
         var { member_id, samaj_id, member_type, talentTypeValue, title, description, idSelectM1, idSelectM2, idSelectM3, idSelectM4,
-            idSelectM5, memberimage1, memberimage2, memberimage3, memberimage4, memberimage5, inputData } = this.state
+            idSelectM5, memberimage1, memberimage2, memberimage3, memberimage4, memberimage5, videolinks, details } = this.state
 
-        var videolinks = []
-            for (let index = 0; index < inputData.length; index++) {
-                const element = inputData[index];
-                videolinks.push(element.text)
-            }
+        var videolinkArry = []
+        videolinkArry.push(videolinks)
 
-            console.log('check video links',videolinks)
+        // for (let index = 0; index < inputData.length; index++) {
+        //     const element = inputData[index];
+        // }
+
+        // console.log('check video links', videolinks)
 
         var formData = new FormData()
+        if (validationempty(details.id)) {
+            formData.append('id', details.id)
+        }
         formData.append('samaj_id', samaj_id)
         formData.append('member_id', member_id)
         formData.append('type_id', talentTypeValue)
@@ -233,17 +256,18 @@ export default class AddTalent extends Component {
         } else {
             formData.append('photo_5', '')
         }
-        formData.append('video_link', JSON.stringify(videolinks))
+        formData.append('video_link', JSON.stringify(videolinkArry))
 
         console.log('check the formdata', formData)
-        var responce = await Helper.POSTFILE('talent_masters',formData)
-        console.log('check the telent add or not',responce)
+        // console.log('check the videolinks', videolinks)
+        var responce = await Helper.POSTFILE('talent_masters', formData)
+        console.log('check the telent add or not', responce)
         showToast(responce.message)
-        this.props.navigation.navigate('Dashbord')
+        this.props.navigation.navigate('Dashboard')
     }
     render() {
         var { talentTypeValue, talentTypeArray, title, description, member1image, matrimonyId, member2image, member3image,
-            member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5, } = this.state
+            member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5, talent_photo_url, videolinks } = this.state
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <StatusBar backgroundColor={Colors.Theme_color} barStyle='light-content' />
@@ -271,12 +295,14 @@ export default class AddTalent extends Component {
                             </View>
                             <TextInputCustome title='Title' value={title} changetext={(title) => this.setState({ title })} maxLength={30} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
                             <TextInputCustome title='Description (Max 200 Words)' value={description} changetext={(description) => this.setState({ description })} maxLength={200} multiline={true} numberOfLines={5} keyboardType={'default'} editable={true} />
-                            <View>
+                            <TextInputCustome title='Video Link' value={videolinks} changetext={(videolinks) => this.setState({ videolinks })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+
+                            {/* <View>
                                 <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>Video Link</Text>
                                 {this.state.textInput.map((value) => {
                                     return value
                                 })}
-                            </View>
+                            </View> */}
 
                             <View style={{ paddingVertical: '2%' }}>
                                 <ScrollView showsVerticalScrollIndicator={false}>
@@ -293,7 +319,7 @@ export default class AddTalent extends Component {
                                                                 ? { uri: member1image }
                                                                 : idSelectM1
                                                                     ? { uri: member1image }
-                                                                    : { uri: img_url_profile + member1image }
+                                                                    : { uri: talent_photo_url + member1image }
                                                     }
                                                     style={{ width: '90%', height: 150 }}
                                                 />
@@ -311,7 +337,7 @@ export default class AddTalent extends Component {
                                                                 ? { uri: member2image }
                                                                 : idSelectM2
                                                                     ? { uri: member2image }
-                                                                    : { uri: img_url_profile + member2image }
+                                                                    : { uri: talent_photo_url + member2image }
                                                     }
                                                     style={{ width: '90%', height: 150 }}
                                                 />
@@ -331,7 +357,7 @@ export default class AddTalent extends Component {
                                                                 ? { uri: member3image }
                                                                 : idSelectM3
                                                                     ? { uri: member3image }
-                                                                    : { uri: img_url_profile + member3image }
+                                                                    : { uri: talent_photo_url + member3image }
                                                     }
                                                     style={{ width: '90%', height: 150 }}
                                                 />
@@ -349,7 +375,7 @@ export default class AddTalent extends Component {
                                                                 ? { uri: member4image }
                                                                 : idSelectM4
                                                                     ? { uri: member4image }
-                                                                    : { uri: img_url_profile + member4image }
+                                                                    : { uri: talent_photo_url + member4image }
                                                     }
                                                     style={{ width: '90%', height: 150 }}
                                                 />
@@ -367,7 +393,7 @@ export default class AddTalent extends Component {
                                                         ? { uri: member5image }
                                                         : idSelectM5
                                                             ? { uri: member5image }
-                                                            : { uri: img_url_profile + member5image }
+                                                            : { uri: talent_photo_url + member5image }
                                             }
                                             style={{ width: '100%', height: 150 }}
                                         />
@@ -376,13 +402,13 @@ export default class AddTalent extends Component {
                                         {this.state.isLoding ? (
                                             <ActivityIndicator color={Colors.Theme_color} size={'large'} />
                                         ) : (
-                                                <TouchableOpacity
-                                                    style={[Style.Buttonback, { marginTop: 10 }]}
-                                                    onPress={() => this.validation()}
-                                                >
-                                                    <Text style={Style.buttonText}>Save</Text>
-                                                </TouchableOpacity>
-                                            )}
+                                            <TouchableOpacity
+                                                style={[Style.Buttonback, { marginTop: 10 }]}
+                                                onPress={() => this.validation()}
+                                            >
+                                                <Text style={Style.buttonText}>Save</Text>
+                                            </TouchableOpacity>
+                                        )}
                                     </View>
                                 </ScrollView>
                             </View>
