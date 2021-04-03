@@ -50,7 +50,7 @@ export default class AddTalent extends Component {
             inputData: [],
             member1image: '', memberimage1: {}, member2image: '', memberimage2: {}, member3image: '', memberimage3: {}, member4image: '', memberimage4: {}, member5image: '', memberimage5: {},
             idSelectM1: false, idSelectM2: false, idSelectM3: false, idSelectM4: false, idSelectM5: false,
-            details: {}, talent_photo_url: '', videoArray: [], videolinks: ''
+            details: {}, talent_photo_url: '', videoArray: [], videolinks: '',isLoding:false
         };
     }
 
@@ -71,7 +71,9 @@ export default class AddTalent extends Component {
 
         this.apiCallTalentType()
         // this.addTextInput(this.state.textInput.length)
-        this.dataSetup()
+        if (validationempty(details)) {
+            this.dataSetup()
+        }
     }
     dataSetup = () => {
         var { details } = this.state
@@ -203,18 +205,20 @@ export default class AddTalent extends Component {
     }
 
     validation = () => {
-        var { membedId, samaj_id, member_type, talentTypeValue, title, description,memberimage1 } = this.state
-        console.log('validation')
-        if (validationBlank(talentTypeValue, 'Select Talent Type') && validationBlank(title, 'Enter Title') && validationBlank(description, 'Enter Descriptions') ) {
+        var { membedId, samaj_id, member_type, talentTypeValue, title, description, memberimage1 } = this.state
+        if (validationBlank(talentTypeValue, 'Select Talent Type') && validationBlank(title, 'Enter Title') && validationBlank(description, 'Enter Descriptions')) {
             this.apiCallTalentAdd()
         }
     }
     apiCallTalentAdd = async () => {
+        console.log('apicallTalent')
         var { member_id, samaj_id, member_type, talentTypeValue, title, description, idSelectM1, idSelectM2, idSelectM3, idSelectM4,
             idSelectM5, memberimage1, memberimage2, memberimage3, memberimage4, memberimage5, videolinks, details } = this.state
 
         var videolinkArry = []
         videolinkArry.push(videolinks)
+
+        this.setState({isLoding:true})
 
         // for (let index = 0; index < inputData.length; index++) {
         //     const element = inputData[index];
@@ -223,7 +227,7 @@ export default class AddTalent extends Component {
         // console.log('check video links', videolinks)
 
         var formData = new FormData()
-        if (validationempty(details.id)) {
+        if (validationempty(details)) {
             formData.append('id', details.id)
         }
         formData.append('samaj_id', samaj_id)
