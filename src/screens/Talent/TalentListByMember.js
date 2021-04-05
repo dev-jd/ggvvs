@@ -8,6 +8,7 @@ import CustomeFonts from '../../Theme/CustomeFonts'
 import Style from '../../Theme/Style'
 import Colors from '../../Theme/Colors'
 import RNFetchBlob from 'rn-fetch-blob';
+import Share from 'react-native-share'
 import { NoData, showToast, validationBlank, validationempty } from '../../Theme/Const';
 import { Helper } from '../../Helper/Helper';
 import { Icon } from 'react-native-elements';
@@ -15,6 +16,7 @@ import Modal from 'react-native-modal'
 import TextInputCustome from '../../Compoment/TextInputCustome';
 import { CardItem, Left, Thumbnail, Body } from 'native-base';
 import { Alert } from 'react-native';
+import { base_url_1 } from '../../Static';
 
 
 export default class TalentListByMember extends Component {
@@ -106,7 +108,35 @@ export default class TalentListByMember extends Component {
             showToast(response.message)
         }
     }
-
+    onShareTalent = async (item) => {
+        console.log('check item', item)
+        var photo = this.state.talent_photo_url+'/' + item.photo_1
+        console.log('check photo', photo)
+        showToast('Waiting for image download')
+        RNFetchBlob.fetch('GET', photo)
+          .then(resp => {
+            console.log('response : ', resp);
+            console.log(resp.data);
+            let base64image = resp.data;
+            //this.Share('data:image/png;base64,' + base64image);
+    
+    
+            let shareOptions = {
+              title: "GGVVS",
+              originalUrl: base_url_1 + 'talent-detail/' + item.id,
+              url: 'data:image/png;base64,' + base64image,
+              message: item.title+'\n'+item.description+'\n'+base_url_1 + 'talent-detail/' + item.id,
+            };
+    
+            Share.open(shareOptions)
+              .then(res => {
+                console.log(res);
+              })
+              .catch(err => {
+                err && console.log(err);
+              });
+          })
+      }
     commentViewApi = async (postId) => {
         this.setState({ commentLoding: true })
         var response = await Helper.GET('commentList/' + postId)
@@ -158,12 +188,11 @@ export default class TalentListByMember extends Component {
                         />
                     </View>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('TalentDetailsPage', {
-                        item, title: item.title, talent_photo_url: this.state.talent_photo_url,
-                        member_profile_url: this.state.member_profile_url
+                     talentId:item.id
                     })}>
                         <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>{item.title}</Text>
                         <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{item.description}</Text>
-                        {vlinks.length > 0 ?
+                        {vlinks[0].link.length > 0 ?
                             <TouchableOpacity style={{ margin: 2 }} onPress={() => Linking.openURL(vlinks[0].link)}>
                                 <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Your Videos</Text>
                                 <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{vlinks.length > 0 ? vlinks[0].link : null}</Text>
@@ -229,7 +258,7 @@ export default class TalentListByMember extends Component {
                         style={{
                             flex: 0.5
                         }}
-                        onPress={() => this.onShare(item)}
+                        onPress={() =>this.onShareTalent(item)}
                     >
                         <Icon
                             type='feather'

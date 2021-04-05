@@ -59,7 +59,8 @@ export default class ViewAllproperty extends Component {
     categoryRendeItem = ({ item, index }) => {
         var vlinks = item.video_link
         return (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('PropertyDetailsView',{title:item.name,item,propertyUrl:this.state.propertyUrl})} style={[Style.cardback, { margin: 5,borderRadius:10}]}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('PropertyDetailsView',{title:item.name,item,propertyUrl:this.state.propertyUrl})} 
+            style={[Style.cardback, { borderRadius:10}]}>
             <View>
               <Image source={{ uri: this.state.propertyUrl + item.photo_1 }} style={{ height: 150, flex: 1, width: '100%' }}
                 resizeMode='contain'

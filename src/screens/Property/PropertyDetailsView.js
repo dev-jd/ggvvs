@@ -103,7 +103,9 @@ export default class PropertyDetailsView extends Component {
         if (validationempty(item.imageName)) {
             return (
                 <TouchableOpacity style={{ marginHorizontal: 10, paddingVertical: '5%', alignItems: 'center' }}
-                    onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: this.state.propertyUrl + item.imageName })}>
+                    // onPress={() => this.props.navigation.navigate('GallerySwiper', { images: this.state.imageArray, itemindex: index,URL : this.state.talent_photo_url,type:'talent' })}>
+                    onPress={() => this.props.navigation.navigate('GallerySwiper', {images: this.state.imageArray, itemindex: index,URL : this.state.propertyUrl,type:'property' })}>
+                    {/* onPress={() => this.props.navigation.navigate('KundliImage', { imageURl: this.state.propertyUrl + item.imageName })}> */}
                     <Image
                         resizeMode={'contain'}
                         source={{ uri: this.state.propertyUrl + item.imageName }}

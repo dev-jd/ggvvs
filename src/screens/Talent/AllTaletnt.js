@@ -15,7 +15,8 @@ import Modal from 'react-native-modal'
 import TextInputCustome from '../../Compoment/TextInputCustome';
 import { CardItem, Left, Thumbnail, Body, Right } from 'native-base';
 import { Alert } from 'react-native';
-
+import Share from 'react-native-share'
+import { base_url_1 } from '../../Static';
 
 export default class AllTaletnt extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -35,7 +36,7 @@ export default class AllTaletnt extends Component {
             isLoding: false,
             telentArray: [],
             samaj_id: '', member_id: '', member_type: '', member_name: '', member_profile_url: '',
-            postId: '', visibleModal: null, menuVisibleList1: [], comments: '', talent_photo_url: '', member_profile_url: ''
+            postId: '', visibleModalComment: null, menuVisibleList1: [], comments: '', talent_photo_url: '', member_profile_url: ''
         };
     }
     componentDidMount = async () => {
@@ -53,7 +54,7 @@ export default class AllTaletnt extends Component {
         this.apicallTalent()
     }
     apicallTalent = async () => {
-        var response = await Helper.GET('talent_list')
+        var response = await Helper.GET('talent_list?member_id='+this.state.member_id )
         console.log('check the all talent', response)
         this.setState({
             telentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url,
@@ -83,15 +84,46 @@ export default class AllTaletnt extends Component {
         formData.append('talent_master_id', postId)
         formData.append('member_id', this.state.member_id)
 
-        if (like === 1) {
+        if (like === 0) {
             var response = await Helper.POST('addLike', formData)
             console.log('like talent response', response)
             showToast(response.message)
+            this.apicallTalent()
         } else {
             var response = await Helper.POST('removeLike', formData)
             console.log('like talent response', response)
             showToast(response.message)
+            this.apicallTalent()
         }
+    }
+    onShareTalent = async (item) => {
+        console.log('check item', item)
+        var photo = this.state.talent_photo_url + '/' + item.photo_1
+        console.log('check photo', photo)
+        showToast('Waiting for image download')
+        RNFetchBlob.fetch('GET', photo)
+            .then(resp => {
+                console.log('response : ', resp);
+                console.log(resp.data);
+                let base64image = resp.data;
+                //this.Share('data:image/png;base64,' + base64image);
+
+
+                let shareOptions = {
+                    title: "GGVVS",
+                    originalUrl: base_url_1 + 'talent-detail/' + item.id,
+                    url: 'data:image/png;base64,' + base64image,
+                    message: 'Talent : '+ item.title + '\n' +'Description : '+ item.description + '\n' + base_url_1 + 'talent-detail/' + item.id,
+                };
+
+                Share.open(shareOptions)
+                    .then(res => {
+                        console.log(res);
+                    })
+                    .catch(err => {
+                        err && console.log(err);
+                    });
+            })
     }
     categoryRendeItem = ({ item, index }) => {
         var vlinks = item.video_link
@@ -99,14 +131,13 @@ export default class AllTaletnt extends Component {
             <View style={[Style.cardback,]}>
                 <View style={Style.flexView2}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('TalentDetailsPage', {
-                        item, title: item.title, talent_photo_url: this.state.talent_photo_url,
-                        member_profile_url: this.state.member_profile_url
+                        talentId: item.id
                     })}>
                         <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>{item.title}</Text>
                         <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{item.description}</Text>
                         {item.video_link.length > 0 ?
                             <TouchableOpacity style={{ margin: 2 }} onPress={() => Linking.openURL(vlinks[0].link)}>
-                                <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Your Videos</Text>
+                                {/* <Text style={[Style.Textmainstyle, { paddingVertical: '2%', color: Colors.Theme_color }]}>Your Videos</Text> */}
                                 <Text style={[Style.Textstyle, { paddingVertical: '2%' }]}>{vlinks.length > 0 ? vlinks[0].link : null}</Text>
                             </TouchableOpacity>
                             : null}
@@ -153,7 +184,7 @@ export default class AllTaletnt extends Component {
                         menuVisibleList1[index] = true
                         this.setState({
                             menuVisibleList1,
-                            visibleModal: 'Bottom',
+                            visibleModalComment: 'Bottom',
                             postId: item.id
                         })
                         this.commentViewApi(item.id)
@@ -170,7 +201,7 @@ export default class AllTaletnt extends Component {
                         style={{
                             flex: 0.5
                         }}
-                        onPress={() => this.onShare(item)}
+                        onPress={() => this.onShareTalent(item)}
                     >
                         <Icon
                             type='feather'
@@ -230,12 +261,12 @@ export default class AllTaletnt extends Component {
 
                 </View>
                 <Modal
-                    isVisible={this.state.visibleModal === 'Bottom'}
-                    onSwipeComplete={() => this.setState({ visibleModal: null, report_reason: '' })}
+                    isVisible={this.state.visibleModalComment === 'Bottom'}
+                    onSwipeComplete={() => this.setState({ visibleModalComment: null, report_reason: '' })}
                     swipeDirection={['down']}
                     style={{ justifyContent: 'flex-end', margin: 0 }}
-                    onBackdropPress={() => this.setState({ visibleModal: null, report_reason: '' })}
-                    onBackButtonPress={() => this.setState({ visibleModal: null, report_reason: '' })}>
+                    onBackdropPress={() => this.setState({ visibleModalComment: null, report_reason: '' })}
+                    onBackButtonPress={() => this.setState({ visibleModalComment: null, report_reason: '' })}>
                     <View style={{ backgroundColor: 'white', padding: '3%' }}>
                         <Text style={Style.Textmainstyle}>Comments</Text>
                         <FlatList

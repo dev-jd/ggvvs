@@ -40,7 +40,7 @@ class ImageGallery extends Component {
     itemindex: '',
     URL :'',
     indicator_visibility: true,
-    images: []
+    images: [],type:''
   }
 
   async componentDidMount() {
@@ -48,12 +48,14 @@ class ImageGallery extends Component {
     const index = await navigation.getParam('itemindex')
     console.log('item index ', index)
     const item = await navigation.getParam('images')
+    const type = await navigation.getParam('type')
 
     await this.setState({
       images: item,
       URL :  navigation.getParam('URL'),
       itemindex: index,
-      indicator_visibility: false
+      indicator_visibility: false,
+      type
     })
   }
 
@@ -82,6 +84,15 @@ class ImageGallery extends Component {
             showsPagination={false} showsButtons={false} loop={false}
           >
             {this.state.images.map((item, index) => {
+              console.log('image item',item)
+              var imgName
+              if(this.state.type === 'talent'){
+                imgName = item.imageName
+              }else if(this.state.type === 'property'){
+                imgName = item.imageName
+              }else{
+                imgName=item
+              }
               return (
                 <View
                   style={{
@@ -91,9 +102,9 @@ class ImageGallery extends Component {
                     alignItems: 'center'
                   }}
                 >
+                  
                   <Image
-                    source={{ uri: this.state.URL + "/"
-                      + item }}
+                    source={{ uri: this.state.URL + "/"+ imgName }}
                     style={{ height: 500, width: '100%' }}
                     resizeMode='contain'
                   />

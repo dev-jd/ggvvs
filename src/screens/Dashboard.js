@@ -379,18 +379,22 @@ export default class Dashboard extends Component {
     this.setState({ isLoading: false })
   }
   likeTalentApiCall = async (postId, like) => {
+    console.log('like', like)
     var formData = new FormData()
     formData.append('talent_master_id', postId)
     formData.append('member_id', this.state.member_id)
 
-    if (like === 1) {
+    if (like === 0) {
       var response = await Helper.POST('addLike', formData)
       console.log('like talent response', response)
       showToast(response.message)
+      this.talentApi()
+
     } else {
       var response = await Helper.POST('removeLike', formData)
       console.log('like talent response', response)
       showToast(response.message)
+      this.talentApi()
     }
   }
   async onShare(image, id) {
@@ -422,20 +426,32 @@ export default class Dashboard extends Component {
   }
   onShareTalent = async (item) => {
     console.log('check item', item)
+    var photo = this.state.talentUrl+'/' + item.photo_1
+    console.log('check photo', photo)
     SimpleToast.show('Waiting for image download')
-    let shareOptions = {
-      title: "GGVVS",
-      originalUrl: base_url_1 + 'talent-detail/' + id,
-      message: base_url_1 + 'talent-detail/' + id,
-    };
+    RNFetchBlob.fetch('GET', photo)
+      .then(resp => {
+        console.log('response : ', resp);
+        console.log(resp.data);
+        let base64image = resp.data;
+        //this.Share('data:image/png;base64,' + base64image);
 
-    Share.open(shareOptions)
-      .then(res => {
-        console.log(res);
+
+        let shareOptions = {
+          title: "GGVVS",
+          originalUrl: base_url_1 + 'talent-detail/' + item.id,
+          url: 'data:image/png;base64,' + base64image,
+          message: item.title+'\n'+item.description+'\n'+base_url_1 + 'talent-detail/' + item.id,
+        };
+
+        Share.open(shareOptions)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            err && console.log(err);
+          });
       })
-      .catch(err => {
-        err && console.log(err);
-      });
   }
   alertForDeleteComment = (commentId) => {
     Alert.alert(
@@ -508,7 +524,7 @@ export default class Dashboard extends Component {
   jobSeekerApi = async () => {
     console.log('response responseSeeker')
     var responseSeeker = await Helper.POST('jobSeekers')
-    console.log('response responseSeeker', responseSeeker.data)
+    // console.log('response responseSeeker', responseSeeker.data)
     var arraySeeker = []
     for (let index = 0; index < responseSeeker.data.length; index++) {
       const element = responseSeeker.data[index];
@@ -541,7 +557,8 @@ export default class Dashboard extends Component {
   }
 
   talentApi = async () => {
-    var response = await Helper.GET('talent_list')
+    var response = await Helper.GET('talent_list?member_id='+this.state.member_id)
+    console.log('response talent api', response)
     this.setState({ talentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url })
   }
   propertyListApi = async () => {
@@ -878,8 +895,7 @@ export default class Dashboard extends Component {
     return (
       <TouchableOpacity style={[Style.cardback, { marginHorizontal: 5, width: Dimensions.get('window').width * 0.95, borderRadius: 10 }]}
         onPress={() => this.props.navigation.navigate('TalentDetailsPage', {
-          item, title: item.title, talent_photo_url: this.state.talentUrl,
-          member_profile_url: this.state.member_profile_url
+          talentId:item.id
         })}>
         <CardItem>
           <Left>
@@ -905,7 +921,7 @@ export default class Dashboard extends Component {
         </CardItem>
         <View>
           <Text style={[Style.Tital18, { color: Colors.Theme_color }]}>{item.title}</Text>
-          <Image source={{ uri: this.state.talentUrl+'/' + item.photo_1 }} style={{ height: 150, flex: 1, width: '100%' }}
+          <Image source={{ uri: this.state.talentUrl + '/' + item.photo_1 }} style={{ height: 150, flex: 1, width: '100%' }}
             resizeMode='contain'
           />
           <Text style={[Style.Textmainstyle]}>{item.description}</Text>
