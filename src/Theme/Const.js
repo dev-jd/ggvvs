@@ -19,7 +19,7 @@ const URL = {
 
 const STRINGNAME = {
   appName:'GGVVS Samaaj',
-//   razerpayKey:'rzp_test_lemdGJXOYmQDZZ'
+  razerpayKeyTest:'rzp_test_sYYWxykxO708HU',
   razerpayKey:'rzp_live_8zIAqo1XI3uG0M',
   searchKey:'AIzaSyD8rFXA6KM_9OCzNcErc4d9Vsr1KeTPIxk',  
   termscondition_url:'http://new.mysamaaj.com/terms-policy'

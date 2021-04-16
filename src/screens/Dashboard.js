@@ -78,7 +78,8 @@ export default class Dashboard extends Component {
       blockedPostId: '', buttonLoding: false, bottomLoading: false, pageNo: 1, totalPage: null,
       matrimonyListArray: [], imageUrlMatrimony: '', imageUrlMember: '', businessListArray: [], businessImage: '', jobSeekerArray: [], cvUrl: '',
       talentArray: [], talentUrl: '', member_profile_url: '', comments: '', visibleModalComment: null, postId: '', allCommentList: [], commentLoding: false,
-      propertyArray: [], propertyUrl: '', newsArray: [], newsUrl: '', eventArray: [], eventImageUrl: '', jobProviderArray: ''
+      propertyArray: [], propertyUrl: '', newsArray: [], newsUrl: '', eventArray: [], eventImageUrl: '', jobProviderArray: '',
+      is_property_view: 0, is_talent_view: 0, is_store_view: 0
     }
   }
 
@@ -135,10 +136,15 @@ export default class Dashboard extends Component {
         samaajname: res.member_details.samajname,
         samaajlogo: res.member_details.samajlogo,
         logourl: res.samaj_logo,
+        is_property_view: res.member_details.is_property_view,
+        is_talent_view: res.member_details.is_talent_view, is_store_view: res.member_details.is_store_view
       })
 
-      console.log('package id ---->', res.is_matrimony_search)
+      console.log('package id ---->',  res.member_details.is_property_view + '')
       await AsyncStorage.setItem('isMatrimonySearch', res.is_matrimony_search + '')
+      await AsyncStorage.setItem('is_property_view', res.member_details.is_property_view + '')
+      await AsyncStorage.setItem('is_talent_view', res.member_details.is_talent_view + '')
+      await AsyncStorage.setItem('is_store_view', res.member_details.is_store_view + '')
 
       if (validationempty(res.professional_info)) {
         this.setState({ isProfessional: true })
@@ -426,7 +432,7 @@ export default class Dashboard extends Component {
   }
   onShareTalent = async (item) => {
     console.log('check item', item)
-    var photo = this.state.talentUrl+'/' + item.photo_1
+    var photo = this.state.talentUrl + '/' + item.photo_1
     console.log('check photo', photo)
     SimpleToast.show('Waiting for image download')
     RNFetchBlob.fetch('GET', photo)
@@ -441,7 +447,7 @@ export default class Dashboard extends Component {
           title: "GGVVS",
           originalUrl: base_url_1 + 'talent-detail/' + item.id,
           url: 'data:image/png;base64,' + base64image,
-          message: item.title+'\n'+item.description+'\n'+base_url_1 + 'talent-detail/' + item.id,
+          message: item.title + '\n' + item.description + '\n' + base_url_1 + 'talent-detail/' + item.id,
         };
 
         Share.open(shareOptions)
@@ -557,7 +563,7 @@ export default class Dashboard extends Component {
   }
 
   talentApi = async () => {
-    var response = await Helper.GET('talent_list?member_id='+this.state.member_id)
+    var response = await Helper.GET('talent_list?member_id=' + this.state.member_id)
     console.log('response talent api', response)
     this.setState({ talentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url })
   }
@@ -895,7 +901,7 @@ export default class Dashboard extends Component {
     return (
       <TouchableOpacity style={[Style.cardback, { marginHorizontal: 5, width: Dimensions.get('window').width * 0.95, borderRadius: 10 }]}
         onPress={() => this.props.navigation.navigate('TalentDetailsPage', {
-          talentId:item.id
+          talentId: item.id
         })}>
         <CardItem>
           <Left>
@@ -1088,13 +1094,13 @@ export default class Dashboard extends Component {
             color={Colors.white}
             onPress={() => this.props.navigation.navigate('Notification')}
           />
-          <Icon
+          {/* <Icon
             style={{ flex: 1, paddingRight: '1%', marginLeft: '2%' }}
             name='sign-out'
             size={25}
             color={Colors.white}
             onPress={() => this.onLogout()}
-          />
+          /> */}
 
         </View>
         {/* banner  */}
@@ -1319,48 +1325,56 @@ export default class Dashboard extends Component {
                   />}
               </Card>
               {/* talent */}
-              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('AllTaletnt', {
-                isProfessional: this.state.isProfessional
-              })}>
-                <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Talent Zone </Text>
-                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
-                <IconFeather
-                  color={Colors.Theme_color}
-                  type='font-awesome'
-                  name='chevron-right'
-                  size={20}
-                />
-              </TouchableOpacity>
-              <FlatList
-                horizontal={true}
-                showsVerticalScrollIndicator={false}
-                style={{ padding: '2%', }}
-                data={this.state.talentArray}
-                renderItem={item => this.talentRender(item)}
-                keyExtractor={(item, index) => index.toString()}
-              />
+              {this.state.is_talent_view === 1 ?
+                <View>
+                  <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('AllTaletnt', {
+                    isProfessional: this.state.isProfessional
+                  })}>
+                    <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Talent Zone </Text>
+                    <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                    <IconFeather
+                      color={Colors.Theme_color}
+                      type='font-awesome'
+                      name='chevron-right'
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                  <FlatList
+                    horizontal={true}
+                    showsVerticalScrollIndicator={false}
+                    style={{ padding: '2%', }}
+                    data={this.state.talentArray}
+                    renderItem={item => this.talentRender(item)}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                </View>
+                : null}
               {/* property */}
-              <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('ViewAllproperty', {
-                isProfessional: this.state.isProfessional
-              })}>
-                <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Properties (Sell/Rent/Buy)</Text>
-                <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
-                <IconFeather
-                  color={Colors.Theme_color}
-                  type='font-awesome'
-                  name='chevron-right'
-                  size={20}
-                />
-              </TouchableOpacity>
-              <FlatList
-                horizontal={true}
-                showsVerticalScrollIndicator={false}
-                style={{ padding: '2%', }}
-                data={this.state.propertyArray}
-                renderItem={item => this.propertyRender(item)}
-                keyExtractor={(item, index) => index.toString()}
-              />
 
+              {this.state.is_property_view === 1 ?
+                <View>
+                  <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('ViewAllproperty', {
+                    isProfessional: this.state.isProfessional
+                  })}>
+                    <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Properties (Sell/Rent/Buy)</Text>
+                    <Text style={[Style.Textmainstyle, { paddingHorizontal: '2%' }]}>View All</Text>
+                    <IconFeather
+                      color={Colors.Theme_color}
+                      type='font-awesome'
+                      name='chevron-right'
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                  <FlatList
+                    horizontal={true}
+                    showsVerticalScrollIndicator={false}
+                    style={{ padding: '2%', }}
+                    data={this.state.propertyArray}
+                    renderItem={item => this.propertyRender(item)}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                </View>
+                : null}
               {/* Events */}
               {/* <TouchableOpacity style={[Style.flexView, { padding: '2%', marginVertical: '2%' }]} onPress={() => this.props.navigation.navigate('EventLIst')}>
                 <Text style={[Style.Dashbordtitle, { color: Colors.Theme_color, flex: 1 }]}>Events</Text>

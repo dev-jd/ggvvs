@@ -9,11 +9,11 @@ import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
 import images from '../Theme/image'
 import axois from 'axios'
-import HTML from 'react-native-render-html'
 import { base_url } from '../Static'
-import { IGNORED_TAGS, alterNode, makeTableRenderer } from 'react-native-render-html-table-bridge'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
+import HTML from 'react-native-render-html'
+import { IGNORED_TAGS, alterNode, makeTableRenderer } from 'react-native-render-html-table-bridge'
 import WebView from 'react-native-webview'
 
 

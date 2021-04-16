@@ -44,7 +44,7 @@ export default class App extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-      if (this.state.connection_Status == true) {
+    if (this.state.connection_Status == true) {
       //   setTimeout(() => {
       //     // this.props.navigation.replace("Login")
 
@@ -70,17 +70,17 @@ export default class App extends Component {
       //     this.props.navigation.replace('Dashboard')
       //   }
       this.getApi()
-      }
+    }
   }
 
- 
+
 
   async getApi() {
     var id = DeviceInfo.getUniqueId()
     console.log('device id ===> ', id)
-   
+
     axois
-      .get(base_url + 'get_token/'+this.state.samaj_id+'/'+this.state.member_id)
+      .get(base_url + 'get_token/' + this.state.samaj_id + '/' + this.state.member_id)
       .then(res => {
 
         if (res.data.data[0].device_token === id) {
@@ -104,8 +104,12 @@ export default class App extends Component {
     // console.log('check formdata profile -->11 ', formdata)
 
     var response = await Helper.POST('profile_data', formdata)
-    // console.log('profile response',response)
     if (response.status) {
+      await AsyncStorage.setItem('is_property_view', response.member_details.is_property_view + '')
+      await AsyncStorage.setItem('is_talent_view', response.member_details.is_talent_view + '')
+      await AsyncStorage.setItem('is_store_view', response.member_details.is_store_view + '')
+
+      // console.log('profile response',response)
       if (validationempty(response.member_details.member_birth_date) && validationempty(response.member_details.member_marital_status) &&
         validationempty(response.other_information.member_address) && validationempty(response.other_information.member_gender_id) && validationempty(response.other_information.member_eq_id) &&
         validationempty(response.member_details.member_photo)) {

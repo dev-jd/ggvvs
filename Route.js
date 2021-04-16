@@ -95,11 +95,16 @@ import { Icon } from 'react-native-elements';
 import NewMenu from './src/screens/NewMenu';
 import AppImages from './src/Theme/image';
 import AllTaletnt from './src/screens/Talent/AllTaletnt';
-import AllPost from './src/screens/AllPost';
+import AllPost from './src/screens/AllPost'; 
 import AddProperty from './src/screens/Property/AddProperty';
 import ViewAllproperty from './src/screens/Property/ViewAllproperty';
 import PropertyDetailsView from './src/screens/Property/PropertyDetailsView';
 import ViewMemberProperty from './src/screens/Property/ViewMemberProperty';
+import StoreProductList from './src/screens/Store/StoreProductList';
+import StoreProductDetails from './src/screens/Store/StoreProductDetails';
+import StoreBookingForm from './src/screens/Store/StoreBookingForm';
+import StoreOrderDetails from './src/screens/Store/StoreOrderDetails';
+import StoreOrderList from './src/screens/Store/StoreOrderList';
 
 const matrimoneyNavi = createMaterialTopTabNavigator({
     MatrimonyList: {
@@ -195,6 +200,44 @@ const topTabNaviTree = createMaterialTopTabNavigator({
     // },
 }, {
     initialRouteName: 'FamilyTreeView',
+    tabBarOptions: {
+        upperCaseLabel: false,
+        style: {
+            backgroundColor: Colors.Theme_color,
+        },
+        headerTitleStyle: {
+            width: '100%',
+            fontWeight: '200',
+            fontFamily: CustomeFonts.regular
+        },
+        labelStyle: {
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: '500',
+            fontFamily: CustomeFonts.medium,
+        },
+        indicatorStyle: {
+            backgroundColor: Colors.white,
+            borderRadius: 10,
+        },
+    },
+})
+
+const topStoreNavigation = createMaterialTopTabNavigator ({
+    StoreProductListView: {
+        screen: StoreProductList,
+        navigationOptions: {
+            title: 'Store Products',
+        },
+    },
+    StoreOrderList: {
+        screen: StoreOrderList,
+        navigationOptions: {
+            title: 'Your Orders',
+        }
+    },
+}, {
+    initialRouteName: 'StoreProductListView',
     tabBarOptions: {
         upperCaseLabel: false,
         style: {
@@ -388,6 +431,10 @@ const Stack_Navi = createStackNavigator(
         ViewAllproperty:{screen:ViewAllproperty},
         PropertyDetailsView:{screen:PropertyDetailsView},
         ViewMemberProperty:{screen:ViewMemberProperty},
+        StoreProductList:{screen:topStoreNavigation,navigationOptions: {    header: null}},
+        StoreProductDetails:{screen:StoreProductDetails},
+        StoreBookingForm:{screen:StoreBookingForm},
+        StoreOrderDetails:{screen:StoreOrderDetails},
     
     },
     {

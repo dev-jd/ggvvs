@@ -33,6 +33,7 @@ const AppImages =
     back7:require('../images/back7.jpg'),
     employment_banner:require('../images/employment_banner.png'),
     nodata:require('../images/nodata.png'),
+    shops:require('../images/shops.png'),
     
 
 }
