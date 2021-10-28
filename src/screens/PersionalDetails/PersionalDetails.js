@@ -12,6 +12,7 @@ import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
+import { NavigationEvents } from 'react-navigation'
 
 class PersionalDetails extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -304,6 +305,7 @@ class PersionalDetails extends Component {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+        <NavigationEvents onDidFocus={payload => this.componentDidMount()} />
           {this.state.isLoding ? (
             <ActivityIndicator color={Colors.Theme_color} size={'large'} />
           ) : (
@@ -451,13 +453,7 @@ class PersionalDetails extends Component {
                   >
                     <Text style={Style.buttonText}>Personal documents</Text>
                   </TouchableOpacity> */}
-                <View
-                  style={[
-                    Style.cardback,
-                    { flex: 1, justifyContent: 'center', marginTop: 10 }
-                  ]}
-                >
-           </View>
+              
               </View>
             )}
         </ScrollView>

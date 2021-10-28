@@ -59,7 +59,7 @@ export default class TermsConditions extends Component {
     }
     termsConditionApi = async () => {
         var response = await Helper.POST('terms')
-        console.log('check the terms condition ', response)
+        // console.log('check the terms condition ', response)
         this.setState({ termsConditionsData: response.data.description })
     }
     render() {

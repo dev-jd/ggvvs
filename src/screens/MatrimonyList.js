@@ -270,7 +270,7 @@ export default class App extends Component {
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
-        {/* <NavigationEvents onDidFocus={payload => this.apiCalling()} /> */}
+        <NavigationEvents onDidFocus={payload => this.componentDidMount()} />
         <ImageBackground source={AppImages.back5}
           blurRadius={1}
           style={{

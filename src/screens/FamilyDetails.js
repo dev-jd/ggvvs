@@ -22,6 +22,7 @@ import Style from '../Theme/Style'
 import Colors from '../Theme/Colors'
 import { base_url } from '../Static'
 import { Icon } from 'react-native-elements'
+import { NavigationEvents } from 'react-navigation'
 
 export default class FamilyDetails extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -210,36 +211,36 @@ export default class FamilyDetails extends Component {
           >
             {this.state.member_tree_id === null ||
               this.state.member_tree_id === undefined ? (
-                <View>
-                  <Icon name='edit-3' size={20} type='feather' color={Colors.Theme_color}
-                    containerStyle={{
-                      color: Colors.red,
-                      right: 10,
-                      position: 'absolute',
-                      marginRight: 20,
-                      marginTop: 10,
-                      alignSelf: 'center',
-                      top: -10
-                    }}
-                    onPress={() => this.editFamilyMember(item.id)}
-                  // onPress={() => this.deleteMember(item.id)}
-                  />
-                  <Icon name='x' size={20} type='feather' color={Colors.Theme_color}
-                    containerStyle={{
-                      color: Colors.red,
-                      right: 0,
-                      position: 'absolute',
-                      marginRight: 2,
-                      marginTop: 10,
-                      marginLeft: 20,
-                      alignSelf: 'center',
-                      top: -10
-                    }}
-                    onPress={() => this._twoOptionAlertHandler(item.id)}
-                  // onPress={() => this.deleteMember(item.id)}
-                  />
-                </View>
-              ) : null}
+              <View>
+                <Icon name='edit-3' size={20} type='feather' color={Colors.Theme_color}
+                  containerStyle={{
+                    color: Colors.red,
+                    right: 10,
+                    position: 'absolute',
+                    marginRight: 20,
+                    marginTop: 10,
+                    alignSelf: 'center',
+                    top: -10
+                  }}
+                  onPress={() => this.editFamilyMember(item.id)}
+                // onPress={() => this.deleteMember(item.id)}
+                />
+                <Icon name='x' size={20} type='feather' color={Colors.Theme_color}
+                  containerStyle={{
+                    color: Colors.red,
+                    right: 0,
+                    position: 'absolute',
+                    marginRight: 2,
+                    marginTop: 10,
+                    marginLeft: 20,
+                    alignSelf: 'center',
+                    top: -10
+                  }}
+                  onPress={() => this._twoOptionAlertHandler(item.id)}
+                // onPress={() => this.deleteMember(item.id)}
+                />
+              </View>
+            ) : null}
           </View>
         ) : null}
       </View>
@@ -262,57 +263,60 @@ export default class FamilyDetails extends Component {
             backgroundColor={Colors.Theme_color}
             barStyle='light-content'
           />
+          <NavigationEvents
+            onWillFocus={payload => this.componentDidMount()}
+          />
           {this.state.member_type === '1' ? (
             <View style={{ justifyContent: 'flex-end' }}>
               {this.state.member_tree_id === null ||
                 this.state.member_tree_id === undefined ? (
-                  <View style={{ flexDirection: 'row',justifyContent:'flex-end', padding:'2%' }}>
-                    <Icon name='plus-circle' size={25} type='feather' color={Colors.Theme_color}
-                      containerStyle={{
-                        color: Colors.red,
-                        alignSelf: 'flex-end',paddingHorizontal:'2%'
-                      }}
-                      onPress={() => this.props.navigation.navigate('AddFamilyMember')}
-                    />
-                    <Icon name='flow-tree' size={25} type='entypo' color={Colors.Theme_color}
-                      containerStyle={{
-                        color: Colors.red,
-                        alignSelf: 'flex-end',paddingHorizontal:'2%'
-                      }}
-                      onPress={() =>
-                        this.props.navigation.navigate('FamilyTree', {
-                          title: 'Family Tree'
-                        })
-                      }
-                    />
-                  </View>
-                ) : null}
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: '2%' }}>
+                  <Icon name='plus-circle' size={25} type='feather' color={Colors.Theme_color}
+                    containerStyle={{
+                      color: Colors.red,
+                      alignSelf: 'flex-end', paddingHorizontal: '2%'
+                    }}
+                    onPress={() => this.props.navigation.navigate('AddFamilyMember')}
+                  />
+                  <Icon name='flow-tree' size={25} type='entypo' color={Colors.Theme_color}
+                    containerStyle={{
+                      color: Colors.red,
+                      alignSelf: 'flex-end', paddingHorizontal: '2%'
+                    }}
+                    onPress={() =>
+                      this.props.navigation.navigate('FamilyTree', {
+                        title: 'Family Tree'
+                      })
+                    }
+                  />
+                </View>
+              ) : null}
             </View>
-          ) : 
-          <View style={{ justifyContent: 'flex-end' }}>
+          ) :
+            <View style={{ justifyContent: 'flex-end' }}>
               {this.state.member_tree_id === null ||
                 this.state.member_tree_id === undefined ? (
-                  <View style={{ flexDirection: 'row',justifyContent:'flex-end', padding:'2%' }}>
-                    {/* <Icon name='plus-circle' size={25} type='feather' color={Colors.Theme_color}
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: '2%' }}>
+                  {/* <Icon name='plus-circle' size={25} type='feather' color={Colors.Theme_color}
                       containerStyle={{
                         color: Colors.red,
                         alignSelf: 'flex-end',paddingHorizontal:'2%'
                       }}
                       onPress={() => this.props.navigation.navigate('AddFamilyMember')}
                     /> */}
-                    <Icon name='flow-tree' size={25} type='entypo' color={Colors.Theme_color}
-                      containerStyle={{
-                        color: Colors.red,
-                        alignSelf: 'flex-end',paddingHorizontal:'2%'
-                      }}
-                      onPress={() =>
-                        this.props.navigation.navigate('FamilyTree', {
-                          title: 'Family Tree'
-                        })
-                      }
-                    />
-                  </View>
-                ) : null}
+                  <Icon name='flow-tree' size={25} type='entypo' color={Colors.Theme_color}
+                    containerStyle={{
+                      color: Colors.red,
+                      alignSelf: 'flex-end', paddingHorizontal: '2%'
+                    }}
+                    onPress={() =>
+                      this.props.navigation.navigate('FamilyTree', {
+                        title: 'Family Tree'
+                      })
+                    }
+                  />
+                </View>
+              ) : null}
             </View>
           }
           <FlatList

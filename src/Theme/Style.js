@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         padding: 10,
         borderRadius: 2,
-        backgroundColor: Colors.white,
-        elevation: 2
+        backgroundColor: Colors.offWhite,
+        elevation: 5
     },
     absoluteFillObject: {
         position: 'absolute',

@@ -32,6 +32,7 @@ import Products from './Products'
 import ImagePicker from 'react-native-image-picker'
 import { PermissionsAndroid } from 'react-native'
 import { showToast } from '../Theme/Const'
+import { NavigationEvents } from 'react-navigation'
 
 
 const options = {
@@ -111,9 +112,9 @@ class MembersDetails extends Component {
       this.setState({ connection_Status: state.isConnected })
     })
 
-    if (this.state.connection_Status === true) {
+    // if (this.state.connection_Status === true) {
       this.apiCalling()
-    }
+    // }
   }
 
   async apiCalling() {
@@ -317,6 +318,7 @@ class MembersDetails extends Component {
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
+         <NavigationEvents onDidFocus={payload => this.componentDidMount()} />
         <ScrollView>
           <Image
             resizeMode='contain'

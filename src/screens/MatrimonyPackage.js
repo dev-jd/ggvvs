@@ -31,7 +31,7 @@ export default class MatrimonyPackage extends Component {
 
     componentDidMount = async () => {
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-        const membedId = await this.props.navigation.getParam('membedId')
+        const membedId = await this.props.navigation.getParam('member_id')
         const member_type = await AsyncStorage.getItem('type')
         const matrimonyId = await this.props.navigation.getParam('matrimonyId')
         const name = await this.props.navigation.getParam('name')
@@ -39,6 +39,7 @@ export default class MatrimonyPackage extends Component {
         const mobile = await this.props.navigation.getParam('mobile')
         const isTermsAccept = await AsyncStorage.getItem('isTermsAccept')
 
+        console.log('check the response packages', membedId)
         var response = await Helper.GET('package_list?samaj_id=' + samaj_id)
         console.log('check the response packages', response)
         var packlageArray = []
@@ -52,7 +53,7 @@ export default class MatrimonyPackage extends Component {
         }
         console.log('check the array ',packlageArray)
         this.setState({ packageList: packlageArray, membedId, membedId, member_type, matrimonyId, name, email, mobile })
-    }
+    } 
     async buyPackage(item) {
         console.log('check the amount', item.price)
         console.log('check the amount', parseFloat(item.price) * 100)

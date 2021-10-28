@@ -34,7 +34,7 @@ import Toast from 'react-native-simple-toast'
 import Modal from 'react-native-modal'
 import { Helper } from '../Helper/Helper';
 
-export default class App extends Component {
+export default class Matrimony extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Matrimony',
@@ -152,30 +152,7 @@ export default class App extends Component {
     formdata.append('f_age', this.state.fromage)
     formdata.append('t_age', this.state.toage)
     console.log('form data ', formdata)
-    // axois
-    //   .post(base_url + 'matrimony_search', formdata)
-    //   .then(res => {
-    //     console.log('matrimony_search res---->', res.data.data)
-    //     if (res.data.status === true) {
-    //       this.setState({
-    //         main_member_data: res.data.main_member_data,
-    //         // family_data: res.data.family_data
-    //       })
-    //       this.props.navigation.navigate('MatrimonyList', {
-    //         // itemData: res.data.family_data,
-    //         mainmember: res.data.main_member_data,
-    //         imageUrlKundli: res.data.kundli,
-    //         imageUrlMember: res.data.profile_photo,
-    //         imageUrlMatrimony: res.data.matrimony_photo_url
-    //       })
-    //     } else {
-    //       Toast.show('No Data Available')
-    //     }
-    //     this.setState({ isLoding: false })
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //   })
+   
   }
 
   async getFamilyMembers(relationType) {
@@ -344,7 +321,7 @@ export default class App extends Component {
                   </View>
                   <View style={{ height: 20 }} />
                   <TouchableOpacity
-                    onPress={() => this.searchMember()}
+                    onPress={() => this.searchMember()} 
                     style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
                   >
                     {this.state.isLoding ? (
@@ -352,14 +329,6 @@ export default class App extends Component {
                     ) : (
                         <Text style={Style.buttonText}>Search</Text>
                       )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() => this.setState({ visibleModelSelection: 'bottom' })}
-                    // onPress={() => this.props.navigation.navigate('LookinForMatrimony')}
-                    style={[Style.Buttonback, { marginHorizontal: 20, marginVertical: 5 }]}
-                  >
-                    <Text style={Style.buttonText}>Matrimony Profile</Text>
                   </TouchableOpacity>
                 </View>
               </View>

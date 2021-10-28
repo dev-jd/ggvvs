@@ -12,7 +12,7 @@ const Colors={
     Theme_color:'#F58634',
     activeTabColor:'#F58634',
     inactiveTabColor:'#726f6f',
-
+    offWhite:'#FCFCFC',
     // Persional details usage
     blue:'blue'
 } 

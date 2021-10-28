@@ -14,15 +14,15 @@ const WIDTH = Dimensions.get('window').width
 
 
 const URL = {
-  
+
 }
 
 const STRINGNAME = {
-  appName:'GGVVS Samaaj',
-  razerpayKeyTest:'rzp_test_sYYWxykxO708HU',
-  razerpayKey:'rzp_live_8zIAqo1XI3uG0M',
-  searchKey:'AIzaSyD8rFXA6KM_9OCzNcErc4d9Vsr1KeTPIxk',  
-  termscondition_url:'http://new.mysamaaj.com/terms-policy'
+    appName: 'GGVVS Samaaj',
+    razerpayKeyTest: 'rzp_test_sYYWxykxO708HU',
+    razerpayKey: 'rzp_live_8zIAqo1XI3uG0M',
+    searchKey: 'AIzaSyD8rFXA6KM_9OCzNcErc4d9Vsr1KeTPIxk',
+    termscondition_url: 'http://new.mysamaaj.com/terms-policy'
 }
 
 const randomNumber = () => {
@@ -31,7 +31,7 @@ const randomNumber = () => {
 }
 
 const onShare = async (details) => {
-    console.log('check details',details)
+    console.log('check details', details)
     // RNFetchBlob.fetch('GET', URL.base_url+details.company_photo)
     //     .then(resp => {
     //         console.log('response : ', resp);
@@ -39,22 +39,22 @@ const onShare = async (details) => {
     //         let base64image = resp.data;
     //         // this.share('data:image/png;base64,' + base64image);
 
-            let shareOptions = {
-                title: STRINGNAME.appName,
-                // originalUrl:'https://brandbooster.co.in/products/'+details.company_id+'/',
-                // url:'https://brandbooster.co.in/products/'+details.slug+'/',
-                message: details,
-            };
+    let shareOptions = {
+        title: STRINGNAME.appName,
+        // originalUrl:'https://brandbooster.co.in/products/'+details.company_id+'/',
+        // url:'https://brandbooster.co.in/products/'+details.slug+'/',
+        message: details,
+    };
 
-            Share.open(shareOptions)
-                .then(res => {
-                    console.log(res);
-                })
-                .catch(err => {
-                    err && console.log(err);
-                });
-        // })
-        // .catch(err => console.log(err));
+    Share.open(shareOptions)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            err && console.log(err);
+        });
+    // })
+    // .catch(err => console.log(err));
 }
 
 
@@ -76,7 +76,7 @@ const isNetworkAvailable = async () => {
 
 const showToast = (msg) => {
     if (msg) {
-        Toast.show(msg, 3000)
+        Toast.show(msg, 4000)
     }
 
 }
@@ -254,14 +254,23 @@ const matchPassword = (value1, value2) => {
         showToast('Confirm password not match')
     }
 }
-
+const ageCalculate = (dateString) => {
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
 class Indicator extends React.Component {
     render() {
         return (
             <ActivityIndicator
                 animating={true}
-                size='large'
-                color={Colors.Theme_color2}
+                size='small'
+                color={Colors.Theme_color}
             />
         )
     }
@@ -334,6 +343,6 @@ export {
     validateName, validateLastName, validatePhone, validateEmail,
     validatePassword, validateConfirmPassword, matchPassword, validateOldPassword,
     Indicator, TopStatusBar, NoData, NoInternet, checkInternet, appAPI, isNetworkAvailable,
-    validationBlank, validationempty, randomNumber, STRINGNAME, youtube_parser,onShare
+    validationBlank, validationempty, randomNumber, STRINGNAME, youtube_parser, onShare,ageCalculate
 }
 

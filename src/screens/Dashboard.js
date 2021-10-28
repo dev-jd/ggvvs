@@ -27,6 +27,7 @@ import { showToast, validationempty } from '../Theme/Const'
 import Realm from 'realm';
 import TextInputCustome from '../Compoment/TextInputCustome'
 import { Alert } from 'react-native'
+import { NavigationEvents } from 'react-navigation'
 
 const config = {
   WebViewComponent: WebView
@@ -140,7 +141,7 @@ export default class Dashboard extends Component {
         is_talent_view: res.member_details.is_talent_view, is_store_view: res.member_details.is_store_view
       })
 
-      console.log('package id ---->',  res.member_details.is_property_view + '')
+      console.log('package id ---->',  res)
       await AsyncStorage.setItem('isMatrimonySearch', res.is_matrimony_search + '')
       await AsyncStorage.setItem('is_property_view', res.member_details.is_property_view + '')
       await AsyncStorage.setItem('is_talent_view', res.member_details.is_talent_view + '')
@@ -167,10 +168,10 @@ export default class Dashboard extends Component {
     if (total_length > 0) {
 
       postDate = realm.objects('post').sorted('id', false)[total_length - 1]
-      console.log("check the date 1--> ", realm.objects('post')[total_length - 1])
+      // console.log("check the date 1--> ", realm.objects('post')[total_length - 1])
 
       date_check = postDate.id
-      console.log("check the date --> ", date_check)
+      // console.log("check the date --> ", date_check)
 
       // to delete ago month data
       var date1 = new Date() //Current Date
@@ -179,9 +180,9 @@ export default class Dashboard extends Component {
       var check_pre_month = Moment(date1, 'YYYY-MM-DD')
         .add(-1, 'months')
         .format('YYYY-MM-DD')
-      console.log('check the previce month ', check_pre_month + " today's date  --> ", today_date)
+      // console.log('check the previce month ', check_pre_month + " today's date  --> ", today_date)
       let postlist = realm.objects('post').filtered('date < $0', check_pre_month)
-      console.log('check the previce month ', postlist)
+      // console.log('check the previce month ', postlist)
 
       // if (postlist.length > 0) {
       //   realm.write(() => {
@@ -211,7 +212,7 @@ export default class Dashboard extends Component {
 
     }
 
-    console.log('post list formdata ===> 2', formdata)
+    // console.log('post list formdata ===> 2', formdata)
     axois
       .post(base_url + 'post/list', formdata)
       .then(res => {
@@ -258,13 +259,13 @@ export default class Dashboard extends Component {
                   })
 
                   var postDataView = realm.objects(post).sorted('id', true);
-                  console.log('post data', postDataView)
+                  // console.log('post data', postDataView)
 
                   if (postDataView.length > 0) {
                     this.setState({
                       postData: postDataView
                     })
-                    console.log("data from state insert -- > ", this.state.postData)
+                    // console.log("data from state insert -- > ", this.state.postData)
                   }
 
                 } else {
@@ -291,7 +292,7 @@ export default class Dashboard extends Component {
         postData: postDataView
       })
 
-      console.log("data from state -- > ", this.state.postData)
+      // console.log("data from state -- > ", this.state.postData)
     }
   }
 
@@ -528,7 +529,6 @@ export default class Dashboard extends Component {
   }
 
   jobSeekerApi = async () => {
-    console.log('response responseSeeker')
     var responseSeeker = await Helper.POST('jobSeekers')
     // console.log('response responseSeeker', responseSeeker.data)
     var arraySeeker = []
@@ -564,13 +564,15 @@ export default class Dashboard extends Component {
 
   talentApi = async () => {
     var response = await Helper.GET('talent_list?member_id=' + this.state.member_id)
-    console.log('response talent api', response)
+    // console.log('response talent api', response)
     this.setState({ talentArray: response.data, talentUrl: response.url, member_profile_url: response.member_profile_url })
   }
   propertyListApi = async () => {
     var response = await Helper.GET('member_properties')
     // console.log('check the response property list ', response)
+    if(response){
     this.setState({ propertyArray: response.data, propertyUrl: response.url + '/' })
+    }
   }
   newsListApi = async () => {
     // // event api call
@@ -1049,9 +1051,9 @@ export default class Dashboard extends Component {
           backgroundColor={Colors.Theme_color}
           barStyle='light-content'
         />
-        {/* <NavigationEvents
-          onWillFocus={payload => this.getPostList()}
-        /> */}
+        <NavigationEvents
+          onWillFocus={payload => this.getProfile()}
+        />
         {/* header */}
         <View
           style={{

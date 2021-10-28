@@ -20,6 +20,7 @@ import NetInfo from "@react-native-community/netinfo";
 import WebView from 'react-native-webview'
 import { showToast, validationempty } from '../../Theme/Const'
 import { Helper } from '../../Helper/Helper'
+import { NavigationEvents } from 'react-navigation'
 
 const options = {
   title: 'Select Image',
@@ -165,7 +166,7 @@ class ViewOtherPersionalDetails extends Component {
     const details = this.props.navigation.getParam('itemData')
     const otherDetails = this.props.navigation.getParam('otherDetails')
     console.log('item Data ==>', details)
-    //console.log('other item Data -->', otherDetails)
+    console.log('other item Data -->', otherDetails)
 
     if (this.state.member_type === '1') {
       this.setState({
@@ -221,7 +222,7 @@ class ViewOtherPersionalDetails extends Component {
       statetatus: otherDetails.member_state_id,
       citytatus: otherDetails.member_city_id,
       gendertatus: otherDetails.member_gender_id,
-      bloodGroupStatus: otherDetails.member_bgm_id,
+      bloodGroupStatus: parseInt(otherDetails.member_bgm_id),
       casttatus: parseInt(details.member_cast_id),
       subcasttatus: details.member_sub_cast,
       _isLoading: false
@@ -363,7 +364,7 @@ class ViewOtherPersionalDetails extends Component {
       }
     }
   }
-  apiCallPost() {
+  async apiCallPost() {
 
     console.log('dob siddhi', this.state.dob)
     console.log('aniversary', this.state.anniversary)
@@ -558,12 +559,14 @@ class ViewOtherPersionalDetails extends Component {
         formdata.append('member_is_alive', isalive)
         formdata.append('place_birth', this.state.placeofbirth)
         formdata.append('place_death', this.state.placeofdeath)
+        formdata.append('member_cast', this.state.casttatus)
+        formdata.append('sub_cast_id', this.state.subcasttatus)
 
 
         console.log('edit details form data', formdata)
 
 
-        axois
+        await axois
           .post(base_url + 'member_details_edit', formdata)
           .then(response => {
             console.log('member_details_edit Response---->', response.data)
@@ -675,6 +678,7 @@ class ViewOtherPersionalDetails extends Component {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
+          <NavigationEvents onDidFocus={payload => this.componentDidMount()} />
           <View style={Style.cointainer}>
             <Text
               numberOfLines={1}
@@ -698,7 +702,6 @@ class ViewOtherPersionalDetails extends Component {
                   marginLeft: 15
                 }}
               >
-                {/* <Text>{this.state.maritalstatus} hello</Text> */}
                 <Text
                   style={[
                     Style.Textmainstyle,
@@ -728,64 +731,64 @@ class ViewOtherPersionalDetails extends Component {
               </View>
               {this.state.maritalstatus === 'Never Married' ||
                 this.state.maritalstatus === 'Divorcee' ? null : (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginLeft: 15
+                  }}
+                >
+                  <Text
+                    style={[
+                      Style.Textmainstyle,
+                      { width: '45%', color: Colors.black }
+                    ]}
+                  >
+                    Anniversary*
+                  </Text>
                   <View
                     style={{
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginLeft: 15
+                      flex: 1,
+                      width: '50%',
+                      fontFamily: CustomeFonts.reguar,
+                      color: Colors.black
                     }}
-                  >
-                    <Text
-                      style={[
-                        Style.Textmainstyle,
-                        { width: '45%', color: Colors.black }
-                      ]}
-                    >
-                      Anniversary*
-                </Text>
-                    <View
-                      style={{
-                        flex: 1,
-                        width: '50%',
-                        fontFamily: CustomeFonts.reguar,
-                        color: Colors.black
-                      }}
-                    ></View>
+                  ></View>
 
-                    <DatePicker
-                      style={{ width: 170 }}
-                      date={this.state.anniversary}
-                      mode='date'
-                      androidMode='spinner'
-                      placeholder={
-                        this.state.anniversary === '' ||
-                          this.state.anniversary === null || this.state.anniversary === "null"
-                          ? 'Select date'
-                          : this.state.anniversary
-                      }
-                      format='DD-MM-YYYY'
-                      confirmBtnText='Confirm'
-                      cancelBtnText='Cancel'
-                      customStyles={{
-                        dateIcon: {
-                          position: 'absolute',
-                          left: 0,
-                          top: 4,
-                          marginLeft: 0
-                        },
-                        dateInput: { marginLeft: 36 }
-                      }}
-                      onDateChange={setDate => {
-                        // var date = moment(setDate).format('YYYY-MM-DD')
-                        this.setState({
-                          anniversary: setDate,
-                          isanySelect: true
-                        })
-                      }}
-                    />
-                  </View>
-                )}
+                  <DatePicker
+                    style={{ width: 170 }}
+                    date={this.state.anniversary}
+                    mode='date'
+                    androidMode='spinner'
+                    placeholder={
+                      this.state.anniversary === '' ||
+                        this.state.anniversary === null || this.state.anniversary === "null"
+                        ? 'Select date'
+                        : this.state.anniversary
+                    }
+                    format='DD-MM-YYYY'
+                    confirmBtnText='Confirm'
+                    cancelBtnText='Cancel'
+                    customStyles={{
+                      dateIcon: {
+                        position: 'absolute',
+                        left: 0,
+                        top: 4,
+                        marginLeft: 0
+                      },
+                      dateInput: { marginLeft: 36 }
+                    }}
+                    onDateChange={setDate => {
+                      // var date = moment(setDate).format('YYYY-MM-DD')
+                      this.setState({
+                        anniversary: setDate,
+                        isanySelect: true
+                      })
+                    }}
+                  />
+                </View>
+              )}
               <View
                 style={{
                   flexDirection: 'row',
@@ -849,14 +852,14 @@ class ViewOtherPersionalDetails extends Component {
                   <Label
                     style={[
                       Style.Textstyle,
-                      (style = {
+                      {
                         color: Colors.black,
                         fontFamily: CustomeFonts.medium
-                      })
+                      }
                     ]}
                   >
                     Place Of Birth
-                </Label>
+                  </Label>
                   <Input
                     style={Style.Textstyle}
                     multiline={true}
@@ -866,16 +869,18 @@ class ViewOtherPersionalDetails extends Component {
                 </Item>
               </Form>
               {this.state.member_type === '1' ? (
-                <View>
+                <View style={{paddingHorizontal:'1.2%'}}>
                   <TouchableOpacity
                     style={{ paddingHorizontal: '3%' }}
                     onPress={() => {
                       this.setState({ visibleModalFamily: null })
-                      this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: this.state.member_id })
+                      if (validationempty(this.state.fatherName)) { } else {
+                        this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: this.state.member_id })
+                      }
                     }}>
 
                     <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '2%' }]}>Father Name</Text>
-                    <Text style={[Style.Textstyle, { paddingVertical: '2%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{this.state.fatherName}</Text>
+                    <Text style={[Style.Textstyle, { paddingVertical: '2%', color: Colors.black, fontFamily: CustomeFonts.regular,paddingHorizontal:'1%' }]}>{this.state.fatherName}</Text>
                     <Item />
 
                   </TouchableOpacity>
@@ -883,10 +888,12 @@ class ViewOtherPersionalDetails extends Component {
                     style={{ paddingHorizontal: '3%' }}
                     onPress={() => {
                       this.setState({ visibleModalFamily: null })
+                      if (validationempty(this.state.motherName)) { } else {
                       this.props.navigation.navigate('AddFamilyMember', { title: 'Family Details', member_tree_id: this.state.member_id })
+                      }
                     }}>
                     <Text style={[Style.Textstyle, { color: Colors.black, fontFamily: CustomeFonts.medium, paddingVertical: '2%' }]}>Mother Name</Text>
-                    <Text style={[Style.Textstyle, { paddingVertical: '2%', color: Colors.black, fontFamily: CustomeFonts.regular }]}>{this.state.motherName}</Text>
+                    <Text style={[Style.Textstyle, { paddingVertical: '2%', color: Colors.black, fontFamily: CustomeFonts.regular,paddingHorizontal:'1%'  }]}>{this.state.motherName}</Text>
                     <Item />
                   </TouchableOpacity>
                 </View>
@@ -925,22 +932,22 @@ class ViewOtherPersionalDetails extends Component {
                     ]}
                   >
                     Email
-                </Label>
+                  </Label>
                   {this.state.email2 === '' ||
                     this.state.email2 === null || this.state.email2 === 'null' ||
                     this.state.email2 === undefined ? (
 
-                      <Input
-                        style={Style.Textstyle}
-                        multiline={false}
-                        keyboardType={'email-address'}
-                        // numberOfLines={3}
-                        onChangeText={value => this.setState({ email: value })}
-                        value={this.state.email}
-                      ></Input>
-                    ) : (
-                      <Text style={Style.Textstyle}>{this.state.email}</Text>
-                    )}
+                    <Input
+                      style={Style.Textstyle}
+                      multiline={false}
+                      keyboardType={'email-address'}
+                      // numberOfLines={3}
+                      onChangeText={value => this.setState({ email: value })}
+                      value={this.state.email}
+                    ></Input>
+                  ) : (
+                    <Text style={Style.Textstyle}>{this.state.email}</Text>
+                  )}
                 </Item>
               </Form>
 
@@ -996,7 +1003,7 @@ class ViewOtherPersionalDetails extends Component {
                     ]}
                   >
                     Subcast
-                </Label>
+                  </Label>
                   <Input
                     style={Style.Textstyle}
                     multiline={false}
@@ -1026,7 +1033,7 @@ class ViewOtherPersionalDetails extends Component {
                   ]}
                 >
                   Country
-              </Text>
+                </Text>
                 <Picker
                   selectedValue={this.state.countrytatus}
                   onValueChange={this.onValueCountryChange}
@@ -1064,7 +1071,7 @@ class ViewOtherPersionalDetails extends Component {
                   ]}
                 >
                   State
-              </Text>
+                </Text>
 
                 <Picker
                   selectedValue={this.state.statetatus}
@@ -1103,7 +1110,7 @@ class ViewOtherPersionalDetails extends Component {
                   ]}
                 >
                   City
-              </Text>
+                </Text>
                 <Picker
                   selectedValue={this.state.citytatus}
                   onValueChange={(itemValue, itemIndex) =>
@@ -1140,7 +1147,7 @@ class ViewOtherPersionalDetails extends Component {
                     ]}
                   >
                     Pincode
-                </Label>
+                  </Label>
                   <Input
                     style={Style.Textstyle}
                     keyboardType={'number-pad'}
@@ -1162,7 +1169,7 @@ class ViewOtherPersionalDetails extends Component {
                     ]}
                   >
                     Mobile2
-                </Label>
+                  </Label>
                   <Input
                     style={Style.Textstyle}
                     keyboardType='numeric'
@@ -1227,7 +1234,7 @@ class ViewOtherPersionalDetails extends Component {
                         ]}
                       >
                         Phone(LL)
-                    </Label>
+                      </Label>
                       <Input
                         style={Style.Textstyle}
                         maxLength={8}
@@ -1250,7 +1257,7 @@ class ViewOtherPersionalDetails extends Component {
                         ]}
                       >
                         Native Place
-                    </Label>
+                      </Label>
                       <Input
                         style={Style.Textstyle}
                         onChangeText={value =>
@@ -1278,7 +1285,7 @@ class ViewOtherPersionalDetails extends Component {
                   ]}
                 >
                   Blood Group
-              </Text>
+                </Text>
                 <Picker
                   selectedValue={this.state.bloodGroupStatus}
                   onValueChange={(itemValue, itemIndex) =>
@@ -1315,7 +1322,7 @@ class ViewOtherPersionalDetails extends Component {
                     ]}
                   >
                     Education
-                </Label>
+                  </Label>
                   <Input
                     style={Style.Textstyle}
                     onChangeText={value => this.setState({ education: value })}
@@ -1336,7 +1343,7 @@ class ViewOtherPersionalDetails extends Component {
                     ]}
                   >
                     Profession
-                </Label>
+                  </Label>
                   <Input
                     style={Style.Textstyle}
                     onChangeText={value => this.setState({ profession: value })}
@@ -1381,7 +1388,7 @@ class ViewOtherPersionalDetails extends Component {
                       ]}
                     >
                       Date Of Death*
-              </Text>
+                    </Text>
                     <View
                       style={{
                         flex: 1,
@@ -1432,7 +1439,7 @@ class ViewOtherPersionalDetails extends Component {
                         ]}
                       >
                         Place Of Death
-                </Label>
+                      </Label>
                       <Input
                         style={[Style.Textstyle, { borderBottomWidth: 1 }]}
                         placeholder={'Place Of Death'}
@@ -1458,7 +1465,7 @@ class ViewOtherPersionalDetails extends Component {
                       ]}
                     >
                       Gotra
-                  </Label>
+                    </Label>
                     <Input
                       style={Style.Textstyle}
                       onChangeText={value => this.setState({ gotra: value })}
@@ -1485,7 +1492,7 @@ class ViewOtherPersionalDetails extends Component {
                   ]}
                 >
                   ID Proof
-              </Text>
+                </Text>
                 <View
                   style={{ flexDirection: 'row', marginTop: 5, width: '100%' }}
                 >
@@ -1531,7 +1538,7 @@ class ViewOtherPersionalDetails extends Component {
                       ]}
                     >
                       Edit
-                  </Text>
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1600,7 +1607,7 @@ class ViewOtherPersionalDetails extends Component {
                       ]}
                     >
                       Edit
-                  </Text>
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1623,7 +1630,7 @@ class ViewOtherPersionalDetails extends Component {
                     ]}
                   >
                     Family Photo
-                </Text>
+                  </Text>
                   <View
                     style={{ flexDirection: 'row', marginTop: 5, width: '100%' }}
                   >
@@ -1667,7 +1674,7 @@ class ViewOtherPersionalDetails extends Component {
                         ]}
                       >
                         Edit
-                    </Text>
+                      </Text>
                     </TouchableOpacity>
                   </View>
                   <Text style={[Style.SubTextstyle, { color: Colors.white, paddingVertical: '5%' }]}> NOTE: You Can Upload Maximum 300 KB Image </Text>
@@ -1678,13 +1685,13 @@ class ViewOtherPersionalDetails extends Component {
             {this.state._isLoading ? (
               <ActivityIndicator color={Colors.Theme_color} size={'large'} />
             ) : (
-                <TouchableOpacity
-                  style={[Style.Buttonback, (style = { marginTop: 10 })]}
-                  onPress={() => this.postApiCall()}
-                >
-                  <Text style={Style.buttonText}>Update Details</Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                style={[Style.Buttonback, (style = { marginTop: 10 })]}
+                onPress={() => this.postApiCall()}
+              >
+                <Text style={Style.buttonText}>Update Details</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -80,16 +80,20 @@ export default class ProfileComplsary extends Component {
             dob: '',
             address: '',
             education: '',
-            samaj_id: '', member_type: '', member_id: '', picUrl: '', email: '', email2: ''
+            samaj_id: '', member_type: '', member_id: '', picUrl: '', email: '', email2: '', isSplash: null, relationType: null,
+            casttatus: '', subcasttatus: '',
+            bloodGroupStatus: '', cast: [], subCast: [], Blood: [],
         };
     }
 
     componentDidMount = async () => {
         const samaj_id = await AsyncStorage.getItem('member_samaj_id')
-        const member_id = await AsyncStorage.getItem('member_id')
-        const member_type = await AsyncStorage.getItem('type')
+        const member_id = await this.props.navigation.getParam('member_id')
+        const member_type = await this.props.navigation.getParam('member_type')
+        const isSplash = await this.props.navigation.getParam('isSplash')
+        const relationType = await this.props.navigation.getParam('relationType')
         this.setState({
-            samaj_id, member_id, member_type
+            samaj_id, member_id, member_type, isSplash, relationType
         })
 
         this.genderApi()
@@ -114,18 +118,30 @@ export default class ProfileComplsary extends Component {
             picUrl: res.member_photo,
             email: res.other_information.member_email,
             email2: res.other_information.member_email,
+            bloodGroupStatus: parseInt(res.other_information.member_bgm_id),
+            casttatus: parseInt(res.member_details.member_cast_id),
+            subcasttatus: res.member_details.member_sub_cast,
         })
     }
 
     genderApi = async () => {
         var response = await Helper.GET('genderList')
-        console.log('check the response ', response)
-
         if (response.success) {
-            this.setState({
-                Gender: response.data
-            })
+            this.setState({Gender: response.data})
         }
+        //blood group
+
+        var responseBloodGroup = await Helper.GET('bloodgroupList')
+
+        if (responseBloodGroup.success === true) {
+            this.setState({Blood: responseBloodGroup.data})
+        }
+        var responsecast = await Helper.GET('cast_list?samaj_id=' + this.state.samaj_id)
+
+        if (responsecast.success === true) {
+            this.setState({cast: responsecast.data})
+        }
+
     }
     async CapturePhoto(type) {
         console.log('click on image ')
@@ -213,6 +229,9 @@ export default class ProfileComplsary extends Component {
         formdata.append('type', this.state.member_type)
         formdata.append('member_eq_id', this.state.education)
         formdata.append('member_email', this.state.email)
+        formdata.append('member_cast', this.state.casttatus)
+        formdata.append('sub_cast_id', this.state.subcasttatus)
+        formdata.append('member_bgm_id', this.state.bloodGroupStatus)
         if (validationempty(this.state.photoPath)) {
             formdata.append('member_photo', {
                 uri: 'file://' + this.state.photoPath,
@@ -223,21 +242,33 @@ export default class ProfileComplsary extends Component {
             formdata.append('member_photo', this.state.photoImage)
         }
 
-        console.log('formdata -->', formdata)
+        // console.log('formdata -->', formdata)
         var response = await Helper.POSTFILE('member_details_edit', formdata)
-        console.log('profile response', response)
+        // console.log('profile response', response)
         showToast(response.message)
         if (response.success) {
-            this.props.navigation.navigate('Dashboard')
+            if (this.state.isSplash === 1) {
+                this.props.navigation.navigate('Dashboard')
+            } else {
+                // this.props.navigation.goBack()
+                this.props.navigation.navigate('LookinForMatrimony', { memberId: this.state.member_id, relationType: this.state.relationType })
+            }
         }
     }
+    async subCast(value) {
+        var response = await Helper.GET('sub_cast_list?cast_id=' + value)
+        // console.log('response subcast -- > ', response)
+        if (response.success) {
+          this.setState({ subCast: response.data })
+        }
+      }
     render() {
         return (
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={[Style.cointainer, { padding: '2%' }]}>
 
-                        <View style={[Style.cardback, { justifyContent: 'center', marginHorizontal: '2%', padding: '1%' }]}>
+                        <View style={{ justifyContent: 'center', marginHorizontal: '2%', padding: '1%' }}>
                             <View style={Style.flexView}>
                                 <Text style={[Style.Textmainstyle, { width: '45%', color: Colors.black }]}>
                                     Marital Status <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
@@ -387,18 +418,117 @@ export default class ProfileComplsary extends Component {
                                         this.state.email2 === null || this.state.email2 === 'null' ||
                                         this.state.email2 === undefined ? (
 
-                                            <Input
-                                                style={Style.Textstyle}
-                                                multiline={false}
-                                                keyboardType={'email-address'}
-                                                // numberOfLines={3}
-                                                onChangeText={value => this.setState({ email: value })}
-                                                value={this.state.email}
-                                            ></Input>
-                                        ) : (
-                                            <Text style={Style.Textstyle}>{this.state.email}</Text>
-                                        )}
+                                        <Input
+                                            style={Style.Textstyle}
+                                            multiline={false}
+                                            keyboardType={'email-address'}
+                                            // numberOfLines={3}
+                                            onChangeText={value => this.setState({ email: value })}
+                                            value={this.state.email}
+                                        ></Input>
+                                    ) : (
+                                        <Text style={Style.Textstyle}>{this.state.email}</Text>
+                                    )}
                                 </Item>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+
+                                }}
+                            >
+                                <Text
+                                    style={[
+                                        Style.Textmainstyle,
+                                        { width: '45%', color: Colors.black }
+                                    ]}
+                                >
+                                    Cast <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
+                                </Text>
+                                <Picker
+                                    selectedValue={this.state.casttatus}
+                                    onValueChange={(itemValue, itemIndex) => {
+                                        this.setState({ casttatus: itemValue })
+                                        this.subCast(itemValue)
+                                    }}
+                                    mode={'dialog'}
+                                    style={{
+                                        flex: 1,
+                                        width: '100%',
+                                        fontFamily: CustomeFonts.reguar,
+                                        color: Colors.black
+                                    }}
+                                >
+                                    <Picker.Item label='Select Cast' value='0' />
+                                    {this.state.cast.map((item, key) => (
+                                        <Picker.Item
+                                            label={item.cast_name}
+                                            value={item.id}
+                                            key={key}
+                                        />
+                                    ))}
+                                </Picker>
+                            </View>
+                            <View>
+                                <Item stackedLabel>
+                                    <Label
+                                        style={[
+                                            Style.Textstyle,
+                                            {
+                                                color: Colors.black,
+                                                fontFamily: CustomeFonts.medium
+                                            }
+                                        ]}
+                                    >
+                                        Subcast <Text style={[Style.Textmainstyle, { color: 'red' }]}>*</Text>
+                                    </Label>
+                                    <Input
+                                        style={Style.Textstyle}
+                                        onChangeText={value => this.setState({ subcasttatus: value })}
+                                        value={this.state.subcasttatus}
+                                    ></Input>
+                                </Item>
+                            </View>
+
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Text
+                                    style={[
+                                        Style.Textmainstyle,
+                                        { width: '45%', color: Colors.black }
+                                    ]}
+                                >
+                                    Blood Group
+                                </Text>
+                                <Picker
+                                    selectedValue={this.state.bloodGroupStatus}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        this.setState({ bloodGroupStatus: itemValue })
+                                    }
+                                    mode={'dialog'}
+                                    style={{
+                                        flex: 1,
+                                        width: '100%',
+                                        fontFamily: CustomeFonts.reguar,
+                                        color: Colors.black
+                                    }}
+                                >
+                                    <Picker.Item label='Select Blood Group' value='0' />
+                                    {this.state.Blood.map((item, key) => (
+                                        <Picker.Item
+                                            label={item.bgm_name}
+                                            value={item.id}
+                                            key={key}
+                                        />
+                                    ))}
+                                </Picker>
                             </View>
                             <View
                                 style={{
@@ -463,13 +593,13 @@ export default class ProfileComplsary extends Component {
                             {this.state._isLoading ? (
                                 <ActivityIndicator color={Colors.Theme_color} size={'large'} />
                             ) : (
-                                    <TouchableOpacity
-                                        style={[Style.Buttonback, { marginTop: '10%' }]}
-                                        onPress={() => this.postApiCall()}
-                                    >
-                                        <Text style={Style.buttonText}>Add Details</Text>
-                                    </TouchableOpacity>
-                                )}
+                                <TouchableOpacity
+                                    style={[Style.Buttonback, { marginTop: '10%' }]}
+                                    onPress={() => this.postApiCall()}
+                                >
+                                    <Text style={Style.buttonText}>Add Details</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
                 </ScrollView>

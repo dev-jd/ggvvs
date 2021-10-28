@@ -74,12 +74,12 @@ export default class LookinForMatrimony extends Component {
       member1image: '', memberimage1: {}, member2image: '', memberimage2: {}, member3image: '', memberimage3: {}, member4image: '', memberimage4: {}, member5image: '', memberimage5: {},
       isActive: false, approvedMatrimony: false,
       idSelectM1: false, idSelectM2: false, idSelectM3: false, idSelectM4: false, idSelectM5: false, twitter: '',
-      packageDetails: {},
+      packageDetails: null,
       heightDroupDown: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
       visibleModalPersonal: null, visibleModalFamily: null, visibleModalEducation: null, visibleModalSpritual: null, visibleModalGeneral: null, visibleModalComm: null,
       visibleModalPhotos: null, visibleModalLifestyle: null, visibleModalProffessional: null,
       signal: '', termsConditionsData: '', subCastArray: [], subcast: '', fatherNo: '', motherNo: '',
-      lat: 0.0, long: 0.0, location: '', relationType: ''
+      lat: 0.0, long: 0.0, location: '', relationType: '', pageLoding: true
     }
   }
   async componentDidMount() {
@@ -90,22 +90,16 @@ export default class LookinForMatrimony extends Component {
     var membedId = await this.props.navigation.getParam('memberId')
     var relationType = await this.props.navigation.getParam('relationType')
 
-    console.log('samaj id ', samaj_id)
-    console.log('membedId ', membedId)
-    console.log('relationType ', relationType)
-    this.setState({
+     this.setState({
       samaj_id: samaj_id,
       member_id: membedId,
       // member_type: member_type
     })
 
     await NetInfo.addEventListener(state => {
-      console.log('Connection type', state.type)
-      console.log('Is connected?', state.isConnected)
-      this.setState({ connection_Status: state.isConnected })
+       this.setState({ connection_Status: state.isConnected })
     })
-    //console.log('isTermsAccept' + isTermsAccept)
-
+ 
     if (this.state.connection_Status === true) {
       if (isTermsAccept === 'true') {
       } else {
@@ -120,55 +114,47 @@ export default class LookinForMatrimony extends Component {
   }
   termsConditionApi = async () => {
     var response = await Helper.POST('terms')
-    //console.log('check the terms condition ', response)
     this.setState({ termsConditionsData: response.data.description })
   }
   packageApi = async () => {
     var response = await Helper.GET('package_list?samaj_id=' + this.state.samaj_id)
-    // console.log('check the response packages', response)
     this.setState({ packageList: response.data })
   }
   castApi = async () => {
     var response = await Helper.GET('cast_list?samaj_id=' + this.state.samaj_id)
-    // console.log('check the response packages', response)
     this.setState({ cast: response.data })
   }
   subCast = async (value) => {
-    //console.log('subcast -- > ', value)
     var response = await Helper.GET('sub_cast_list?cast_id=' + value)
-    //console.log('response subcast -- > ', response)
     if (response.success) {
       this.setState({ subCastArray: response.data })
     }
   }
   countryApi = async () => {
     var responce = await Helper.GET('countryList')
-    // console.log('check the response ', responce)
     if (responce.success) {
       this.setState({ countryArray: responce.data })
     }
   }
   stateApiCall = async (country) => {
     var responce = await Helper.GET('stateList?country_id=' + country)
-    // console.log('check the response state', responce)
     if (responce.success) {
       this.setState({ stateArray: responce.data })
     }
   }
   cityApiCall = async (state) => {
     var responce = await Helper.GET('cityList?state_id=' + state)
-    // console.log('check the response state', responce)
     if (responce.success) {
       this.setState({ cityarray: responce.data })
     }
   }
   async apiCalling() {
 
-    console.log('check social media url', 'socialLink?samaj_id=' + this.state.samaj_id + '&member_id=' + this.state.member_id)
     var socialresponse = await Helper.GET('socialLink?samaj_id=' + this.state.samaj_id + '&member_id=' + this.state.member_id)
     this.setState({
       fbuser: socialresponse.data[0].member_fb,
       instauser: socialresponse.data[0].member_insta,
+
       linkedin: socialresponse.data[0].member_linkedin,
       wappno: socialresponse.data[0].member_whatsapp,
       twitter: socialresponse.data[0].member_twitter,
@@ -177,15 +163,7 @@ export default class LookinForMatrimony extends Component {
 
     var response = await Helper.GET('memberProfile/' + this.state.member_id)
     console.log('check the response matrimony', response)
-    // var formdata = new FormData()
-    // formdata.append('samaj_id', this.state.samaj_id)
-    // formdata.append('member_id', this.state.member_id)
-    // formdata.append('type', this.state.member_type)
-
-    // // var response = { matrimony: null }
-    // var response = await Helper.POST('profile_data', formdata)
-    // // console.log('check the response -- > ', response)
-    // if (validationempty(response.package_details)) {
+  
     this.setState({
       packageId: response.data.package_id,
       packageDetails: {
@@ -208,9 +186,10 @@ export default class LookinForMatrimony extends Component {
     if (validationempty(response.data.matrimony_id)) {
       this.setState({
         // using matrimoney personal
+        pageLoding: false,
         isActive: true,
         matrimonyId: response.data.matrimony_id + '',
-        profiletagline: response.data.matrimony.profile_tag_line,
+        profiletagline: validationempty(response.data.matrimony.profile_tag_line),
         personaldesc: response.data.matrimony.person_description,
         birthPlace: response.data.matrimony.mm_birth_place,
         btime: response.data.matrimony.mm_birth_time,
@@ -290,7 +269,7 @@ export default class LookinForMatrimony extends Component {
         isManglik, kundliBelive, isPustimarg, approvedMatrimony, parantesContact: contacttoParents
       })
     } else {
-      this.setState({ isActive: false })
+      this.setState({ isActive: false, visibleModalPersonal: 'bottom', pageLoding: false })
     }
 
     this.setState({
@@ -320,7 +299,6 @@ export default class LookinForMatrimony extends Component {
   }
 
   async CapturePhoto(type) {
-    console.log('click on image ')
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.CAMERA,
       {
@@ -332,7 +310,6 @@ export default class LookinForMatrimony extends Component {
     )
 
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the camera')
       ImagePicker.showImagePicker(options, response => {
         if (response.didCancel) {
           console.log('responce didCancel')
@@ -377,9 +354,11 @@ export default class LookinForMatrimony extends Component {
   }
 
   async editData() {
-    var { kundliImage, matrimonyId, birthPlace, skinColor, btime, casttatus, subcast, profiletagline,relationType, isManglik, personaldesc, heightfFeet, heightInch, weight, member_id, samaj_id, idSelect } = this.state
+    var { kundliImage, matrimonyId, birthPlace, skinColor, btime, casttatus, subcast, profiletagline, relationType, isManglik, personaldesc, heightfFeet, heightInch, weight, member_id, samaj_id, idSelect } = this.state
 
-    if (validationBlank(kundliImage, 'Select Kundli First') && validationBlank(casttatus, 'select your cast') && validationBlank(subcast, 'select your sub-cast')) {
+    if (validationBlank(this.state.dob, 'select your Date Of Birth') && validationBlank(btime, 'Select Birth Time') && validationBlank(birthPlace, 'Write Birth Place') && validationBlank(heightfFeet, 'select height in feet')
+      && validationBlank(heightInch, 'select height inch') && validationBlank(weight, 'write weight') && validationBlank(skinColor, 'write skin tone') && validationBlank(personaldesc, 'write personal description')
+      && validationBlank(casttatus, 'select your cast') && validationBlank(subcast, 'select your sub-cast')) {
 
       var isManglik, isPustimarg, believe, approved
       if (this.state.isManglik) {
@@ -425,13 +404,11 @@ export default class LookinForMatrimony extends Component {
       }
 
 
-      console.log('formdata-->', formdata)
 
       var response = await Helper.POSTFILE('matrimonyAdd', formdata)
-      console.log('check the response', response)
       if (response.status) {
-        this.setState({ isLoding: false, visibleModalPersonal: null,matrimonyId:response.matrimony_id })
-        apiCalling()
+        this.setState({ isLoding: false, visibleModalPersonal: null, matrimonyId: response.matrimony_id })
+        this.apiCalling()
         showToast(response.message)
       }
     }
@@ -447,10 +424,8 @@ export default class LookinForMatrimony extends Component {
       if (validationempty(matrimonyId)) {
         formdata.append('matrimony_id', matrimonyId)
       }
-      console.log('educational formdata-->', formdata)
 
       var response = await Helper.POSTFILE('matrimonyLifeStyle', formdata)
-      console.log('check the response', response)
       if (response.status) {
         this.setState({ isLoding: false, visibleModalLifestyle: null })
         showToast(response.message)
@@ -470,10 +445,8 @@ export default class LookinForMatrimony extends Component {
         if (validationempty(matrimonyId)) {
           formdata.append('matrimony_id', matrimonyId)
         }
-        console.log('educational formdata-->', formdata)
 
         var response = await Helper.POSTFILE('matrimonyEducation', formdata)
-        console.log('check the response', response)
         if (response.status) {
           this.setState({ isLoding: false, visibleModalEducation: null })
           showToast(response.message)
@@ -501,7 +474,6 @@ export default class LookinForMatrimony extends Component {
         formdata.append('matrimony_id', matrimonyId)
       }
       var response = await Helper.POSTFILE('matrimonyFamily', formdata)
-      console.log('check the response', response)
       if (response.status) {
         this.setState({ isLoding: false, visibleModalFamily: null })
         showToast(response.message)
@@ -523,10 +495,8 @@ export default class LookinForMatrimony extends Component {
         if (validationempty(matrimonyId)) {
           formdata.append('matrimony_id', matrimonyId)
         }
-        console.log('profession formdata-->', formdata)
 
         var response = await Helper.POSTFILE('matrimonyProfession', formdata)
-        console.log('check the response', response)
         if (response.status) {
           this.setState({ isLoding: false, visibleModalProffessional: null })
           showToast(response.message)
@@ -557,7 +527,6 @@ export default class LookinForMatrimony extends Component {
         formdata.append('matrimony_id', matrimonyId)
       }
       var response = await Helper.POSTFILE('matrimonySpiritual', formdata)
-      console.log('check the response', response)
       if (response.status) {
         this.setState({ isLoding: false, visibleModalSpritual: null })
         showToast(response.message)
@@ -597,7 +566,6 @@ export default class LookinForMatrimony extends Component {
         formdata.append('matrimony_id', matrimonyId)
       }
       var response = await Helper.POSTFILE('matrimonyCommunication', formdata)
-      console.log('check the response communication ', response)
       if (response.status) {
         this.setState({ isLoding: false, visibleModalComm: null })
         showToast(response.message)
@@ -621,7 +589,6 @@ export default class LookinForMatrimony extends Component {
         formdata.append('matrimony_id', matrimonyId)
       }
       var response = await Helper.POSTFILE('matrimonyGeneral', formdata)
-      console.log('check the response questionery ', response)
       if (response.status) {
         this.setState({ isLoding: false, visibleModalGeneral: null })
         showToast(response.message)
@@ -666,7 +633,6 @@ export default class LookinForMatrimony extends Component {
 
 
       var response = await Helper.POSTFILE('matrimonyPhoto', formdata)
-      console.log('check the response photos ', response)
       if (response.status) {
         this.setState({ isLoding: false, visibleModalPhotos: null })
         showToast(response.message)
@@ -689,9 +655,7 @@ export default class LookinForMatrimony extends Component {
       var formdata = new FormData()
       formdata.append('matrimony_id', matrimonyId)
       formdata.append('me_approved', approved)
-      console.log('check the formdata me approve', formdata)
       var response = await Helper.POSTFILE('matrimonyApprove', formdata)
-      console.log('check the response active  ', response)
       if (response.status) {
         this.setState({ isLoding: false })
         showToast(response.message)
@@ -699,8 +663,7 @@ export default class LookinForMatrimony extends Component {
     }
   }
   onChangeTime = (event, selectedDate) => {
-    // console.log('check the time', event)
-    // console.log('check the time', selectedDate)
+   
     if (event.type === 'dismissed') {
       this.setState({ birthTime: new Date(), btime: '', showTimepicker: false })
     } else {
@@ -708,13 +671,24 @@ export default class LookinForMatrimony extends Component {
       this.setState({ birthTime: selectedDate, btime: timeview, showTimepicker: false });
     }
   };
+
+  datediff(second) {
+    // Take the difference between the dates and divide by milliseconds per day.
+    // Round to nearest whole number to deal with DST.
+    // return Math.round((second-first)/(1000*60*60*24));
+    var msDiff = new Date(second).getTime() - new Date().getTime();    //Future date - current date
+    var daysTill30June2035 = Math.floor(msDiff / (1000 * 60 * 60 * 24));
+    return daysTill30June2035
+  }
   render() {
     var { isActive, isLoding, packageDetails, signal, packageId, approvedMatrimony, name, kundliBelive, parantesContact, birthPlace, idSelect, birthTime, kundliImage, img_url, img_url_profile, skinColor, btime, profiletagline, isManglik, gotra, casttatus, personaldesc, heightfFeet, heightInch, weight, showTimepicker,
       education, educationdesc, lifestylechoice, expectation, fathername, fatherProfession, mothername, motherprofession, otherfamilydetails, nativeplace, familydesc, profession, professiondesc, income,
       membedId, religion, negativePoint, positivePoint, mobile, email, address, fbuser, instauser, linkedin, twitter, wappno, takedrink, smoke, nonveg, eggs, lookfornri,
       member1image, matrimonyId, member2image, member3image, heightDroupDown, member4image, member5image, memberimage5, idSelectM1, idSelectM2, idSelectM3, idSelectM4, idSelectM5,
       fatherNo, motherNo, subcast, member_id } = this.state
-    console.log('check package details', packageDetails)
+    // console.log('check package details', packageDetails)
+    var today = moment().format('YYYY-MM-DD')
+    
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar backgroundColor={Colors.Theme_color} barStyle='light-content' />
@@ -726,108 +700,109 @@ export default class LookinForMatrimony extends Component {
             resizeMode: "cover",
             justifyContent: "center"
           }}>
-          <View style={{ height: '100%', padding: '3%' }}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {validationempty(packageId) && packageDetails.status !== 'Expired' ?
-                <View style={[Style.cardback, Style.matrimonyCard]}>
-                  <View>
-                    <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white }]}>Package {packageDetails.package_name}</Text>
+          {this.state.pageLoding ? <Indicator /> :
+            <View style={{ height: '100%', padding: '3%' }}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {validationempty(packageId) && packageDetails.status !== 'Expired' ?
+                  <View style={[Style.cardback, Style.matrimonyCard]}>
+                    <View>
+                      <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white }]}>Package {packageDetails.package_name}</Text>
+                    </View>
+                    <View>
+                      {/* <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text> */}
+                      <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Tranjection Id - {validationempty(packageDetails.transaction_id) ? packageDetails.transaction_id : 'Free Package'}</Text>
+                    </View>
+                    {/* ,packageDetails.end_date */}
+                    <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Package Limit {this.datediff(packageDetails.end_date) >= 0 ? this.datediff(packageDetails.end_date) + ' days left' : this.datediff(packageDetails.end_date) === -1 ? 'Expired Today' : 'Exired'}</Text>
+                    <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>{moment(packageDetails.start_date).format('DD-MM-YYYY')}  To  {moment(packageDetails.end_date).format('DD-MM-YYYY')}</Text>
                   </View>
-                  <View>
-                    {/* <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Cost ₹ {validationempty(packageDetails.amount) ? packageDetails.amount : '0'}</Text> */}
-                    <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Tranjection Id - {validationempty(packageDetails.transaction_id) ? packageDetails.transaction_id : 'Free Package'}</Text>
-                  </View>
-                  <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>Package Limit {packageDetails.days} days</Text>
-                  <Text style={[Style.Textstyle, { textAlign: 'center', color: Colors.white }]}>{moment(packageDetails.start_date).format('DD-MM-YYYY')}  To  {moment(packageDetails.end_date).format('DD-MM-YYYY')}</Text>
-                </View>
-                : <View style={[Style.cardback, Style.matrimonyCard]}>
-                  <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white, }]}>No Any Package Active In Your Profile</Text>
-                  <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white, }]}>To view your profile to be in search list buy package</Text>
-                  <TouchableOpacity
-                    style={[Style.Buttonback, { marginVertical: 10, width: '50%', alignSelf: 'center', backgroundColor: Colors.white }]}
-                    onPress={() => {
-                      if (validationempty(matrimonyId)) {
-                        this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile,membedId })
-                      } else {
-                        showToast('First add your personal details')
-                      }
-                    }}
-                  >
-                    <Text style={[Style.buttonText, { color: Colors.Theme_color }]}>Click To Pay</Text>
-                  </TouchableOpacity>
-                </View>}
+                  : <View style={[Style.cardback, Style.matrimonyCard]}>
+                    <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white, }]}>No Any Package Active In Your Profile</Text>
+                    <Text style={[Style.Textmainstyle, { textAlign: 'center', color: Colors.white, }]}>To view your profile to be in search list buy package</Text>
+                    <TouchableOpacity
+                      style={[Style.Buttonback, { marginVertical: 10, width: '50%', alignSelf: 'center', backgroundColor: Colors.white }]}
+                      onPress={() => {
+                        if (validationempty(matrimonyId)) {
+                          this.props.navigation.navigate('MatrimonyPackage', { matrimonyId, name, email, mobile, member_id })
+                        } else {
+                          showToast('First add your personal details')
+                        }
+                      }}
+                    >
+                      <Text style={[Style.buttonText, { color: Colors.Theme_color }]}>Click To Pay</Text>
+                    </TouchableOpacity>
+                  </View>}
 
-              {/* profile tag */}
-              <View style={[Style.cardback, Style.matrimonyCard]}>
-                <Text style={[Style.Textmainstyle, { color: Colors.white, }]}>Name - {name}</Text>
-                {/* <TextInputCustome title='Name' value={name} changetext={(name) => this.setState({ name })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} /> */}
-                <TextInputCustome title='Profile Tag' value={profiletagline} changetext={(profiletagline) => this.setState({ profiletagline })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
-              </View>
-              {/* Row 1 */}
-              <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPersonal: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Personal</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalFamily: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Family</Text>
-                </TouchableOpacity>
-              </View>
-              {/* row 2 */}
-              <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalEducation: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Education</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalProffessional: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Professional</Text>
-                </TouchableOpacity>
-              </View>
-              {/* row 3 */}
-              <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalLifestyle: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Lifestyle Choice</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalSpritual: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Spiritual</Text>
-                </TouchableOpacity>
-              </View>
-              {/* row 4 */}
-              <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalGeneral: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>General</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalComm: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Communication</Text>
-                </TouchableOpacity>
-              </View>
-              {/* Row 5 */}
-              <View style={Style.flexView}>
-                <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
-                  <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', paddingVertical: '12%', textAlign: 'center' }]}>Photos</Text>
-                </TouchableOpacity>
-                {/* <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
+                {/* profile tag */}
+                <View style={[Style.cardback, Style.matrimonyCard]}>
+                  <Text style={[Style.Textmainstyle, { color: Colors.white, }]}>Name - {name}</Text>
+                  {/* <TextInputCustome title='Name' value={name} changetext={(name) => this.setState({ name })} maxLength={15} multiline={false} numberOfLines={1} keyboardType={'default'} editable={false} /> */}
+                  <TextInputCustome title='Profile Tag' value={profiletagline} changetext={(profiletagline) => this.setState({ profiletagline })} maxLength={50} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
+                </View>
+                {/* Row 1 */}
+                <View style={Style.flexView}>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPersonal: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Personal</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalFamily: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Family</Text>
+                  </TouchableOpacity>
+                </View>
+                {/* row 2 */}
+                <View style={Style.flexView}>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalEducation: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Education</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalProffessional: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Professional</Text>
+                  </TouchableOpacity>
+                </View>
+                {/* row 3 */}
+                <View style={Style.flexView}>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalLifestyle: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Lifestyle Choice</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalSpritual: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Spiritual</Text>
+                  </TouchableOpacity>
+                </View>
+                {/* row 4 */}
+                <View style={Style.flexView}>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalGeneral: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>General</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginLeft: 5, }]} onPress={() => this.setState({ visibleModalComm: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%' }]}>Communication</Text>
+                  </TouchableOpacity>
+                </View>
+                {/* Row 5 */}
+                <View style={Style.flexView}>
+                  <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
+                    <Text style={[Style.Textmainstyle, { color: Colors.white, width: '100%', paddingVertical: '12%', textAlign: 'center' }]}>Photos</Text>
+                  </TouchableOpacity>
+                  {/* <TouchableOpacity style={[Style.cardback, Style.matrimonyCard, { marginRight: 5, }]} onPress={() => this.setState({ visibleModalPhotos: 'bottom' })}>
                   <Text style={[Style.Textmainstyle, { color: Colors.white, width: '90%', paddingVertical: '12%', textAlign: 'center' }]}>Download Bio-Data</Text>
                 </TouchableOpacity> */}
-              </View>
-            </ScrollView>
-            {validationempty(packageId) ?
-              <View style={{ position: 'absolute', bottom: 5, right: 5 }}>
-                <Icon raised name='download' type='feather' onPress={() => Linking.openURL('https://new.mysamaaj.com/generatBiodata/' + member_id + '/1')} />
-              </View> : null}
-          </View>
+                </View>
+              </ScrollView>
+              {validationempty(packageId) ?
+                <View style={{ position: 'absolute', bottom: 5, right: 5 }}>
+                  <Icon raised name='download' type='feather' onPress={() => Linking.openURL('https://new.mysamaaj.com/generatBiodata/' + member_id + '/1')} />
+                </View> : null}
+            </View>
+          }
         </ImageBackground>
         {/* personal modal */}
         <Modal
-          isVisible={this.state.visibleModalPersonal === 'bottom'}
-          // onSwipeComplete={() => this.setState({ visibleModalPersonal: null })}
+          isVisible={this.state.visibleModalPersonal === 'bottom'} coverScreen={true}
           swipeDirection={['down']}
-          style={{ justifyContent: 'flex-end', padding: 2 }}
-        // onBackdropPress={() => this.setState({ visibleModalPersonal: null })}
-        // onBackButtonPress={() => this.setState({ visibleModalPersonal: null })}
         >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%' }]}>
-            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalPersonal: null })}>
+            <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center' }]}>Personal Details</Text>
-              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalPersonal: null })} />
+              <Icon name='x' type='feather' onPress={() => {
+                this.setState({ visibleModalPersonal: null })
+              }} />
             </TouchableOpacity>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={[Style.flexView, { paddingVertical: '2%' }]}>
@@ -998,7 +973,7 @@ export default class LookinForMatrimony extends Component {
           isVisible={this.state.visibleModalFamily === 'bottom'}
           // onSwipeComplete={() => this.setState({ visibleModalFamily: null })}
           swipeDirection={['down']}
-          style={{ justifyContent: 'flex-end', padding: 5 }}
+
         // onBackdropPress={() => this.setState({ visibleModalFamily: null })}
         // onBackButtonPress={() => this.setState({ visibleModalFamily: null })}
         >
@@ -1048,14 +1023,15 @@ export default class LookinForMatrimony extends Component {
           isVisible={this.state.visibleModalEducation === 'bottom'}
           // onSwipeComplete={() => this.setState({ visibleModalEducation: null })}
           swipeDirection={['down']}
-          style={{ justifyContent: 'center', padding: 5 }}
+        // style={{ justifyContent: 'center', padding: 5 }}
         // onBackdropPress={() => this.setState({ visibleModalEducation: null })}
         // onBackButtonPress={() => this.setState({ visibleModalEducation: null })}
         >
           <View style={[Style.cardback, { justifyContent: 'center', width: '100%', flex: 0 }]}>
             <TouchableOpacity style={{ alignSelf: 'flex-end', paddingVertical: '2%', flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.setState({ visibleModalEducation: null })}>
               <Text style={[Style.Textmainstyle, { color: Colors.Theme_color, width: '100%', textAlign: 'center', paddingVertical: '2%' }]}>Educational Details</Text>
-              <Icon name='x' type='feather' onPress={() => this.setState({ visibleModalEducation: null })} />
+              <Icon name='x' type='feather' onPress={() =>
+                this.setState({ visibleModalEducation: null })} />
             </TouchableOpacity>
 
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -1347,78 +1323,7 @@ export default class LookinForMatrimony extends Component {
                 </View>
               </View>
               <TextInputCustome title='Address' value={address} changetext={(address) => this.setState({ address })} maxLength={50} multiline={true} numberOfLines={3} keyboardType={'default'} editable={true} />
-              {/* <View style={{ paddingVertical: 10 }}>
-                <GooglePlacesAutocomplete
-                  ref={(instance) => { this.GooglePlacesRef = instance }}
-                  clearButtonMode={'always'}
-                  placeholder='Search Landmark, Location'
-                  autoFocus={true}
-                  placeholderTextColor={Colors.white}
-                  minLength={1} // minimum length of text to search
-                  fetchDetails={true}
-                  onPress={(data, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-                    console.log(data, details);
-                    console.log('lat long', data);
-                    // var region = {
-                    //   latitude: details.geometry.location.lat,
-                    //   longitude: details.geometry.location.lng,
-                    //   latitudeDelta: LATITUDE_DELTA,
-                    //   longitudeDelta: LONGITUDE_DELTA
-                    // }
-                    // that.setRegion(region);
-                    // that.mapview.fitToCoordinates(region, {
-                    //   edgePadding: {
-                    //     right: (WIDTH / 20),
-                    //     bottom: (HEIGHT / 20),
-                    //     left: (WIDTH / 20),
-                    //     top: (HEIGHT / 20),
-                    //   }
-                    // })
-                    that.setState({ isSearchvisible: false, address: data.description, lat: details.geometry.location.lat, long: details.geometry.location.lng })
-                    // this.serchSocity(details.geometry.location.lat, details.geometry.location.lng)
-
-                  }}
-                  currentLocation={true}
-                  currentLocationLabel="Current location"
-                  query={{
-                    key: STRINGNAME.searchKey,
-                    language: 'en',
-                    // location: location,
-                    radius: 1000,
-                    // components: 'country:india',
-                  }}
-                  nearbyPlacesAPI='GoogleReverseGeocoding' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-                  GoogleReverseGeocodingQuery={{
-                    // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-                    key: STRINGNAME.searchKey,
-                    language: 'en',
-                    // location: location,
-                    radius: 1000,
-                  }}
-                  filterReverseGeocodingByTypes={['locality', 'sublocality', 'sublocality_level_5', 'point_of_interest', 'landmark']}
-                  textInputProps={{
-                    placeholderTextColor: Colors.white,
-                    onFocus: () => {
-                      this.setState({ isSearchvisible: true })
-                      console.log('issearch', this.state.isSearchvisible)
-                    },
-                  }}
-                  styles={{
-                    textInputContainer: {
-                      color: Colors.Theme_color,
-                      borderBottomWidth: 1,
-                      borderBottomColor: Colors.white,
-                      width: '95%'
-                    },
-                    textInput: {
-                      color: Colors.white,
-                    },
-                  }}
-                />
-
-              </View>
-        */}
+           
               <TextInputCustome title='Facebook Profile' value={fbuser} changetext={(fbuser) => this.setState({ fbuser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Instagram Profile' value={instauser} changetext={(instauser) => this.setState({ instauser })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
               <TextInputCustome title='Linkedin Profile' value={linkedin} changetext={(linkedin) => this.setState({ linkedin })} maxLength={100} multiline={false} numberOfLines={1} keyboardType={'default'} editable={true} />
@@ -1577,13 +1482,13 @@ export default class LookinForMatrimony extends Component {
                 {this.state.isLoding ? (
                   <ActivityIndicator color={Colors.Theme_color} size={'large'} />
                 ) : (
-                    <TouchableOpacity
-                      style={[Style.Buttonback, { marginTop: 10 }]}
-                      onPress={() => this.submitPhotoData()}
-                    >
-                      <Text style={Style.buttonText}>Save</Text>
-                    </TouchableOpacity>
-                  )}
+                  <TouchableOpacity
+                    style={[Style.Buttonback, { marginTop: 10 }]}
+                    onPress={() => this.submitPhotoData()}
+                  >
+                    <Text style={Style.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </ScrollView>
           </View>
@@ -1602,7 +1507,7 @@ export default class LookinForMatrimony extends Component {
                 { color: Colors.Theme_color, textAlign: 'center' }
               ]}>
                 TERMS AND CONDITIONS
-                </Text>
+              </Text>
               <HTML
                 html={this.state.termsConditionsData}
                 imagesMaxWidth={Dimensions.get('window').width}

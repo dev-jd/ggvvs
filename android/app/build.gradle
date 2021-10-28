@@ -135,8 +135,8 @@ android {
         applicationId "com.ggvvssamaaj"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 35
-        versionName "2.6"
+        versionCode 42  
+        versionName "2.13"
         multiDexEnabled true
     }
     splits {

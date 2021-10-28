@@ -45,30 +45,7 @@ export default class App extends Component {
     })
 
     if (this.state.connection_Status == true) {
-      //   setTimeout(() => {
-      //     // this.props.navigation.replace("Login")
-
-      //     if (
-      //       this.state.member_id === '' ||
-      //       this.state.member_id === null ||
-      //       this.state.member_id === undefined
-      //     ) {
-      //       this.props.navigation.replace('Login')
-      //     } else {
-      //       this.props.navigation.replace('Dashboard')
-      //       this.getApi()
-      //     }
-      //   }, 2000)
-      // } else {
-      //   if (
-      //     this.state.member_id === '' ||
-      //     this.state.member_id === null ||
-      //     this.state.member_id === undefined
-      //   ) {
-      //     this.props.navigation.replace('Login')
-      //   } else {
-      //     this.props.navigation.replace('Dashboard')
-      //   }
+    
       this.getApi()
     }
   }
@@ -117,7 +94,7 @@ export default class App extends Component {
         // this.props.navigation.replace('ProfileComplsary')
       } else {
         // this.props.navigation.replace('Dashboard')
-        this.props.navigation.replace('ProfileComplsary')
+        this.props.navigation.replace('ProfileComplsary',{isSplash:1,member_id:this.state.member_id,member_type:this.state.member_type})
       }
     }
   }

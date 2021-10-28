@@ -43,6 +43,7 @@ import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage'
 import NetInfo from "@react-native-community/netinfo";
 import { validationempty } from '../Theme/Const'
+import { Alert } from 'react-native'
 
 class AddFamilyMember extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -165,18 +166,17 @@ class AddFamilyMember extends Component {
 
     if (this.state.memberrelationstatus === '' || this.state.memberrelationstatus === null || this.state.memberrelationstatus === undefined || this.state.memberrelationstatus === '0') {
       Toast.show("Select Relation To Member")
-     }else if (this.state.relation === '' || this.state.relation === null || this.state.relation === undefined || this.state.relation === '0') {
+    } else if (this.state.relation === '' || this.state.relation === null || this.state.relation === undefined || this.state.relation === '0') {
       Toast.show("Select Relation")
-    } else if (this.state.countrytatus === '' || this.state.countrytatus === null || this.state.countrytatus === undefined || this.state.countrytatus === '0') {
-      Toast.show("Select Country")
-    } else if (this.state.statetatus === '' || this.state.statetatus === null || this.state.statetatus === undefined || this.state.countrytatus === '0') {
-      Toast.show("Select State")
-    } else if (this.state.citytatus === '' || this.state.citytatus === null || this.state.citytatus === undefined || this.state.countrytatus === '0') {
-      Toast.show("Select City")
     } else if (this.state.name === '' || this.state.name === null || this.state.name === undefined) {
       Toast.show("Enter Name")
-    } else {
-      if (validationempty(this.state.mobile)) {
+    } else if (this.state.dob === '' || this.state.dob === null || this.state.dob === undefined) {
+      Toast.show("Enter Date of birth")
+    } else if (this.state.alive) {
+      if (this.state.countrytatus === '' || this.state.countrytatus === null || this.state.countrytatus === undefined || this.state.countrytatus === '0') {
+        Toast.show("Select Country")
+      }
+      else if (validationempty(this.state.mobile)) {
         if (validationempty(this.state.mobilecode)) {
           this.api_call()
         } else {
@@ -185,6 +185,8 @@ class AddFamilyMember extends Component {
       } else {
         this.api_call()
       }
+    } else {
+      this.api_call()
     }
   }
   api_call() {
@@ -212,7 +214,7 @@ class AddFamilyMember extends Component {
     formData.append('member_relation_to_member', this.state.memberrelationstatus)
     formData.append('member_is_alive', isalive)
     formData.append('place_birth', this.state.placeofbirth)
-    formData.append('place_death', this.state.placeofdeath)
+    formData.append('place_death', this.state.placeofdeath ? this.state.placeofdeath : '')
     formData.append('member_birth_date', Moment(this.state.dob, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
     formData.append('member_death_date', Moment(this.state.dod, 'DD-MM-YYYY', true).format("YYYY-MM-DD"))
     formData.append('member_type', '2')
@@ -227,11 +229,14 @@ class AddFamilyMember extends Component {
           if (res.data.status === true) {
             Toast.show(res.data.message)
             this.props.navigation.navigate('Dashboard')
+          } else {
+            Toast.show(res.data.message)
           }
         })
         .catch(err => {
           this.setState({ isLoading: false })
           console.log("familyAdd err", err)
+          Alert.alert('Family Member Add Error',err)
         })
     } else {
       Toast.show("No Internet Connection")
@@ -365,109 +370,8 @@ class AddFamilyMember extends Component {
                 ))}
               </Picker>
             </View>
-            <View
-              style={{
-                justifyContent: 'center',
-                flexDirection: 'row',
-                alignItems: 'center'
-              }}
-            >
-              <Text
-                style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-              >
-                Country <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
-              </Text>
-              <Picker
-                selectedValue={this.state.countrytatus}
-                onValueChange={this.onValueCountryChange}
-                mode={'dialog'}
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  fontFamily: CustomeFonts.reguar,
-                  color: Colors.black
-                }}
-              >
-                <Picker.Item label='Select Country' value='0' />
-                {this.state.Country.map((item, key) => (
-                  <Picker.Item
-                    label={item.country_name}
-                    value={item.code}
-                    key={key}
-                  />
-                ))}
-              </Picker>
-            </View>
-            <View
-              style={{
-                justifyContent: 'center',
-                flexDirection: 'row',
-                alignItems: 'center'
-              }}
-            >
-              <Text
-                style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-              >
-                State <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
-              </Text>
 
-              <Picker
-                selectedValue={this.state.statetatus}
-                onValueChange={this.onValueStateChange}
-                mode={'dialog'}
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  fontFamily: CustomeFonts.reguar,
-                  color: Colors.black
-                }}
-              >
-                <Picker.Item label='Select State' value='0' />
-                {this.state.state.map((item, key) => (
-                  <Picker.Item
-                    label={item.state_name}
-                    value={item.id}
-                    key={key}
-                  />
-                ))}
-              </Picker>
-            </View>
 
-            <View
-              style={{
-                justifyContent: 'center',
-                flexDirection: 'row',
-                alignItems: 'center'
-              }}
-            >
-              <Text
-                style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
-              >
-                City <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
-              </Text>
-              <Picker
-                selectedValue={this.state.citytatus}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({ citytatus: itemValue })
-                }
-                mode={'dialog'}
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  fontFamily: CustomeFonts.reguar,
-                  color: Colors.black
-                }}
-              >
-                <Picker.Item label='Select City' value='0' />
-                {this.state.city.map((item, key) => (
-                  <Picker.Item
-                    label={item.city_name}
-                    value={item.id}
-                    key={key}
-                  />
-                ))}
-              </Picker>
-            </View>
             <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Name <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Text>
             <Input
               style={[Style.Textstyle, { borderBottomWidth: 1 }]}
@@ -477,69 +381,8 @@ class AddFamilyMember extends Component {
               onChangeText={value => this.setState({ name: value })}
               value={this.state.name}
             ></Input>
-            <Text style={[Style.Textmainstyle, { padding: '2%' }]}>
-              Mobile No.
-            </Text>
-            <View style={Style.flexView}>
-              <Picker
-                selectedValue={this.state.mobilecode}
-                onValueChange={(value) => this.setState({ mobilecode: value })}
-                mode={'dialog'}
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  fontFamily: CustomeFonts.reguar,
-                  color: Colors.black
-                }}
-              >
-                <Picker.Item label='Select code' value='0' />
-                {this.state.Country.map((item, key) => (
-                  <Picker.Item
-                    label={item.mobile_code}
-                    value={item.mobile_code}
-                    key={key}
-                  />
-                ))}
-              </Picker>
-              <Input
-                style={[Style.Textstyle, { borderBottomWidth: 1 }]}
-                placeholder={'Phone Number'}
-                keyboardType='phone-pad'
-                maxLength={13}
-                mimLength={8}
-                onChangeText={value => this.setState({ mobile: value })}
-                value={this.state.mobile}
-              ></Input>
-            </View>
-            <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Email</Text>
-            <Input
-              style={[Style.Textstyle, { borderBottomWidth: 1 }]}
-              placeholder={'Email'}
-              keyboardType='email-address'
-              numberOfLines={1}
-              onChangeText={value => this.setState({ email: value })}
-              value={this.state.email}
-            ></Input>
-            <View style={[Style.flexView, { padding: '2%', justifyContent: 'flex-start' }]}>
-              <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Is Alive</Text>
-              <Switch
-                value={this.state.alive}
-                onValueChange={alive => {
-                  console.log('check alive', alive)
-                  this.setState({ alive: !this.state.alive })
-                }
-                }
-                thumbColor={
-                  this.state.alive
-                    ? Colors.Theme_color
-                    : Colors.light_pink
-                }
-                trackColor={Colors.lightThem}
-              />
-            </View>
-            <View
-              style={[Style.flexView, { paddingVertical: '2%' }]}
-            >
+
+            <View style={[Style.flexView, { paddingVertical: '2%' }]} >
               <Text style={[Style.Textmainstyle, { width: '50%', color: Colors.black }]}> Date Of Birth <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text></Text>
               <View
                 style={{
@@ -549,7 +392,6 @@ class AddFamilyMember extends Component {
                   color: Colors.black
                 }}
               ></View>
-              {/* <Text>{this.state.dob}</Text> */}
               <DatePicker
                 style={{ width: 170 }}
                 date={this.state.dob}
@@ -580,6 +422,178 @@ class AddFamilyMember extends Component {
                 }}
               />
             </View>
+            <View style={[Style.flexView, { padding: '2%', justifyContent: 'flex-start' }]}>
+              <Text style={[Style.Textmainstyle]}>Member Is Alive</Text>
+              <Switch
+                value={this.state.alive}
+                onValueChange={alive => {
+                  console.log('check alive', alive)
+                  this.setState({ alive: !this.state.alive })
+                }
+                }
+                thumbColor={
+                  this.state.alive
+                    ? Colors.Theme_color
+                    : Colors.light_pink
+                }
+                trackColor={Colors.Theme_color}
+              />
+            </View>
+            {this.state.alive ?
+              <View>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Text
+                    style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
+                  >
+                    Country <Text style={[Style.Textmainstyle, { width: '45%', color: 'red' }]}>*</Text>
+                  </Text>
+                  <Picker
+                    selectedValue={this.state.countrytatus}
+                    onValueChange={this.onValueCountryChange}
+                    mode={'dialog'}
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      fontFamily: CustomeFonts.reguar,
+                      color: Colors.black
+                    }}
+                  >
+                    <Picker.Item label='Select Country' value='0' />
+                    {this.state.Country.map((item, key) => (
+                      <Picker.Item
+                        label={item.country_name}
+                        value={item.code}
+                        key={key}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+
+
+                {/* <View
+                  style={{
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Text
+                    style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
+                  >
+                    State
+                  </Text>
+
+                  <Picker
+                    selectedValue={this.state.statetatus}
+                    onValueChange={this.onValueStateChange}
+                    mode={'dialog'}
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      fontFamily: CustomeFonts.reguar,
+                      color: Colors.black
+                    }}
+                  >
+                    <Picker.Item label='Select State' value='0' />
+                    {this.state.state.map((item, key) => (
+                      <Picker.Item
+                        label={item.state_name}
+                        value={item.id}
+                        key={key}
+                      />
+                    ))}
+                  </Picker>
+                </View> */}
+                {/* 
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Text
+                    style={[Style.Textmainstyle, { padding: '2%', width: '50%' }]}
+                  >
+                    City
+                  </Text>
+                  <Picker
+                    selectedValue={this.state.citytatus}
+                    onValueChange={(itemValue, itemIndex) =>
+                      this.setState({ citytatus: itemValue })
+                    }
+                    mode={'dialog'}
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      fontFamily: CustomeFonts.reguar,
+                      color: Colors.black
+                    }}
+                  >
+                    <Picker.Item label='Select City' value='0' />
+                    {this.state.city.map((item, key) => (
+                      <Picker.Item
+                        label={item.city_name}
+                        value={item.id}
+                        key={key}
+                      />
+                    ))}
+                  </Picker>
+                </View> */}
+
+                <Text style={[Style.Textmainstyle, { padding: '2%' }]}>
+                  Mobile No.
+                </Text>
+                <View style={Style.flexView}>
+                  <Picker
+                    selectedValue={this.state.mobilecode}
+                    onValueChange={(value) => this.setState({ mobilecode: value })}
+                    mode={'dialog'}
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      fontFamily: CustomeFonts.reguar,
+                      color: Colors.black
+                    }}
+                  >
+                    <Picker.Item label='Select code' value='0' />
+                    {this.state.Country.map((item, key) => (
+                      <Picker.Item
+                        label={item.mobile_code + '  -  ' + item.country_name}
+                        value={item.mobile_code}
+                        key={key}
+                      />
+                    ))}
+                  </Picker>
+                  <Input
+                    style={[Style.Textstyle, { borderBottomWidth: 1 }]}
+                    placeholder={'Phone Number'}
+                    keyboardType='phone-pad'
+                    maxLength={13}
+                    mimLength={8}
+                    onChangeText={value => this.setState({ mobile: value })}
+                    value={this.state.mobile}
+                  ></Input>
+                </View>
+                <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Email</Text>
+                <Input
+                  style={[Style.Textstyle, { borderBottomWidth: 1 }]}
+                  placeholder={'Email'}
+                  keyboardType='email-address'
+                  numberOfLines={1}
+                  onChangeText={value => this.setState({ email: value })}
+                  value={this.state.email}
+                ></Input>
+              </View>
+              : null}
+
+            {/* 
             <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Place Of Birth</Text>
             <Input
               style={[Style.Textstyle, { borderBottomWidth: 1 }]}
@@ -588,18 +602,11 @@ class AddFamilyMember extends Component {
               numberOfLines={1}
               onChangeText={value => this.setState({ placeofbirth: value })}
               value={this.state.placeofbirth}
-            ></Input>
+            ></Input> */}
+
             {this.state.alive ? null :
               <View>
-                <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Place Of Death</Text>
-                <Input
-                  style={[Style.Textstyle, { borderBottomWidth: 1 }]}
-                  placeholder={'Place Of Death'}
-                  keyboardType='default'
-                  numberOfLines={1}
-                  onChangeText={value => this.setState({ placeofdeath: value })}
-                  value={this.state.placeofdeath}
-                ></Input>
+
                 <View
                   style={[Style.flexView, { paddingVertical: '2%' }]}
                 >
@@ -642,54 +649,28 @@ class AddFamilyMember extends Component {
                     }}
                   />
                 </View>
+                <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Place Of Death</Text>
+                <Input
+                  style={[Style.Textstyle, { borderBottomWidth: 1 }]}
+                  placeholder={'Place Of Death'}
+                  keyboardType='default'
+                  numberOfLines={1}
+                  onChangeText={value => this.setState({ placeofdeath: value })}
+                  value={this.state.placeofdeath}
+                ></Input>
               </View>
             }
-            {/* <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Facebook</Text>
-            <Input
-              style={[Style.Textstyle, { borderBottomWidth: 1 }]}
-              placeholder={'Facebook'}
-              keyboardType='default'
-              numberOfLines={1}
-              onChangeText={value => this.setState({ fb: value })}
-              value={this.state.fb}
-            ></Input>
-             <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Instagram</Text>
-            <Input
-              style={[Style.Textstyle, { borderBottomWidth: 1 }]}
-              placeholder={'Instagram'}
-              keyboardType='default'
-              numberOfLines={1}
-              onChangeText={value => this.setState({ Instagram: value })}
-              value={this.state.Instagram}
-            ></Input>
-             <Text style={[Style.Textmainstyle, { padding: '2%' }]}>LinkedIn</Text>
-            <Input
-              style={[Style.Textstyle, { borderBottomWidth: 1 }]}
-              placeholder={'LinkedIn'}
-              keyboardType='default'
-              numberOfLines={1}
-              onChangeText={value => this.setState({ LinkedIn: value })}
-              value={this.state.LinkedIn}
-            ></Input>
-             <Text style={[Style.Textmainstyle, { padding: '2%' }]}>Whatsapp</Text>
-            <Input
-              style={[Style.Textstyle, { borderBottomWidth: 1 }]}
-              placeholder={'Whatsapp'}
-              keyboardType='default'
-              numberOfLines={1}
-              onChangeText={value => this.setState({ Whatsapp: value })}
-              value={this.state.Whatsapp}
-            ></Input> */}
+
             {this.state.isLoading ? (
               <ActivityIndicator color={Colors.Theme_color} />
             ) : (
-                <TouchableOpacity
-                  style={[Style.Buttonback, (style = { margin: 10 })]}
-                  onPress={() => this.addFamily()}
-                >
-                  <Text style={Style.buttonText}>Add To Family</Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                style={[Style.Buttonback, (style = { margin: 10 })]}
+                onPress={() => this.addFamily()}
+              >
+                <Text style={Style.buttonText}>Add To Family</Text>
+              </TouchableOpacity>
+            )}
           </Card>
         </ScrollView>
       </SafeAreaView>

@@ -95,7 +95,7 @@ import { Icon } from 'react-native-elements';
 import NewMenu from './src/screens/NewMenu';
 import AppImages from './src/Theme/image';
 import AllTaletnt from './src/screens/Talent/AllTaletnt';
-import AllPost from './src/screens/AllPost'; 
+import AllPost from './src/screens/AllPost';
 import AddProperty from './src/screens/Property/AddProperty';
 import ViewAllproperty from './src/screens/Property/ViewAllproperty';
 import PropertyDetailsView from './src/screens/Property/PropertyDetailsView';
@@ -105,6 +105,9 @@ import StoreProductDetails from './src/screens/Store/StoreProductDetails';
 import StoreBookingForm from './src/screens/Store/StoreBookingForm';
 import StoreOrderDetails from './src/screens/Store/StoreOrderDetails';
 import StoreOrderList from './src/screens/Store/StoreOrderList';
+import multiimageupload from './src/screens/multiimageupload';
+import MatrimonyRegister from './src/screens/MatrimonyRegister';
+import AddFamilyMemberMatrimony from './src/screens/AddFamilyMemberMatrimony';
 
 const matrimoneyNavi = createMaterialTopTabNavigator({
     MatrimonyList: {
@@ -125,11 +128,13 @@ const matrimoneyNavi = createMaterialTopTabNavigator({
     tabBarOptions: {
         upperCaseLabel: false,
         style: {
-            backgroundColor: Colors.Theme_color,},
+            backgroundColor: Colors.Theme_color,
+        },
         headerTitleStyle: {
             width: '100%',
             fontSize: 16,
-            fontFamily: CustomeFonts.regular},
+            fontFamily: CustomeFonts.regular
+        },
         labelStyle: {
             color: Colors.white,
             fontSize: 16,
@@ -223,7 +228,7 @@ const topTabNaviTree = createMaterialTopTabNavigator({
     },
 })
 
-const topStoreNavigation = createMaterialTopTabNavigator ({
+const topStoreNavigation = createMaterialTopTabNavigator({
     StoreProductListView: {
         screen: StoreProductList,
         navigationOptions: {
@@ -261,12 +266,49 @@ const topStoreNavigation = createMaterialTopTabNavigator ({
     },
 })
 
+const topMatrimonyTab= createMaterialTopTabNavigator({
+    Matrimony: {
+        screen: Matrimony,
+        navigationOptions: {
+            title: 'Matrimony Search'
+        }
+    },
+    MatrimonyRegister: {
+        screen: MatrimonyRegister,
+        navigationOptions: {
+            title: 'Matrimony Register'
+        },
+    }
+}, {
+    initialRouteName: 'Matrimony',
+    swipeEnabled: false,
+    tabBarOptions: {
+        upperCaseLabel: false,
+        style: {
+            backgroundColor: Colors.Theme_color,
+        },
+        headerTitleStyle: {
+            width: '100%',
+            fontSize: 16,
+            fontFamily: CustomeFonts.regular
+        },
+        labelStyle: {
+            color: Colors.white,
+            fontSize: 16,
+            fontFamily: CustomeFonts.medium,
+        },
+        indicatorStyle: {
+            backgroundColor: Colors.white,
+            borderRadius: 10,
+        },
+    }
+})
 const bottomHomeTab = createBottomTabNavigator({
     Dashboard: {
         screen: Dashboard,
         navigationOptions: {
             header: null,
-            tabBarLabel:'Home',  
+            tabBarLabel: 'Home',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="home" type='font-awesome-5' color={tintColor} size={25} />
             )
@@ -275,7 +317,7 @@ const bottomHomeTab = createBottomTabNavigator({
     MembersDetails: {
         screen: MembersDetails,
         navigationOptions: {
-            tabBarLabel:'Profile',  
+            tabBarLabel: 'Profile',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="user-alt" type='font-awesome-5' color={tintColor} size={25} />
             )
@@ -284,22 +326,22 @@ const bottomHomeTab = createBottomTabNavigator({
     OurSamaj: {
         screen: OurSamaj,
         navigationOptions: {
-            tabBarLabel:'We',  
+            tabBarLabel: 'We',
             tabBarIcon: ({ tintColor }) => (
                 <Image
-                source={AppImages.logo}
-                style={{ height: 55, width: 55, borderRadius: 55 / 2, marginBottom:25 }}
-                borderRadius={100}
-                resizeMode='contain'
-                resizeMethod='resize'
-              />
+                    source={AppImages.logo}
+                    style={{ height: 55, width: 55, borderRadius: 55 / 2, marginBottom: 25 }}
+                    borderRadius={100}
+                    resizeMode='contain'
+                    resizeMethod='resize'
+                />
             )
         }
     },
     NewsList: {
         screen: NewsList,
         navigationOptions: {
-            tabBarLabel:'News',  
+            tabBarLabel: 'News',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="newspaper" type='ionicon' color={tintColor} size={25} />
             )
@@ -308,13 +350,13 @@ const bottomHomeTab = createBottomTabNavigator({
     NewMenu: {
         screen: NewMenu,
         navigationOptions: {
-            tabBarLabel:'More',  
+            tabBarLabel: 'More',
             tabBarIcon: ({ tintColor }) => (
                 <Icon name="grid" type='ionicon' color={tintColor} size={25} />
             )
         }
     },
-  
+
 },
     {
         initialRouteName: 'Dashboard',
@@ -322,8 +364,8 @@ const bottomHomeTab = createBottomTabNavigator({
         tabBarOptions: {
             upperCaseLabel: false,
             style: {
-                height:55,
-               
+                height: 55,
+
             },
             headerTitleStyle: {
                 width: '100%',
@@ -334,7 +376,7 @@ const bottomHomeTab = createBottomTabNavigator({
                 // color: Colors.white,
                 fontSize: 14,
                 fontFamily: CustomeFonts.medium,
-               
+
             },
             activeTintColor: Colors.Theme_color,
             inactiveTintColor: Colors.black
@@ -342,103 +384,103 @@ const bottomHomeTab = createBottomTabNavigator({
     })
 const Stack_Navi = createStackNavigator(
     {
-        splash: {screen: Splash,navigationOptions: {    header: null}},
-        Login: {screen: Login,navigationOptions: {    header: null}},
-        Otp: {screen: Otp,navigationOptions: {    header: null}},
-        ForgetPassword: {screen: ForgetPassword,navigationOptions: {    header: null}},
-        Dashboard: {screen: bottomHomeTab,navigationOptions: {    header: null}},
-        YojnaList: {screen: YojnaList,},
-        YojnaDetail: {screen: YojnaDetail,path: 'yojna-detail/:yojnaId'},
-        EventLIst: {screen: EventLIst,},
-        EventDetail: {screen: EventDetail,},
-        NewsList: {screen: NewsList,},
-        NewsDetail: {screen: NewsDetail,path: 'news-detail/:newsId'},
-        CircularDetail: {screen: CircularDetail,path: 'circular-detail/:circularId'},
-        PropertyList: {screen: PropertyList,},
-        PropertyDetail: {screen: PropertyDetail,},
-        PropertyBookingList: {screen: PropertyBookingList,},
-        Matrimony: {screen: Matrimony,navigationOptions: {    header: null}},
-        Employment: {screen: Employment,},
-        Jobseeker: {screen: Jobseeker,},
-        JobProvider: {screen: JobProvider,},
-        Gallery: {screen: topTabNavi,navigationOptions: {    header: null}},
-        GallerySwiper: {screen: GallerySwiper,},
-        CircularList: {screen: CircularList,},
-        BusinessInfo: {screen: BusinessInfo,},
-        Suggestion: {screen: Suggestion,},
-        MatrimonyList: {screen: matrimoneyNavi,navigationOptions: {    header: null}},
-        FamilyTree: {screen: topTabNaviTree,navigationOptions: {    header: null}},
-        FamilyTab: {screen: FamilyTab,},
-        FamilyTreeRequest: {screen: FamilyTreeRequest,},
-        FamilyDetails: {screen: FamilyDetails,},
-        AdDetails: {screen: AdDetails,},
-        Donor: {screen: Donor,},
-        Faq: {screen: Faq,},
-        OurSamaj: {screen: OurSamaj,},
-        Aboutus: {screen: Aboutus,},
-        ContactUs: {screen: ContactUs,},
-        Committe: {screen: Committe,},
-        MembersDetails: {screen: MembersDetails,},
-        ProductDetails: {screen: ProductDetails,},
-        CompanyProductsList: {screen: CompanyProductsList,},
-        Addnewpost: {screen: Addnewpost,},
-        PostDetails: {screen: PostDetails,path: 'post-detail/:postId'},
-        CompanyDetails: {screen: CompanyDetails,},
-        EditProduct: {screen: EditProduct,},
-        BecomeDoner: {screen: BecomeDoner,},
-        SampleEventEdit: {screen: SampleEventEdit,},
-        AcadamicEventParticipent: {screen: AcadamicEventParticipent,},
-        PropertyBooking: {screen: PropertyBooking,},
-        MatrimonyDetails: {screen: MatrimonyDetails,},
-        AddFamilyMember: {screen: AddFamilyMember,},
+        splash: { screen: Splash, navigationOptions: { header: null } },
+        Login: { screen: Login, navigationOptions: { header: null } },
+        Otp: { screen: Otp, navigationOptions: { header: null } },
+        ForgetPassword: { screen: ForgetPassword, navigationOptions: { header: null } },
+        Dashboard: { screen: bottomHomeTab, navigationOptions: { header: null } },
+        YojnaList: { screen: YojnaList, },
+        YojnaDetail: { screen: YojnaDetail, path: 'yojna-detail/:yojnaId' },
+        EventLIst: { screen: EventLIst, },
+        EventDetail: { screen: EventDetail, },
+        NewsList: { screen: NewsList, },
+        NewsDetail: { screen: NewsDetail, path: 'news-detail/:newsId' },
+        CircularDetail: { screen: CircularDetail, path: 'circular-detail/:circularId' },
+        PropertyList: { screen: PropertyList, },
+        PropertyDetail: { screen: PropertyDetail, },
+        PropertyBookingList: { screen: PropertyBookingList, },
+        Matrimony: { screen: topMatrimonyTab, navigationOptions: { header: null } },
+        Employment: { screen: Employment, },
+        Jobseeker: { screen: Jobseeker, },
+        JobProvider: { screen: JobProvider, },
+        Gallery: { screen: topTabNavi, navigationOptions: { header: null } },
+        GallerySwiper: { screen: GallerySwiper, },
+        CircularList: { screen: CircularList, },
+        BusinessInfo: { screen: BusinessInfo, },
+        Suggestion: { screen: Suggestion, },
+        MatrimonyList: { screen: matrimoneyNavi, navigationOptions: { header: null } },
+        FamilyTree: { screen: topTabNaviTree, navigationOptions: { header: null } },
+        FamilyTab: { screen: FamilyTab, },
+        FamilyTreeRequest: { screen: FamilyTreeRequest, },
+        FamilyDetails: { screen: FamilyDetails, },
+        AdDetails: { screen: AdDetails, },
+        Donor: { screen: Donor, },
+        Faq: { screen: Faq, },
+        OurSamaj: { screen: OurSamaj, },
+        Aboutus: { screen: Aboutus, },
+        ContactUs: { screen: ContactUs, },
+        Committe: { screen: Committe, },
+        MembersDetails: { screen: MembersDetails, },
+        ProductDetails: { screen: ProductDetails, },
+        CompanyProductsList: { screen: CompanyProductsList, },
+        Addnewpost: { screen: Addnewpost, },
+        PostDetails: { screen: PostDetails, path: 'post-detail/:postId' },
+        CompanyDetails: { screen: CompanyDetails, },
+        EditProduct: { screen: EditProduct, },
+        BecomeDoner: { screen: BecomeDoner, },
+        SampleEventEdit: { screen: SampleEventEdit, },
+        AcadamicEventParticipent: { screen: AcadamicEventParticipent, },
+        PropertyBooking: { screen: PropertyBooking, },
+        MatrimonyDetails: { screen: MatrimonyDetails, },
+        AddFamilyMember: { screen: AddFamilyMember, },
         // Persional Details Folder Screen Navigation
-        PersionalDetail: {screen: PersionalDetail},
-        ViewOtherPersionalDetails: {screen: ViewOtherPersionalDetails},
-        ViewProfessionalDetails: {screen: ViewProfessionalDetails,navigationOptions: {    header: null}},
-        ViewMemberDoctorDetails: {screen: ViewMemberDoctorDetails},
-        AddProduct: {screen: AddProduct},
-        LookingForJob: {screen: LookingForJob},
-        LookinForMatrimony: {screen: LookinForMatrimony,navigationOptions: {    header: null}},
-        ViewJobProvider: {screen: ViewJobProvider},
-        Karobaridetails: {screen: Karobaridetails},
-        KundliImage: {screen: KundliImage},
-        MemberSearch: {screen: MemberSearch},
-        EventAppliedList: {screen: EventAppliedList},
-        FamilyTreeMemberDetails: {screen: FamilyTreeMemberDetails},
-        WebView: {screen: WebView},
+        PersionalDetail: { screen: PersionalDetail },
+        ViewOtherPersionalDetails: { screen: ViewOtherPersionalDetails },
+        ViewProfessionalDetails: { screen: ViewProfessionalDetails, navigationOptions: { header: null } },
+        ViewMemberDoctorDetails: { screen: ViewMemberDoctorDetails },
+        AddProduct: { screen: AddProduct },
+        LookingForJob: { screen: LookingForJob },
+        LookinForMatrimony: { screen: LookinForMatrimony, navigationOptions: { header: null } },
+        ViewJobProvider: { screen: ViewJobProvider },
+        Karobaridetails: { screen: Karobaridetails },
+        KundliImage: { screen: KundliImage },
+        MemberSearch: { screen: MemberSearch },
+        EventAppliedList: { screen: EventAppliedList },
+        FamilyTreeMemberDetails: { screen: FamilyTreeMemberDetails },
+        WebView: { screen: WebView },
         // realmtest: {
         //     screen: realmtest
         // },
-        VideoView: {screen: VideoView},
-        PlayAudio: {screen: PlayAudio},
-        WhishListView: {screen: WhishListView},
-        AddWishlist: {screen: AddWishlist},
-        FirendsView: {screen: FirendsView},
-        Notification: {screen: Notification},
-        MatrimonyPackage: {screen: MatrimonyPackage,navigationOptions: {    header: null}},
-        TermsConditions: {screen: TermsConditions,},
-        JobDetails: {screen: JobDetails,},
-        EmployeeDetails: {screen: EmployeeDetails,},
-        ProviderJobPostList: {screen: ProviderJobPostList,},
-        ProfileComplsary: {screen: ProfileComplsary,},
-        TalentListByMember: {screen: TalentListByMember,},
-        AddTalent: {screen: AddTalent,},
-        TalentDetailsPage: {screen: TalentDetailsPage,path: 'talent-detail/:talentId'},
-        AllTaletnt:{screen:AllTaletnt},
-        AllPost:{screen:AllPost},
-        NewMenu:{screen:NewMenu},
-        AddProperty:{screen:AddProperty},
-        ViewAllproperty:{screen:ViewAllproperty},
-        PropertyDetailsView:{screen:PropertyDetailsView},
-        ViewMemberProperty:{screen:ViewMemberProperty},
-        StoreProductList:{screen:topStoreNavigation,navigationOptions: {    header: null}},
-        StoreProductDetails:{screen:StoreProductDetails},
-        StoreBookingForm:{screen:StoreBookingForm},
-        StoreOrderDetails:{screen:StoreOrderDetails},
-    
+        VideoView: { screen: VideoView },
+        PlayAudio: { screen: PlayAudio },
+        WhishListView: { screen: WhishListView },
+        AddWishlist: { screen: AddWishlist },
+        FirendsView: { screen: FirendsView },
+        Notification: { screen: Notification },
+        MatrimonyPackage: { screen: MatrimonyPackage, navigationOptions: { header: null } },
+        TermsConditions: { screen: TermsConditions, },
+        JobDetails: { screen: JobDetails, },
+        EmployeeDetails: { screen: EmployeeDetails, },
+        ProviderJobPostList: { screen: ProviderJobPostList, },
+        ProfileComplsary: { screen: ProfileComplsary, },
+        TalentListByMember: { screen: TalentListByMember, },
+        AddTalent: { screen: AddTalent, },
+        TalentDetailsPage: { screen: TalentDetailsPage, path: 'talent-detail/:talentId' },
+        AllTaletnt: { screen: AllTaletnt },
+        AllPost: { screen: AllPost },
+        NewMenu: { screen: NewMenu },
+        AddProperty: { screen: AddProperty },
+        ViewAllproperty: { screen: ViewAllproperty },
+        PropertyDetailsView: { screen: PropertyDetailsView },
+        ViewMemberProperty: { screen: ViewMemberProperty },
+        StoreProductList: { screen: topStoreNavigation, navigationOptions: { header: null } },
+        StoreProductDetails: { screen: StoreProductDetails },
+        StoreBookingForm: { screen: StoreBookingForm },
+        StoreOrderDetails: { screen: StoreOrderDetails },
+        AddFamilyMemberMatrimony:{screen:AddFamilyMemberMatrimony}
     },
     {
-        initialRouteName:'splash'
+        initialRouteName: 'splash'
     }
 )
 
